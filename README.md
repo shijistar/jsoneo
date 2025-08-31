@@ -2,11 +2,11 @@
 
 A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.
 
-Write once. Run in Jest and e2e.
+> Write once. Run unit testing in Node and Browsers.
 
-A perfect partner for unit testing, which allowing `Jest` and `e2e` tests to share one copy of test suite. Please check more details in the [enum-plus](https://github.com/shijistar/enum-plus) project.
+A perfect partner for unit testing, which allowing `Node.js` (or others) and `e2e` tests to share one copy of test suite. Please check more details in the [enum-plus](https://github.com/shijistar/enum-plus/blob/master/test/engines/index.ts) project.
 
-This library is extracted from [enum-plus](https://github.com/shijistar/enum-plus).
+This project was extracted from [enum-plus](https://github.com/shijistar/enum-plus). It was designed to serialize `Enum` objects from Browser to Node.js, so that the same test suites in `Jest` can be reused in `Playwright` e2e tests. We don't have to duplicate our test logic in the two testing frameworks. This project was also previously named _[serialize-everything.js](https://github.com/shijistar/serialize-everything.js)_
 
 ## Features
 
@@ -74,7 +74,7 @@ yarn add jsoneo
 
 ## Supported Types
 
-- JSON primitives:
+- **JSON Primitives:**
   - `string`
   - `number`
   - `boolean`
@@ -83,7 +83,7 @@ yarn add jsoneo
   - `plain object`
   - `array`
 
-- Extended types
+- **Extended Types:**
   - `Date`
   - `RegExp`
   - `Symbol`
@@ -95,8 +95,8 @@ yarn add jsoneo
     - Classes
   - `Map`
   - `Set`
-  - `WeakMap` (Only structure, without data)
-  - `WeakSet` (Only structure, without data)
+  - `WeakMap` (Structure only, without data)
+  - `WeakSet` (Structure only, without data)
   - `URL`
   - `URLSearchParams`
   - `TypedArray`
@@ -113,8 +113,73 @@ yarn add jsoneo
     - `BigUint64Array`
   - `ArrayBuffer`
   - `DataView`
-  - `Blob`
   - `Buffer`
   - `Error`
   - `Iterable`
   - `RawJSON`（via `JSON.rawJSON()`）
+
+## Usage
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const json = {
+  // String
+  name: 'John',
+  // Number
+  age: 30,
+  // Boolean
+  isAdmin: false,
+  // Date
+  createdAt: new Date(),
+  // RegExp
+  pattern: /abc/gi,
+  // BigInt
+  bigValue: 12345678901234567890n,
+  // Plain object
+  address: {
+    city: 'New York',
+    zip: '10001',
+  },
+  // Plain array
+  tags: ['developer', 'javascript'],
+  // Array with objects
+  projects: [
+    {
+      id: 1,
+      name: 'Project 1',
+      createdAt: new Date(),
+    },
+    {
+      id: 2,
+      name: 'Project 2',
+      createdAt: new Date(),
+    },
+  ],
+  // URL
+  homepage: new URL('https://example.com?id=123'),
+  // Symbols
+  id: Symbol.for('id'),
+  [Symbol.toStringTag]: 'User',
+  // Map and Set
+  roles: new Map([
+    [Symbol.for('admin'), true],
+    [Symbol.for('editor'), false],
+  ]),
+  permissions: new Set(['read', 'write']),
+  // TypedArray
+  bytes: new Uint8Array([1, 2, 3, 4]),
+  // ArrayBuffer
+  buffer: new ArrayBuffer(8),
+  // function
+  sayHello: () => `Hello, ${this.name}!`,
+};
+
+// Serialize
+const serialized = stringify(json);
+console.log('Serialized:', serialized);
+
+// Deserialize
+const deserialized = parse(serialized);
+console.log('Deserialized:', deserialized);
+```

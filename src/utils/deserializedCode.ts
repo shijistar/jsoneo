@@ -1,4 +1,5 @@
 import type { InternalParseOptions, SerializedResult, StringifyOptions } from '../types';
+import { base64ToArrayBuffer, deserializeBinary, TypedArrays } from './binary';
 import {
   DefaultEndTag,
   DefaultStartTag,
@@ -8,9 +9,8 @@ import {
   VariablePrefix,
 } from './consts';
 import { base64ToString, escapeRegExp } from './encode';
-import { TypedArrays } from './expandPrototypeChain';
 
-export function generateDeserializationCode(result: SerializedResult, options: InternalParseOptions) {
+export function deserializedCode(result: SerializedResult, options: InternalParseOptions) {
   const { closure, isPrinting } = options ?? {};
   const {
     startTag: ST = DefaultStartTag,
@@ -53,6 +53,9 @@ export function generateDeserializationCode(result: SerializedResult, options: I
     ),
     { startTag: ST, endTag: ET }
   )} ?? [];
+  const TYPED_ARRAY_CTORS = {
+    ${TypedArrays.map((ctor) => ctor.name).join(',\n    ')}
+  };
   const symbolKeyRegExps = [
     ${SymbolKeyRegExps.map(
       (regExp) => `new RegExp('^${escapeRegExp(regExp, { escapeTwice: isPrinting, format: escapeSingleQuote })}$')`
@@ -128,27 +131,14 @@ export function generateDeserializationCode(result: SerializedResult, options: I
         newResult = set;
       } 
       else if ([${TypedArrays.map((t) => `'${t.name}'`).join(', ')}].includes(type) && 
-        typeof globalThis[type] === 'function' && Array.isArray(value)) {
-        newResult = new globalThis[type](value);
+        typeof globalThis[type] === 'function') {
+        newResult = deserializeBinary(value);
       }
-      else if (type === 'ArrayBuffer' && typeof ArrayBuffer === 'function' && typeof Uint8Array === 'function' && Array.isArray(value)) {
-        const buffer = new ArrayBuffer(value.length);
-        const view = new Uint8Array(buffer);
-        value.forEach((item, index) => {
-          view[index] = item;
-        });
-        newResult = buffer;
+      else if (type === 'ArrayBuffer' && typeof ArrayBuffer === 'function') {
+        newResult = deserializeBinary(value);
       }
-      else if (type === 'DataView' && typeof DataView === 'function' && typeof ArrayBuffer === 'function' && typeof Uint8Array === 'function' && Array.isArray(value)) {
-        const buffer = new ArrayBuffer(value.length);
-        const view = new Uint8Array(buffer);
-        value.forEach((item, index) => {
-          view[index] = item;
-        });
-        newResult = new DataView(buffer);
-      }
-      else if (type === 'Blob' && typeof Blob === 'function' && Array.isArray(value)) {
-        newResult = new Blob(value, { type: metadata && metadata.type ? metadata.type : '' });
+      else if (type === 'DataView' && typeof DataView === 'function' && typeof ArrayBuffer === 'function') {
+        newResult = deserializeBinary(value);
       }
       else if (type === 'Buffer' && Array.isArray(value)) {
         if (typeof Buffer !== 'undefined') {
@@ -262,6 +252,9 @@ export function generateDeserializationCode(result: SerializedResult, options: I
       }
     });
   }
+
+  ${deserializeBinary.toString()}
+  ${base64ToArrayBuffer.toString()}
 
   function getFullKeys(obj) {
     if (obj == null) {

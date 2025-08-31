@@ -1,4 +1,5 @@
 import type { StringifyOptions } from '../types';
+import { TypedArrays } from './binary';
 import { getFullKeys } from './get';
 
 /**
@@ -25,9 +26,9 @@ export function pickPrototype(
     proto !== Function.prototype &&
     proto !== Map.prototype &&
     proto !== Set.prototype &&
-    proto !== Blob.prototype &&
     proto !== ArrayBuffer.prototype &&
     proto !== DataView.prototype &&
+    !TypedArrays.some((t) => proto === t.prototype) &&
     (typeof Buffer === 'undefined' || proto !== Buffer.prototype)
   ) {
     const protoKeys = getFullKeys(proto);

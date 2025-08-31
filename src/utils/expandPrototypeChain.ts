@@ -6,25 +6,12 @@
  * @param options - Options to control the expansion behavior.
  */
 import type { DescriptorInfo, ExpandPrototypeChainOptions, JsonApi, PathType, StringifyOptions } from '../types';
+import { serializeBinary, TypedArrays } from './binary';
 import { stringToBase64 } from './encode';
 import { getFullKeys } from './get';
 import { pickPrototype } from './pickPrototype';
 import { serializeFunction } from './serializeRecursively';
 import { toSymbolString } from './symbol';
-
-export const TypedArrays = [
-  Int8Array,
-  Uint8Array,
-  Uint8ClampedArray,
-  Int16Array,
-  Uint16Array,
-  Int32Array,
-  Uint32Array,
-  Float32Array,
-  Float64Array,
-  typeof BigInt64Array !== 'undefined' ? BigInt64Array : undefined!,
-  typeof BigUint64Array !== 'undefined' ? BigUint64Array : undefined!,
-].filter(Boolean);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function expandPrototypeChain(source: any, options?: ExpandPrototypeChainOptions): typeof source {
@@ -120,17 +107,14 @@ function expandPrototypeChainRecursively(
     } else if (source instanceof WeakSet) {
       result = [];
     } else if (TypedArrays.some((Type) => source instanceof Type)) {
-      result = Array.from(source);
+      result = serializeBinary(source as InstanceType<(typeof TypedArrays)[number]>);
       types.push({ path: paths, type: source.constructor.name });
     } else if (source instanceof ArrayBuffer) {
-      result = source.slice(0);
+      result = serializeBinary(source);
       types.push({ path: paths, type: 'ArrayBuffer' });
     } else if (source instanceof DataView) {
-      result = new DataView(source.buffer.slice(0));
+      result = serializeBinary(source);
       types.push({ path: paths, type: 'DataView' });
-    } else if (typeof Blob !== 'undefined' && source instanceof Blob) {
-      result = typeof Blob !== 'undefined' ? new Blob([source], { type: source.type }) : undefined;
-      types.push({ path: paths, type: 'Blob', metadata: { type: source.type } });
     } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
       result = Array.from(source);
       types.push({ path: paths, type: 'Buffer' });

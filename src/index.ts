@@ -10,8 +10,8 @@ import type {
   TypeInfo,
 } from './types';
 import { DefaultEndTag, DefaultStartTag, VariablePrefix } from './utils/consts';
+import { deserializedCode } from './utils/deserializedCode';
 import { expandPrototypeChain } from './utils/expandPrototypeChain';
-import { generateDeserializationCode } from './utils/format';
 import { getByPath } from './utils/get';
 import { serializeRecursively } from './utils/serializeRecursively';
 import { version } from './version';
@@ -48,7 +48,7 @@ import { version } from './version';
  * Advantages:
  *
  * 1. Supports serialization of complex JavaScript objects, including functions and prototypes.
- * 2. Supports serialization of Map, Set, ArrayBuffer, DataView, Blob, and other complex types.
+ * 2. Supports serialization of Map, Set, ArrayBuffer, DataView, and other complex types.
  * 3. Supports serialization of circular references.
  * 4. Supports serialization of Symbol keys and values.
  * 5. Supports serialization of custom property descriptors.
@@ -141,9 +141,9 @@ export function parse(input: string, options?: ParseOptions) {
   }
   // return deserialize(inputResult, { ...options, closure });
   const { variablePrefix: VP = VariablePrefix } = inputResult;
-  const code = generateDeserializationCode(inputResult, options ?? {});
+  const code = deserializedCode(inputResult, options ?? {});
   if (debug) {
-    const printSourceCode = generateDeserializationCode(inputResult, { ...options, isPrinting: true });
+    const printSourceCode = deserializedCode(inputResult, { ...options, isPrinting: true });
     const prettyPrintCode = `\`${printSourceCode.replace(/`/g, '\\`').replace(/\$\{/g, '\\${')}\``;
     const realCode = `'${printSourceCode.replace(/\n/g, '\\n').replace(/'/g, "\\'")}'`;
     const printCode = prettyPrint ? prettyPrintCode : realCode;
