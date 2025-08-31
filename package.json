@@ -1,6 +1,6 @@
 {
   "name": "jsoneo",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.",
   "keywords": [
     "JSON",
