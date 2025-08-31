@@ -10,16 +10,8 @@ const headerComment = (legacy: boolean) => `/**
  * @link ${packageJson.homepage}
  */`;
 
-if (process.env.LEGACY === '1') {
-  const legacyFilePath = './umd/enum-plus-legacy.min.js';
-  if (existsSync(legacyFilePath)) {
-    const legacyJsContent = readFileSync(legacyFilePath, 'utf8');
-    writeFileSync(legacyFilePath, `${headerComment(true)}\n${legacyJsContent}`);
-  }
-} else {
-  const filePath = './umd/enum-plus.min.js';
-  if (existsSync(filePath)) {
-    const umdJsContent = readFileSync(filePath, 'utf8');
-    writeFileSync(filePath, `${headerComment(false)}\n${umdJsContent}`);
-  }
+const filePath = './umd/jsoneo.min.js';
+if (existsSync(filePath)) {
+  const umdJsContent = readFileSync(filePath, 'utf8');
+  writeFileSync(filePath, `${headerComment(false)}\n${umdJsContent}`);
 }
