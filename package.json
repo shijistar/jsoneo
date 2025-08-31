@@ -1,0 +1,81 @@
+{
+  "name": "jsoneo",
+  "version": "1.0.0-beta.0",
+  "description": "A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.",
+  "keywords": [
+    "JSON",
+    "Serialization",
+    "Deserialization",
+    "stringify",
+    "parse",
+    "e2e"
+  ],
+  "homepage": "https://github.com/shijistar/jsoneo",
+  "bugs": {
+    "url": "https://github.com/shijistar/jsoneo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shijistar/jsoneo.git"
+  },
+  "license": "MIT",
+  "author": "李凤宝(Leo) <shijistar@gmail.com>",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "es",
+    "umd",
+    "LICENSE",
+    "CHANGELOG.md",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "scripts": {
+    "build": "run-p build:*",
+    "build:es": "run-s gv task:build-es task:add-es-extensions task:add-umd-banner",
+    "build:lib": "run-s gv ts2lib task:copy-lib",
+    "build:tses": "run-s gv ts2es task:add-tses-extensions",
+    "clean": "shx rm -rf lib es es-legacy umd tses tslib",
+    "gv": "node scripts/generate-version.js",
+    "init-husky": "husky",
+    "prepare": "run-s gv init-husky",
+    "prepublishOnly": "run-s build",
+    "task:add-es-extensions": "tsx scripts/add-esm-extensions.ts es",
+    "task:add-tses-extensions": "tsx scripts/add-esm-extensions.ts tses",
+    "task:add-umd-banner": "tsx scripts/add-umd-banner.ts",
+    "task:build-es": "father build",
+    "task:bundle-e2e": "tsx scripts/make-e2e-bundle.ts",
+    "task:copy-lib": "tsx scripts/copy-lib.ts",
+    "test": "run-s gv task:jest",
+    "ts2es": "tsc -p tsconfig.es.json",
+    "ts2lib": "tsc -p tsconfig.lib.json"
+  },
+  "overrides": {
+    "@umijs/babel-preset-umi": {
+      "@babel/runtime": "^7.27.1"
+    },
+    "esbuild": "^0.25.4"
+  },
+  "devDependencies": {
+    "@tiny-codes/code-style-all-in-one": "^1.1.5",
+    "@types/node": "^22.16.2",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.25.4",
+    "father": "^4.5.5",
+    "glob": "^11.0.3",
+    "npm-run-all2": "^8.0.3",
+    "shx": "^0.4.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "npm@11.4.2",
+  "engines": {
+    "node": ">=7.10.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}

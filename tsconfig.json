@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "target": "ES2016",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2016", "DOM"],
+    "sourceMap": true,
+    "sourceRoot": "/",
+    "mapRoot": "./",
+    "inlineSourceMap": false,
+    "inlineSources": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "allowJs": false
+  },
+  "include": ["src", "scripts", "test", "test-browser", "*.ts", ".*.ts"],
+  "exclude": ["node_modules", "es", "es-legacy", "lib", "tslib", "tses", "types-legacy"]
+}
