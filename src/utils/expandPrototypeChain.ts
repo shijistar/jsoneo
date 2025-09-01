@@ -81,11 +81,11 @@ function expandPrototypeChainRecursively(
     }
     if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
       return source;
-    } else if (source instanceof URL) {
+    } else if (typeof URL !== 'undefined' && source instanceof URL) {
       result = source.toString();
       types.push({ path: paths, type: 'URL' });
       return result;
-    } else if (source instanceof URLSearchParams) {
+    } else if (typeof URLSearchParams !== 'undefined' && source instanceof URLSearchParams) {
       result = source.toString();
       types.push({ path: paths, type: 'URLSearchParams' });
       return result;
