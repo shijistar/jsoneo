@@ -1,6 +1,6 @@
 {
   "name": "jsoneo",
-  "version": "1.0.1-canary.0",
+  "version": "1.0.1",
   "description": "A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.",
   "keywords": [
     "JSON",
@@ -55,21 +55,21 @@
   },
   "overrides": {
     "@umijs/babel-preset-umi": {
-      "@babel/runtime": "^7.27.1"
+      "@babel/runtime": "^7.28.3"
     },
-    "esbuild": "^0.25.4"
+    "esbuild": "^0.25.9"
   },
   "devDependencies": {
     "@tiny-codes/code-style-all-in-one": "^1.1.5",
     "@types/node": "^22.16.2",
-    "cross-env": "^7.0.3",
-    "esbuild": "^0.25.4",
-    "father": "^4.5.5",
+    "cross-env": "^10.0.0",
+    "esbuild": "^0.25.9",
+    "father": "^4.6.3",
     "glob": "^11.0.3",
-    "npm-run-all2": "^8.0.3",
+    "npm-run-all2": "^8.0.4",
     "shx": "^0.4.0",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "packageManager": "npm@11.4.2",
   "engines": {

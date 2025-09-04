@@ -4,7 +4,7 @@ export default defineConfig({
   esm: { input: 'src', output: 'es', transformer: 'babel' },
   umd: {
     entry: 'src',
-    name: 'JSONeo',
+    name: 'jsoneo',
     output: {
       path: 'umd',
       filename: 'jsoneo.min',
