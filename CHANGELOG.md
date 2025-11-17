@@ -2,6 +2,14 @@
 
 # jsoneo Changelog
 
+- ## 1.0.2
+
+2025-11-17
+
+### Features
+
+- ✨ Improved serialization of getter and setter functions.
+
 - ## 1.0.1
 
 2025-9-4

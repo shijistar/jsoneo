@@ -118,6 +118,12 @@ export function serializeFunction(funcStr: string) {
   if (funcStr.includes('{ [native code] }')) {
     return undefined;
   }
+  // Handle getter and setter functions, { get prop() {}, set assign(v) {} }
+  if (funcStr.startsWith('get ') || funcStr.startsWith('set ')) {
+    funcStr = funcStr.replace(/^(get|set)\s+/, '');
+    funcStr = `function ${funcStr}`;
+    return funcStr;
+  }
   if (
     // function () {}
     !funcStr.startsWith('function') &&
