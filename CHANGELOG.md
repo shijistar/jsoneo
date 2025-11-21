@@ -2,6 +2,14 @@
 
 # jsoneo Changelog
 
+- ## 1.0.3
+
+2025-11-21
+
+### Bug Fixes
+
+- 🐞 Fixed an issue where prototype chain patches were not applied recursively.
+
 - ## 1.0.2
 
 2025-11-17

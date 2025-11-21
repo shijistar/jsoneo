@@ -149,12 +149,10 @@ export function parse(input: string, options?: ParseOptions) {
     const printCode = prettyPrint ? prettyPrintCode : realCode;
     console.log('------------------ deserialize ------------------');
     console.log(
-      `new Function('${VP}context', '${VP}options', ${printCode})(${closure ? 'closure' : 'undefined'}, { get: getByPath });
-      ${getByPath.toString()}
-      `,
-      'closure =',
-      closure
+      `new Function('${VP}context', '${VP}options', ${printCode})(${closure ? 'closure' : 'undefined'}, { get: getByPath });`
     );
+    console.log('closure =', closure);
+    console.log(getByPath.toString());
   }
   return new Function(`${VP}context`, `${VP}options`, code)(closure, { get });
 }

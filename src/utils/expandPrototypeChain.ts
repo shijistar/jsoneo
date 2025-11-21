@@ -5,7 +5,14 @@
  * @param source - The source object to expand.
  * @param options - Options to control the expansion behavior.
  */
-import type { DescriptorInfo, ExpandPrototypeChainOptions, JsonApi, PathType, StringifyOptions } from '../types';
+import type {
+  DescriptorInfo,
+  ExpandPrototypeChainOptions,
+  JsonApi,
+  PatchInfo,
+  PathType,
+  StringifyOptions,
+} from '../types';
 import { serializeBinary, TypedArrays } from './binary';
 import { stringToBase64 } from './encode';
 import { getFullKeys } from './get';
@@ -237,6 +244,13 @@ function expandPrototypeChainRecursively(
   }
 
   // Copy extra context, only for function and array, which can't hold custom properties in JSON format
+  addPatch(result, { paths, patches });
+  return result;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function addPatch(result: any, options: { paths: PathType[]; patches: PatchInfo[] }) {
+  const { paths, patches } = options;
   if (Array.isArray(result) || typeof result === 'function') {
     let skipKeys: string[] = [];
     if (typeof result === 'function') {
@@ -261,8 +275,13 @@ function expandPrototypeChainRecursively(
           path: paths,
           patch: patchValue,
         });
+        for (const key of getFullKeys(result)) {
+          addPatch(result[key], {
+            paths: [...paths, key],
+            patches,
+          });
+        }
       }
     }
   }
-  return result;
 }
