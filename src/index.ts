@@ -19,7 +19,7 @@ import { version } from './version';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * Notes:
+ * ## Notes:
  *
  * 1. Do not use 'closure' in the function, the function body can be serialized but the closure
  *    reference can't. If it's a class, set the closures to the class properties, and use 'this' to
@@ -39,13 +39,9 @@ import { version } from './version';
  * 8. Respect `toJSON` and `fromJSON` method, if the object has a `toJSON` method, it will be called to
  *    get the serialized value. If the object has a `fromJSON` method, it will be called with
  *    serialized json to restore the original value.
- * 9. Make sure you trust the source of the serialized string, because the deserialization need to
- *    evaluate script codes. A carefully crafted strings may embed malicious code, thus posing a
- *    security threat.
- * 10. Buffer is supported in Node.js environment, and will be converted to Uint8Array in web browsers.
- */
-/**
- * Advantages:
+ * 9. Buffer is supported in Node.js environment, and will be converted to Uint8Array in web browsers.
+ *
+ * ## Advantages:
  *
  * 1. Supports serialization of complex JavaScript objects, including functions and prototypes.
  * 2. Supports serialization of Map, Set, ArrayBuffer, DataView, and other complex types.
@@ -55,6 +51,16 @@ import { version } from './version';
  * 6. Supports serialization of non-enumerable properties.
  * 7. Supports toJSON and fromJSON methods for custom serialization and deserialization.
  * 8. Supports raw JSON objects (via JSON.rawJSON() method).
+ *
+ * ## Security Considerations:
+ *
+ * The `stringify` and `parse` methods are secure when used together, with the same level of
+ * security as `JSON`. No malicious code will be evaluated during serialization and
+ * deserialization.
+ *
+ * However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
+ * sources`. Never run `parse` with user input or data from `untrusted sources`, as it may embed
+ * malicious code.
  */
 
 /**

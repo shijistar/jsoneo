@@ -6,9 +6,9 @@
 
 A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.
 
-> Write once. Run unit testing in Node and Browsers.
-
 A perfect partner for unit testing, which allowing `Node.js` (or others) and `e2e` tests to share one copy of test suite. Please check more details in the [enum-plus](https://github.com/shijistar/enum-plus/blob/master/test/engines/index.ts) project.
+
+> Write once, run in multiple environments.
 
 This project was extracted from [enum-plus](https://github.com/shijistar/enum-plus). It was designed to serialize `Enum` objects from Browser to Node.js, so that the same test suites in `Jest` can be reused in `Playwright` e2e tests. We don't have to duplicate our test logic in the two testing frameworks. This project was also previously named _[serialize-everything.js](https://github.com/shijistar/serialize-everything.js)_
 
