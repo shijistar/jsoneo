@@ -2,6 +2,14 @@
 
 # jsoneo Changelog
 
+- ## 1.1.0
+
+2026-6-21
+
+### Features
+
+- ✨ Allow and preserve extra info on `getter/setter` functions.
+
 - ## 1.0.3
 
 2025-11-21

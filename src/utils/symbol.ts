@@ -13,11 +13,11 @@ export function getWellKnownSymbols() {
 
 export function toSymbolString(symbol: symbol): string | undefined {
   if (WellKnownSymbols.includes(symbol)) {
-    return `[${symbol.description}]`;
+    return symbol.description;
   } else if (Symbol.keyFor(symbol)) {
-    return `[Symbol.for('${Symbol.keyFor(symbol)}')]`;
+    return `Symbol.for('${Symbol.keyFor(symbol)}')`;
   } else if (symbol.description) {
-    return `[Symbol('${symbol.description}')]`;
+    return `Symbol('${symbol.description}')`;
   }
   return undefined;
 }

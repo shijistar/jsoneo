@@ -14,6 +14,7 @@ import type {
   StringifyOptions,
 } from '../types';
 import { serializeBinary, TypedArrays } from './binary';
+import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
 import { stringToBase64 } from './encode';
 import { getFullKeys } from './get';
 import { pickPrototype } from './pickPrototype';
@@ -59,7 +60,9 @@ function expandPrototypeChainRecursively(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const assertCircular = (obj: any, path: PathType[]) => {
     const toSymbolStrings = (paths: PathType[]) => {
-      return paths.map((p) => (typeof p === 'symbol' ? (toSymbolString(p) ?? 'undefined') : p));
+      return paths.map((p) =>
+        typeof p === 'symbol' ? ((toSymbolString(p) ? `[${toSymbolString(p)}]` : undefined) ?? 'undefined') : p
+      );
     };
     if (circular.has(obj)) {
       refs.push({
@@ -162,7 +165,7 @@ function expandPrototypeChainRecursively(
         (!descriptor.writable || !descriptor.enumerable || !descriptor.configurable || descriptor.get || descriptor.set)
       ) {
         if (typeof key === 'symbol') {
-          key = toSymbolString(key) ?? '';
+          key = toSymbolString(key) ? `[${toSymbolString(key)}]` : '';
         }
         const copied = { ...descriptor };
         delete copied.value;
@@ -185,10 +188,8 @@ function expandPrototypeChainRecursively(
       const sourceDescriptors = Object.getOwnPropertyDescriptors(source);
       Object.setPrototypeOf(sourceDescriptors, null);
       getFullKeys(source).forEach((key) => {
-        const descriptor = sourceDescriptors[key];
-        const destDescriptor = destDescriptors[key as string];
         let index: number;
-        // Always skip array length and indecies
+        // Always skip array length and indices
         if (
           Array.isArray(source) &&
           typeof key === 'string' &&
@@ -196,6 +197,8 @@ function expandPrototypeChainRecursively(
         ) {
           return;
         }
+        const descriptor = sourceDescriptors[key];
+        const destDescriptor = destDescriptors[key as string];
         if (descriptor && !descriptor.get && !('value' in descriptor)) {
           // If the descriptor is not readable, skip it
           if (debug) {
@@ -227,6 +230,8 @@ function expandPrototypeChainRecursively(
 
     assign(proto);
     assign(source);
+
+    const childDescriptors = Object.getOwnPropertyDescriptors(source);
     for (const key of getFullKeys(result)) {
       result[key] = expandPrototypeChainRecursively(result[key], {
         ...options,
@@ -237,6 +242,31 @@ function expandPrototypeChainRecursively(
         refs,
         paths: [...paths, typeof key === 'string' && key.match(/^\d+$/) ? Number(key) : key],
       });
+      const descriptor = childDescriptors[key as string];
+      if (descriptor) {
+        if (descriptor.get) {
+          expandPrototypeChainRecursively(descriptor.get, {
+            ...options,
+            patches,
+            descriptors,
+            types,
+            circular,
+            refs,
+            paths: [...paths, key, SymbolForGetDescriptor],
+          });
+        }
+        if (descriptor.set) {
+          expandPrototypeChainRecursively(descriptor.set, {
+            ...options,
+            patches,
+            descriptors,
+            types,
+            circular,
+            refs,
+            paths: [...paths, key, SymbolForSetDescriptor],
+          });
+        }
+      }
     }
   } else {
     // For primitive types, just return the source

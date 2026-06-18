@@ -71,7 +71,7 @@ export function serializeRecursively(
 
       for (const symbol of Object.getOwnPropertySymbols(source)) {
         // only predefined symbols and keyed symbols are preserved
-        const symbolString = toSymbolString(symbol);
+        const symbolString = toSymbolString(symbol) ? `[${toSymbolString(symbol)}]` : undefined;
         const subValue = source[symbol];
         if (!symbolString || subValue === null) {
           continue;

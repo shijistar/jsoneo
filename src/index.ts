@@ -43,12 +43,12 @@ import { version } from './version';
  *
  * ## Advantages:
  *
- * 1. Supports serialization of complex JavaScript objects, including functions and prototypes.
- * 2. Supports serialization of Map, Set, ArrayBuffer, DataView, and other complex types.
- * 3. Supports serialization of circular references.
- * 4. Supports serialization of Symbol keys and values.
+ * 1. Supports serialization of normal JavaScript objects, and their prototypes.
+ * 2. Supports serialization of functions, preserving inner codes.
+ * 3. Supports serialization of Map, Set, ArrayBuffer, DataView, and other complex types.
+ * 4. Supports serialization of Symbol object keys and Symbol values.
  * 5. Supports serialization of custom property descriptors.
- * 6. Supports serialization of non-enumerable properties.
+ * 6. Supports serialization of non-enumerable properties. <<<<<<< Updated upstream
  * 7. Supports toJSON and fromJSON methods for custom serialization and deserialization.
  * 8. Supports raw JSON objects (via JSON.rawJSON() method).
  *
@@ -58,9 +58,15 @@ import { version } from './version';
  * security as `JSON`. No malicious code will be evaluated during serialization and
  * deserialization.
  *
- * However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
+ * # However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
  * sources`. Never run `parse` with user input or data from `untrusted sources`, as it may embed
  * malicious code.
+ *
+ * 7. Supports raw JSON objects (via JSON.rawJSON() method).
+ * 8. Supports circular references.
+ * 9. Supports toJSON and fromJSON methods for custom serialization and deserialization.
+ *
+ * > > > > > > > Stashed changes
  */
 
 /**

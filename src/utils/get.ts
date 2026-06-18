@@ -8,6 +8,8 @@
  *
  * @returns The resolved value
  */
+import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getByPath(obj: any, path: (string | number | symbol)[], defaultValue?: any): any {
   // Handle null/undefined objects
@@ -25,7 +27,19 @@ export function getByPath(obj: any, path: (string | number | symbol)[], defaultV
     if (current == null) {
       return defaultValue;
     }
-    current = current[key];
+    if (key === SymbolForGetDescriptor) {
+      current = Object.getOwnPropertyDescriptor(current, key)?.get;
+      if (current == null) {
+        return defaultValue;
+      }
+    } else if (key === SymbolForSetDescriptor) {
+      current = Object.getOwnPropertyDescriptor(current, key)?.set;
+      if (current == null) {
+        return defaultValue;
+      }
+    } else {
+      current = current[key];
+    }
   }
   return current === undefined ? defaultValue : current;
 }

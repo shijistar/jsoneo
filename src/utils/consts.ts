@@ -4,3 +4,5 @@ export const VariablePrefix = '$SJV$_';
 export const SymbolKeyRegExps = [/\[Symbol\.\w+\]/, /\[Symbol\.for\([\u0027\u0022].+?[\u0027\u0022]\)\]/];
 export const SymbolKeyPrefixRegExp = /\[/;
 export const SymbolKeySuffixRegExp = /\]/;
+export const SymbolForGetDescriptor = Symbol.for('[JSONEO_GET_DESCRIPTOR]');
+export const SymbolForSetDescriptor = Symbol.for('[JSONEO_SET_DESCRIPTOR]');

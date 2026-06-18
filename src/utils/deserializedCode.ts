@@ -3,12 +3,15 @@ import { base64ToArrayBuffer, deserializeBinary, TypedArrays } from './binary';
 import {
   DefaultEndTag,
   DefaultStartTag,
+  SymbolForGetDescriptor,
+  SymbolForSetDescriptor,
   SymbolKeyPrefixRegExp,
   SymbolKeyRegExps,
   SymbolKeySuffixRegExp,
   VariablePrefix,
 } from './consts';
 import { base64ToString, escapeRegExp } from './encode';
+import { toSymbolString } from './symbol';
 
 export function deserializedCode(result: SerializedResult, options: InternalParseOptions) {
   const { closure, isPrinting } = options ?? {};
@@ -85,8 +88,11 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
   // 5. Should be after restoreRefs.
   // Restore custom property descriptors
   restoreDescriptors(deserializeResult, descriptors);
+  
+  // 6. Should be after restoreDescriptors, because descriptor patches depend on the restored descriptors.
+  restoreDescriptorPatches(deserializeResult, patches);
 
-  // 6. Should be the last step.
+  // 7. Should be the last step.
   // Restore the root object type.
   if (types.some((t) => t.path.length === 0) || apis.some((t) => t.path.length === 0)) {
     const rootResult = restoreOriginalTypes(deserializeResult, types.filter((t) => t.path.length === 0), apis.filter((t) => t.path.length === 0));
@@ -193,11 +199,45 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
   function restorePatches(root, patches = []) {
     // Apply patches to the deserialized object
     patches.forEach(({ path, patch }) => {
-      const sourceObj = get(root, path);
+      let sourceObj;
+      const lastKey = path[path.length - 1];
+      if (lastKey === ${toSymbolString(SymbolForGetDescriptor)} ||
+          lastKey === ${toSymbolString(SymbolForSetDescriptor)}) {
+        return;
+      } else {
+        sourceObj = get(root, path);
+      }
       if (sourceObj) {
-        const sourceKeys = getFullKeys(sourceObj);
-        getFullKeys(patch).forEach((key) => {
-          if (!sourceKeys.includes(key) || sourceObj[key] == null) {
+        const childKeys = getOwnKeys(sourceObj);
+        getOwnKeys(patch).forEach((key) => {
+          if (!childKeys.includes(key) || sourceObj[key] == null) {
+            sourceObj[key] = patch[key];
+          }
+        });
+      }
+    });
+  }
+
+  function restoreDescriptorPatches(root, patches = []) {
+    // Apply patches to the deserialized object
+    patches.forEach(({ path, patch }) => {
+      let sourceObj;
+      const lastKey = path[path.length - 1];
+      if (lastKey === ${toSymbolString(SymbolForGetDescriptor)}) {
+        const parentObj = get(root, path.slice(0, -2));
+        const descriptor = Object.getOwnPropertyDescriptor(parentObj, path[path.length - 2]);
+        sourceObj = descriptor.get;
+      } else if (lastKey === ${toSymbolString(SymbolForSetDescriptor)}) {
+        const parentObj = get(root, path.slice(0, -2));
+        const descriptor = Object.getOwnPropertyDescriptor(parentObj, path[path.length - 2]);
+        sourceObj = descriptor.set;
+      } else {
+        return;
+      }
+      if (sourceObj) {
+        const childKeys = getOwnKeys(sourceObj);
+        getOwnKeys(patch).forEach((key) => {
+          if (!childKeys.includes(key) || sourceObj[key] == null) {
             sourceObj[key] = patch[key];
           }
         });
@@ -256,7 +296,7 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
   ${deserializeBinary.toString()}
   ${base64ToArrayBuffer.toString()}
 
-  function getFullKeys(obj) {
+  function getOwnKeys(obj) {
     if (obj == null) {
       return [];
     }
