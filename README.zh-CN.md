@@ -90,8 +90,8 @@ type SharedFixture = {
   canAccess(scope: string): boolean;
   readonly displayName: string;
   secret?: string;
-  [roleSymbol]?: string;
   self?: SharedFixture;
+  [key: symbol]: string | undefined;
 };
 
 const fixture: SharedFixture = {
