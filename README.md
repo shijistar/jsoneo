@@ -4,186 +4,341 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shijistar/jsoneo)
 ![GitHub License](https://img.shields.io/github/license/shijistar/jsoneo?label=License&color=ff8000&cacheSeconds=86400)
 
-A powerful JSON enhancement library that supports all JSON primitives, Date, RegExp, Symbol, Functions, Map, Set, TypedArray and much more! Almost everything in JavaScript.
+**English** | [简体中文](./README.zh-CN.md)
 
-A perfect partner for unit testing, which allowing `Node.js` (or others) and `e2e` tests to share one copy of test suite. Please check more details in the [enum-plus](https://github.com/shijistar/enum-plus/blob/master/test/engines/index.ts) project.
+> JSON, upgraded for real JavaScript objects.
+
+`jsoneo` is a JSON enhancement library for serializing and deserializing complex JavaScript values that native `JSON.stringify()` and `JSON.parse()` cannot represent well: `Date`, `RegExp`, `BigInt`, `Symbol`, functions, `Map`, `Set`, typed arrays, property descriptors, prototype members, circular references, and more.
+
+It is especially useful when you need to move rich test fixtures or object graphs between Node.js, browsers, and end-to-end test environments.
 
 > Write once, run in multiple environments.
 
-This project was extracted from [enum-plus](https://github.com/shijistar/enum-plus). It was designed to serialize `Enum` objects from Browser to Node.js, so that the same test suites in `Jest` can be reused in `Playwright` e2e tests. We don't have to duplicate our test logic in the two testing frameworks. This project was also previously named _[serialize-everything.js](https://github.com/shijistar/serialize-everything.js)_
+## Why jsoneo?
 
-## Features
+Native JSON is simple and portable, but it loses JavaScript-specific information:
 
-- Serialize and deserialize almost everything in JavaScript
-- Interface with existing JSON APIs seamlessly
-- Built-in support for circular references
-- TypeScript support for better developer experience
-- **Function serialization**
-  - Regular functions
-  - Arrow functions
-  - Async functions
-  - Generator functions
-  - Class methods
-  - Function properties
-- **Special values support**
-  - `NaN`, `Infinity`, `-Infinity`, `-0`
-  - `undefined` (in objects, following JSON semantics)
-- **Symbol handling**
-  - Built-in symbols (like `Symbol.iterator`)
-  - Global symbols (via `Symbol.for`)
-  - Local symbols with descriptions
-  - Symbol as object keys
-- **Advanced property handling**
-  - Non-enumerable properties preservation
-  - Getter/setter methods (accessor properties)
-  - Property descriptors (writable, configurable, enumerable)
-- **Prototype chain handling**
-  - Complete prototype chain serialization
-  - Preserves prototype methods and properties
-- **Browser and Node.js compatibility**
-  - Automatic environment detection
-  - Buffer handling (falls back to Uint8Array in browsers)
-- **Raw JSON preservation**
-  - Direct support for `JSON.rawJSON()` objects
-- **Custom API**
-  - Support for custom serialization and deserialization logic
-  - `toJSON`/`fromJSON` method respect
-  - Automatic API method preservation
+- `Date` becomes a string.
+- `Map`, `Set`, `RegExp`, `BigInt`, `Symbol`, typed arrays, and functions are not faithfully preserved.
+- `undefined`, `NaN`, `Infinity`, `-Infinity`, and `-0` need special handling.
+- non-enumerable properties, accessors, property descriptors, and prototype methods are dropped.
+- circular references throw errors.
+
+`jsoneo` keeps the familiar `stringify` / `parse` workflow while preserving much more of the original JavaScript value.
 
 ## Installation
-
-Install using npm:
 
 ```bash
 npm install jsoneo
 ```
 
-Install using pnpm:
-
 ```bash
 pnpm add jsoneo
 ```
-
-Install using bun:
-
-```bash
-bun add jsoneo
-```
-
-Or using yarn:
 
 ```bash
 yarn add jsoneo
 ```
 
-## Supported Types
+```bash
+bun add jsoneo
+```
 
-- **JSON Primitives:**
-  - `string`
-  - `number`
-  - `boolean`
-  - `BigInt`
-  - `null`
-  - `plain object`
-  - `array`
-
-- **Extended Types:**
-  - `Date`
-  - `RegExp`
-  - `Symbol`
-  - `Function`
-    - Normal functions
-    - Arrow functions
-    - Generator functions
-    - Async functions
-    - Classes
-  - `Map`
-  - `Set`
-  - `WeakMap` (Structure only, without data)
-  - `WeakSet` (Structure only, without data)
-  - `URL`
-  - `URLSearchParams`
-  - `TypedArray`
-    - `Int8Array`
-    - `Uint8Array`
-    - `Uint8ClampedArray`
-    - `Int16Array`
-    - `Uint16Array`
-    - `Int32Array`
-    - `Uint32Array`
-    - `Float32Array`
-    - `Float64Array`
-    - `BigInt64Array`
-    - `BigUint64Array`
-  - `ArrayBuffer`
-  - `DataView`
-  - `Buffer`
-  - `Error`
-  - `Iterable`
-  - `RawJSON`（via `JSON.rawJSON()`）
-
-## Usage
+## Quick start
 
 ```ts
 import { parse, stringify } from 'jsoneo';
 
-const json = {
-  // String
-  name: 'John',
-  // Number
-  age: 30,
-  // Boolean
-  isAdmin: false,
-  // Date
-  createdAt: new Date(),
-  // RegExp
-  pattern: /abc/gi,
-  // BigInt
-  bigValue: 12345678901234567890n,
-  // Plain object
-  address: {
-    city: 'New York',
-    zip: '10001',
-  },
-  // Plain array
-  tags: ['developer', 'javascript'],
-  // Array with objects
-  projects: [
-    {
-      id: 1,
-      name: 'Project 1',
-      createdAt: new Date(),
-    },
-    {
-      id: 2,
-      name: 'Project 2',
-      createdAt: new Date(),
-    },
-  ],
-  // URL
-  homepage: new URL('https://example.com?id=123'),
-  // Symbols
-  id: Symbol.for('id'),
-  [Symbol.toStringTag]: 'User',
-  // Map and Set
-  roles: new Map([
-    [Symbol.for('admin'), true],
-    [Symbol.for('editor'), false],
+const source = {
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  pattern: /^user:\w+$/i,
+  ids: new Set([1, 2, 3]),
+  permissions: new Map([
+    ['read', true],
+    ['write', true],
   ]),
-  permissions: new Set(['read', 'write']),
-  // TypedArray
-  bytes: new Uint8Array([1, 2, 3, 4]),
-  // ArrayBuffer
-  buffer: new ArrayBuffer(8),
-  // function
-  sayHello: () => `Hello, ${this.name}!`,
+  amount: 9007199254740993n,
 };
 
-// Serialize
-const serialized = stringify(json);
-console.log('Serialized:', serialized);
+const text = stringify(source);
+const restored = parse(text);
 
-// Deserialize
-const deserialized = parse(serialized);
-console.log('Deserialized:', deserialized);
+console.log(restored.createdAt instanceof Date); // true
+console.log(restored.pattern.test('user:leo')); // true
+console.log(restored.ids instanceof Set); // true
+console.log(restored.permissions instanceof Map); // true
+console.log(restored.amount === 9007199254740993n); // true
 ```
+
+## Complete use case: share complex test fixtures across environments
+
+A common use case is sharing one complex fixture between Node.js unit tests and browser/e2e tests. With native JSON you would need to rebuild dates, regular expressions, maps, sets, typed arrays, symbol keys, descriptors, and circular references by hand. With `jsoneo`, the fixture can make a round trip as one string.
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const roleSymbol = Symbol.for('role');
+
+type SharedFixture = {
+  name: string;
+  scores: Set<number>;
+  permissions: Map<string, boolean>;
+  payload: Uint8Array;
+  createdAt: Date;
+  matcher: RegExp;
+  bigNumber: bigint;
+  canAccess(scope: string): boolean;
+  readonly displayName: string;
+  secret?: string;
+  [roleSymbol]?: string;
+  self?: SharedFixture;
+};
+
+const fixture: SharedFixture = {
+  name: 'Leo',
+  scores: new Set([98, 100]),
+  permissions: new Map([
+    ['read', true],
+    ['write', true],
+  ]),
+  payload: new Uint8Array([1, 2, 3]),
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  matcher: /^user:\w+$/i,
+  bigNumber: 9007199254740993n,
+  canAccess(scope: string) {
+    // Prefer self-contained functions or values provided through parse(text, { closure }).
+    const roles = this as SharedFixture & Record<symbol, string | undefined>;
+    return scope === 'admin' && roles[Symbol.for('role')] === 'admin';
+  },
+  get displayName() {
+    return `User:${this.name}`;
+  },
+};
+
+Object.defineProperty(fixture, 'secret', {
+  value: 'hidden-token',
+  enumerable: false,
+  writable: false,
+  configurable: false,
+});
+
+fixture[roleSymbol] = 'admin';
+fixture.self = fixture;
+
+// Serialize in Node.js, a build step, or a fixture generator.
+const serialized = stringify(fixture);
+
+// Deserialize in another environment, such as a browser/e2e test.
+const restored = parse(serialized) as SharedFixture;
+
+console.log(restored.canAccess('admin')); // true
+console.log(restored.displayName); // User:Leo
+console.log(restored.createdAt instanceof Date); // true
+console.log(restored.matcher.test('user:leo')); // true
+console.log(restored.scores instanceof Set); // true
+console.log(restored.permissions.get('write')); // true
+console.log(restored.payload instanceof Uint8Array); // true
+console.log(restored[roleSymbol]); // admin
+console.log(Object.getOwnPropertyDescriptor(restored, 'secret')?.enumerable); // false
+console.log(restored.self === restored); // true
+```
+
+## Supported data
+
+### JSON-compatible values
+
+- `string`
+- `number`
+- `boolean`
+- `null`
+- plain objects
+- arrays
+
+### JavaScript-specific values
+
+- `undefined` in objects, following JSON semantics
+- `NaN`
+- `Infinity`
+- `-Infinity`
+- `-0`
+- `BigInt`
+- `Date`
+- `RegExp`
+- `Symbol`
+  - well-known symbols, such as `Symbol.iterator`
+  - global symbols created with `Symbol.for()`
+  - local symbols with descriptions as values
+  - symbol object keys are best supported when they are well-known symbols or created with `Symbol.for()`
+- functions
+  - regular functions
+  - arrow functions
+  - async functions
+  - generator functions
+  - class methods
+  - function properties
+- `Map`
+- `Set`
+- `WeakMap` structure only, without entries
+- `WeakSet` structure only, without entries
+- `URL`
+- `URLSearchParams`
+- typed arrays
+  - `Int8Array`
+  - `Uint8Array`
+  - `Uint8ClampedArray`
+  - `Int16Array`
+  - `Uint16Array`
+  - `Int32Array`
+  - `Uint32Array`
+  - `Float32Array`
+  - `Float64Array`
+  - `BigInt64Array`
+  - `BigUint64Array`
+- `ArrayBuffer`
+- `DataView`
+- Node.js `Buffer`
+- `Error`
+- iterable objects
+- circular references
+- prototype methods and properties
+- custom property descriptors
+- non-enumerable properties
+- getter and setter descriptors
+- `toJSON` / `fromJSON`
+- `JSON.rawJSON()` objects when supported by the runtime
+
+## API
+
+### `stringify(value, options?)`
+
+Serializes a JavaScript value into a string.
+
+```ts
+import { stringify } from 'jsoneo';
+
+const text = stringify(value, options);
+```
+
+#### `StringifyOptions`
+
+| Option                     | Type      | Default    | Description                                                      |
+| -------------------------- | --------- | ---------- | ---------------------------------------------------------------- |
+| `startTag`                 | `string`  | `'$SJS$_'` | Internal marker used to encode JavaScript expressions.           |
+| `endTag`                   | `string`  | `'_$SJE$'` | Internal marker used to encode JavaScript expressions.           |
+| `variablePrefix`           | `string`  | `'$SJV$_'` | Prefix used for generated variable names.                        |
+| `preserveClassConstructor` | `boolean` | `false`    | Whether to preserve class constructor code during serialization. |
+| `preserveDescriptors`      | `boolean` | `true`     | Whether to preserve custom property descriptors.                 |
+| `debug`                    | `boolean` | `false`    | Print serialization debug information.                           |
+
+### `parse(input, options?)`
+
+Deserializes a string produced by `stringify`.
+
+```ts
+import { parse } from 'jsoneo';
+
+const value = parse(text, options);
+```
+
+#### `ParseOptions`
+
+| Option        | Type                      | Default              | Description                                                            |
+| ------------- | ------------------------- | -------------------- | ---------------------------------------------------------------------- |
+| `closure`     | `Record<string, unknown>` | `undefined`          | External variables made available when restoring serialized functions. |
+| `get`         | `GetFunc`                 | built-in path getter | Custom function used to read child values while restoring patches.     |
+| `prettyPrint` | `boolean`                 | `true`               | Pretty-print generated deserialization code in debug output.           |
+| `debug`       | `boolean`                 | `false`              | Print deserialization debug information.                               |
+
+### Using `closure` for functions
+
+Function bodies can be serialized, but JavaScript closures cannot be captured automatically. If a restored function needs external values, provide them through the `closure` option of `parse(text, options)`.
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const allowedRoles = ['admin', 'editor'];
+
+const source = {
+  canRead(user: { role: string }) {
+    return allowedRoles.includes(user.role);
+  },
+};
+
+const text = stringify(source);
+const restored = parse(text, {
+  // The function body references `allowedRoles`, so provide it explicitly.
+  closure: {
+    allowedRoles,
+  },
+});
+
+console.log(restored.canRead({ role: 'admin' })); // true
+```
+
+## Important notes and limitations
+
+- `parse` should only be used with strings produced by `stringify` and from trusted sources.
+- Function source code can be serialized, but closures are not captured automatically. Use the `closure` option of `parse(text, options)` for external values.
+- Native functions cannot be serialized because their source is reported as `[native code]`.
+- Avoid `Function.prototype.bind()`: bound functions are native-like and cannot be reconstructed reliably.
+- Anonymous symbols are limited, especially when used as object keys. Prefer well-known symbols or `Symbol.for()` for stable round trips.
+- Class constructors are not preserved by default. Use `preserveClassConstructor` only when you understand the trade-offs.
+- Private class fields and private methods are not accessible from outside the object and are not suitable serialization targets.
+- `Map` values are supported, but non-string keys are not guaranteed to round-trip faithfully in the current implementation.
+- In browsers, Node.js `Buffer` values are restored as `Uint8Array` when `Buffer` is unavailable.
+- `WeakMap` and `WeakSet` entries are not enumerable, so only their structure can be represented.
+
+## Security
+
+`jsoneo` can restore functions, accessors, descriptors, and prototype-related data. During `parse`, it generates and evaluates JavaScript code to rebuild the original value.
+
+For that reason:
+
+- only parse data produced by `jsoneo.stringify()`;
+- only parse data from trusted sources;
+- never pass arbitrary user input, untrusted network data, or unreviewed third-party payloads to `parse`;
+- do not treat `jsoneo` as a sandbox or a security boundary.
+
+If you need to exchange untrusted data, use native JSON or another data-only format instead.
+
+## Browser and Node.js compatibility
+
+`jsoneo` is designed for both Node.js and browser environments. It automatically handles environment-specific values where possible, such as converting Node.js `Buffer` values to `Uint8Array` in browsers.
+
+The package currently declares support for Node.js `>=12`. Features such as `BigInt` and BigInt typed arrays still require runtimes that support them.
+
+## Common use cases
+
+- Sharing one fixture between unit tests and e2e tests.
+- Moving complex objects between Node.js and browser test runners.
+- Snapshotting complex JavaScript values for debugging.
+- Preserving object graphs that include functions, symbols, maps, sets, typed arrays, descriptors, and circular references.
+- Reusing test suites across multiple runtime environments.
+
+This project was extracted from [enum-plus](https://github.com/shijistar/enum-plus), where it was used to serialize `Enum` objects from browser tests back to Node.js so the same Jest test suites could be reused in Playwright e2e tests. It was previously named [serialize-everything.js](https://github.com/shijistar/serialize-everything.js).
+
+## FAQ
+
+### Is jsoneo a drop-in replacement for JSON?
+
+Not exactly. It uses a familiar `stringify` / `parse` API, but it is intended for trusted JavaScript object round trips, not for untrusted data exchange.
+
+### Can it serialize closures?
+
+No. It can serialize function bodies, but it cannot capture lexical closures automatically. Use self-contained functions or pass required external values through the `closure` option of `parse(text, options)`.
+
+### Can it handle circular references?
+
+Yes. Circular references are tracked during serialization and restored during parsing.
+
+### Does it work in browsers?
+
+Yes. Browser environments are supported. Node.js-specific values such as `Buffer` are restored as browser-compatible values when needed.
+
+### Is it safe to parse untrusted input?
+
+No. Do not parse untrusted input. `parse` evaluates generated JavaScript code while restoring complex values.
+
+## License
+
+[MIT](./LICENSE)

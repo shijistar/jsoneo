@@ -73,7 +73,7 @@
   },
   "packageManager": "npm@11.4.2",
   "engines": {
-    "node": ">=7.10.1"
+    "node": ">=12"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
