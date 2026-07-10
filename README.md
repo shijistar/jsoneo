@@ -32,42 +32,84 @@ Native JSON is simple and portable, but it loses JavaScript-specific information
 npm install jsoneo
 ```
 
-```bash
-pnpm add jsoneo
-```
-
-```bash
-yarn add jsoneo
-```
-
-```bash
-bun add jsoneo
-```
-
 ## Quick start
 
 ```ts
 import { parse, stringify } from 'jsoneo';
 
-const source = {
-  createdAt: new Date('2026-01-01T00:00:00.000Z'),
-  pattern: /^user:\w+$/i,
-  ids: new Set([1, 2, 3]),
-  permissions: new Map([
-    ['read', true],
-    ['write', true],
+const json = {
+  // String
+  name: 'John',
+  // Number
+  age: 30,
+  // Boolean
+  isAdmin: false,
+  // Date
+  createdAt: new Date(),
+  // RegExp
+  pattern: /abc/gi,
+  // BigInt
+  bigValue: 12345678901234567890n,
+  // Plain object
+  address: {
+    city: 'New York',
+    zip: '10001',
+  },
+  // Plain array
+  tags: ['developer', 'javascript'],
+  // Array with objects
+  projects: [
+    {
+      id: 1,
+      name: 'Project 1',
+      createdAt: new Date(),
+    },
+    {
+      id: 2,
+      name: 'Project 2',
+      createdAt: new Date(),
+    },
+  ],
+  // URL
+  homepage: new URL('https://example.com?id=123'),
+  // Symbols
+  id: Symbol.for('id'),
+  [Symbol.toStringTag]: 'User',
+  // Map and Set
+  roles: new Map([
+    [Symbol.for('admin'), true],
+    [Symbol.for('editor'), false],
   ]),
-  amount: 9007199254740993n,
+  permissions: new Set(['read', 'write']),
+  // TypedArray
+  bytes: new Uint8Array([1, 2, 3, 4]),
+  // ArrayBuffer
+  buffer: new ArrayBuffer(8),
+  // function
+  sayHello: () => `Hello, ${this.name}!`,
 };
+Object.defineProperties(json, {
+  readonlyValue: {
+    value: 42,
+    writable: false,
+  },
+  getter: {
+    get: () => 'getter value',
+    enumerable: true,
+    configurable: true,
+  },
+  setter: {
+    set: (value) => console.log('setter called with', value),
+    enumerable: true,
+    configurable: true,
+  },
+});
 
-const text = stringify(source);
-const restored = parse(text);
+// Serialize
+const serialized = stringify(json); // [long string]
 
-console.log(restored.createdAt instanceof Date); // true
-console.log(restored.pattern.test('user:leo')); // true
-console.log(restored.ids instanceof Set); // true
-console.log(restored.permissions instanceof Map); // true
-console.log(restored.amount === 9007199254740993n); // true
+// Deserialize
+const deserialized = parse(serialized);
 ```
 
 ## Complete use case: share complex test fixtures across environments
@@ -90,8 +132,8 @@ type SharedFixture = {
   canAccess(scope: string): boolean;
   readonly displayName: string;
   secret?: string;
-  [roleSymbol]?: string;
   self?: SharedFixture;
+  [key: symbol]: string | undefined;
 };
 
 const fixture: SharedFixture = {
@@ -204,8 +246,10 @@ console.log(restored.self === restored); // true
 - custom property descriptors
 - non-enumerable properties
 - getter and setter descriptors
-- `toJSON` / `fromJSON`
 - `JSON.rawJSON()` objects when supported by the runtime
+- `toJSON` / `fromJSON` custom function on object
+
+> Almost everything in JavaScript!
 
 ## API
 

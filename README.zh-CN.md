@@ -32,42 +32,84 @@
 npm install jsoneo
 ```
 
-```bash
-pnpm add jsoneo
-```
-
-```bash
-yarn add jsoneo
-```
-
-```bash
-bun add jsoneo
-```
-
 ## 快速开始
 
 ```ts
 import { parse, stringify } from 'jsoneo';
 
-const source = {
-  createdAt: new Date('2026-01-01T00:00:00.000Z'),
-  pattern: /^user:\w+$/i,
-  ids: new Set([1, 2, 3]),
-  permissions: new Map([
-    ['read', true],
-    ['write', true],
+const json = {
+  // String
+  name: 'John',
+  // Number
+  age: 30,
+  // Boolean
+  isAdmin: false,
+  // Date
+  createdAt: new Date(),
+  // RegExp
+  pattern: /abc/gi,
+  // BigInt
+  bigValue: 12345678901234567890n,
+  // Plain object
+  address: {
+    city: '纽约',
+    zip: '10001',
+  },
+  // Plain array
+  tags: ['developer', 'javascript'],
+  // Array with objects
+  projects: [
+    {
+      id: 1,
+      name: '项目1',
+      createdAt: new Date(),
+    },
+    {
+      id: 2,
+      name: '项目2',
+      createdAt: new Date(),
+    },
+  ],
+  // URL
+  homepage: new URL('https://example.com?id=123'),
+  // Symbols
+  id: Symbol.for('id'),
+  [Symbol.toStringTag]: 'User',
+  // Map and Set
+  roles: new Map([
+    [Symbol.for('admin'), true],
+    [Symbol.for('editor'), false],
   ]),
-  amount: 9007199254740993n,
+  permissions: new Set(['read', 'write']),
+  // TypedArray
+  bytes: new Uint8Array([1, 2, 3, 4]),
+  // ArrayBuffer
+  buffer: new ArrayBuffer(8),
+  // function
+  sayHello: () => `你好，${this.name}！`,
 };
+Object.defineProperties(json, {
+  readonlyValue: {
+    value: 42,
+    writable: false,
+  },
+  getter: {
+    get: () => 'getter value',
+    enumerable: true,
+    configurable: true,
+  },
+  setter: {
+    set: (value) => console.log('setter called with', value),
+    enumerable: true,
+    configurable: true,
+  },
+});
 
-const text = stringify(source);
-const restored = parse(text);
+// 序列化
+const serialized = stringify(json); // [一个长字符串]
 
-console.log(restored.createdAt instanceof Date); // true
-console.log(restored.pattern.test('user:leo')); // true
-console.log(restored.ids instanceof Set); // true
-console.log(restored.permissions instanceof Map); // true
-console.log(restored.amount === 9007199254740993n); // true
+// 反序列化
+const deserialized = parse(serialized);
 ```
 
 ## 完整用例：跨环境共享复杂测试 fixture
@@ -204,8 +246,10 @@ console.log(restored.self === restored); // true
 - 自定义属性描述符
 - 非枚举属性
 - getter / setter 描述符
-- `toJSON` / `fromJSON`
 - 运行环境支持时的 `JSON.rawJSON()` 对象
+- 对象上的 `toJSON` / `fromJSON` 自定义方法
+
+> 几乎所有 JavaScript 值！
 
 ## API
 
