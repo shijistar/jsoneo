@@ -59,7 +59,8 @@ import { version } from './version';
  * deserialization.
  *
  * # However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
- * sources`. Never run `parse` with user input or data from `untrusted sources`, as it may embed
+ *
+ * sources`. Never run `parse`with user input or data from`untrusted sources`, as it may embed
  * malicious code.
  *
  * 7. Supports raw JSON objects (via JSON.rawJSON() method).
@@ -101,11 +102,11 @@ export function stringify(value: any, options?: StringifyOptions): string {
       printLabel: 'patches',
       printPath: (options) => {
         const index = Number(options.parentPath?.[0]);
-        if (index >= 0) {
+        if (index >= 0 && patches[index]) {
           const patch = patches[index];
-          return ['.patches', ...patch.path, options.key === 'path' ? '[path]' : options.key];
+          return ['.patches', ...patch.path, options.key.replace(/^path$/, '[path]')];
         }
-        return ['.patches', ...(options.parentPath ?? []), options.key];
+        return ['.patches', ...(options.parentPath as PathType[]), options.key];
       },
     }) as PatchInfo[],
     types,

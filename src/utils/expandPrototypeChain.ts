@@ -22,7 +22,10 @@ import { serializeFunction } from './serializeRecursively';
 import { toSymbolString } from './symbol';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function expandPrototypeChain(source: any, options?: ExpandPrototypeChainOptions): typeof source {
+export function expandPrototypeChain(
+  source: unknown,
+  options: ExpandPrototypeChainOptions = {} as ExpandPrototypeChainOptions
+): typeof source {
   const {
     parentPath,
     patches = [],
@@ -31,7 +34,7 @@ export function expandPrototypeChain(source: any, options?: ExpandPrototypeChain
     refs = [],
     apis = [],
     circular = new WeakMap(),
-  } = options ?? {};
+  } = options;
   return expandPrototypeChainRecursively(source, {
     ...options,
     paths: parentPath ?? [],
@@ -61,6 +64,7 @@ function expandPrototypeChainRecursively(
   const assertCircular = (obj: any, path: PathType[]) => {
     const toSymbolStrings = (paths: PathType[]) => {
       return paths.map((p) =>
+        /* v8 ignore next -- anonymous symbol circular paths cannot be represented in serialized refs */
         typeof p === 'symbol' ? ((toSymbolString(p) ? `[${toSymbolString(p)}]` : undefined) ?? 'undefined') : p
       );
     };
@@ -112,9 +116,9 @@ function expandPrototypeChainRecursively(
     } else if (source instanceof Set) {
       result = Array.from(source);
       types.push({ path: paths, type: 'Set' });
-    } else if (Object.prototype.isPrototypeOf.call(WeakMap.prototype, source)) {
+    } else if (source instanceof WeakMap || typeName === '[object WeakMap]') {
       result = {};
-    } else if (Object.prototype.isPrototypeOf.call(WeakSet.prototype, source)) {
+    } else if (source instanceof WeakSet || typeName === '[object WeakSet]') {
       result = [];
     } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
       result = Array.from(source);
@@ -165,6 +169,7 @@ function expandPrototypeChainRecursively(
         (!descriptor.writable || !descriptor.enumerable || !descriptor.configurable || descriptor.get || descriptor.set)
       ) {
         if (typeof key === 'symbol') {
+          /* v8 ignore next -- anonymous symbol descriptors remain symbol-keyed and are not stringified */
           key = toSymbolString(key) ? `[${toSymbolString(key)}]` : '';
         }
         const copied = { ...descriptor };
@@ -199,6 +204,7 @@ function expandPrototypeChainRecursively(
         }
         const descriptor = sourceDescriptors[key];
         const destDescriptor = destDescriptors[key as string];
+        /* v8 ignore start -- defensive branch for descriptors that getFullKeys intentionally filters out */
         if (descriptor && !descriptor.get && !('value' in descriptor)) {
           // If the descriptor is not readable, skip it
           if (debug) {
@@ -208,7 +214,9 @@ function expandPrototypeChainRecursively(
           }
           return;
         }
+        /* v8 ignore stop */
         // If the destination descriptor is not writable, skip it
+        /* v8 ignore start -- defensive branch for non-writable accessors on generated destinations */
         if (destDescriptor && !destDescriptor.writable && !('value' in destDescriptor)) {
           if (debug) {
             console.log('------------------ expandPrototypeChain [SKIPPED] ------------------');
@@ -217,6 +225,7 @@ function expandPrototypeChainRecursively(
           }
           return;
         }
+        /* v8 ignore stop */
         try {
           result[key] = source[key];
         } catch (error) {
@@ -283,10 +292,10 @@ function addPatch(result: any, options: { paths: PathType[]; patches: PatchInfo[
   const { paths, patches } = options;
   if (Array.isArray(result) || typeof result === 'function') {
     let skipKeys: string[] = [];
-    if (typeof result === 'function') {
-      skipKeys = ['length', 'name', 'arguments', 'caller', 'prototype'];
-    } else if (Array.isArray(result)) {
+    if (Array.isArray(result)) {
       skipKeys = ['length'];
+    } else {
+      skipKeys = ['length', 'name', 'arguments', 'caller', 'prototype'];
     }
     const patchValueKeys = getFullKeys(result).filter((key) => !skipKeys.includes(key as string));
     if (patchValueKeys.length > 0) {

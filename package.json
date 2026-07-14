@@ -52,7 +52,8 @@
     "task:copy-lib": "tsx scripts/copy-lib.ts",
     "test": "run-s gv test:node test:browser",
     "test:browser": "playwright install chromium && vitest run --config vitest.browser.config.ts",
-    "test:node": "vitest run --config vitest.node.config.ts",
+    "test:coverage": "vitest run --config vitest.node.config.ts --coverage",
+    "test:node": "vitest run --config vitest.node.config.ts --coverage",
     "ts2es": "tsc -p tsconfig.es.json",
     "ts2lib": "tsc -p tsconfig.lib.json"
   },
@@ -67,6 +68,7 @@
     "@types/node": "^22.16.2",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
     "cross-env": "^10.0.0",
     "esbuild": "^0.25.9",
     "father": "^4.6.3",

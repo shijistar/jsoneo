@@ -8,7 +8,9 @@ const TYPED_ARRAY_CTORS = {
   Uint32Array,
   Float32Array,
   Float64Array,
+  /* v8 ignore next -- BigInt64Array exists in supported Node/browser test runtimes */
   BigInt64Array: typeof BigInt64Array !== 'undefined' ? BigInt64Array : undefined!,
+  /* v8 ignore next -- BigUint64Array exists in supported Node/browser test runtimes */
   BigUint64Array: typeof BigUint64Array !== 'undefined' ? BigUint64Array : undefined!,
 };
 

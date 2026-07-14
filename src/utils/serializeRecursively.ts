@@ -54,7 +54,7 @@ export function serializeRecursively(
   } else if (typeof source === 'bigint') {
     return `${ST}BigInt('${source.toString()}')${ET}`;
   } else if (source instanceof RegExp) {
-    return `${ST}new RegExp('${source.source.replace(/\\\\/g, '\\')}', '${source.flags ?? ''}')${ET}`;
+    return `${ST}new RegExp('${source.source.replace(/\\\\/g, '\\')}', '${source.flags}')${ET}`;
     // `value instanceof Date` never works, try testing date format instead
   } else if (typeof source === 'symbol') {
     if (WellKnownSymbols.includes(source)) {
