@@ -148,7 +148,7 @@ const fixture: SharedFixture = {
   matcher: /^user:\w+$/i,
   bigNumber: 9007199254740993n,
   canAccess(scope: string) {
-    // Prefer self-contained functions or values provided through parse(text, { closure }).
+    // Prefer self-contained functions, parse(text, { closure }), or function object properties.
     const roles = this as SharedFixture & Record<symbol, string | undefined>;
     return scope === 'admin' && roles[Symbol.for('role')] === 'admin';
   },
@@ -293,7 +293,7 @@ const value = parse(text, options);
 | `prettyPrint` | `boolean`                 | `true`               | Pretty-print generated deserialization code in debug output.           |
 | `debug`       | `boolean`                 | `false`              | Print deserialization debug information.                               |
 
-### Using `closure` for functions
+### Handling function dependencies
 
 Function bodies can be serialized, but JavaScript closures cannot be captured automatically. If a restored function needs external values, provide them through the `closure` option of `parse(text, options)`.
 
@@ -319,10 +319,34 @@ const restored = parse(text, {
 console.log(restored.canRead({ role: 'admin' })); // true
 ```
 
+Alternatively, attach serializable values directly to a named function object, then read them inside the function through `functionName.xxx`. Because functions are objects, `jsoneo` can preserve those properties together with the function.
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+function canRead(user: { role: string }) {
+  return canRead.allowedRoles.includes(user.role);
+}
+
+namespace canRead {
+  export let allowedRoles: string[];
+}
+
+canRead.allowedRoles = ['admin', 'editor'];
+
+const text = stringify({ canRead });
+const restored = parse(text) as { canRead: typeof canRead };
+
+console.log(restored.canRead({ role: 'admin' })); // true
+console.log(restored.canRead.allowedRoles); // ['admin', 'editor']
+```
+
+Use a named function for this pattern. Anonymous functions, arrow functions, or object method shorthand do not provide the same reliable self-reference for `functionName.xxx` inside the function body.
+
 ## Important notes and limitations
 
 - `parse` should only be used with strings produced by `stringify` and from trusted sources.
-- Function source code can be serialized, but closures are not captured automatically. Use the `closure` option of `parse(text, options)` for external values.
+- Function source code can be serialized, but closures are not captured automatically. Use the `closure` option of `parse(text, options)` for external values, or attach serializable values to a named function object and access them through `functionName.xxx`.
 - Native functions cannot be serialized because their source is reported as `[native code]`.
 - Avoid `Function.prototype.bind()`: bound functions are native-like and cannot be reconstructed reliably.
 - Anonymous symbols are limited, especially when used as object keys. Prefer well-known symbols or `Symbol.for()` for stable round trips.
@@ -367,9 +391,9 @@ This project was extracted from [enum-plus](https://github.com/shijistar/enum-pl
 
 Not exactly. It uses a familiar `stringify` / `parse` API, but it is intended for trusted JavaScript object round trips, not for untrusted data exchange.
 
-### Can it serialize closures?
+### Can closures be serialized?
 
-No. It can serialize function bodies, but it cannot capture lexical closures automatically. Use self-contained functions or pass required external values through the `closure` option of `parse(text, options)`.
+No. `jsoneo` can serialize function bodies, but it cannot automatically capture lexical closures. Use self-contained functions, pass required external values through the `closure` option of `parse(text, options)`, or attach those values to a named function object and access them through `functionName.xxx` inside the function.
 
 ### Can it handle circular references?
 
