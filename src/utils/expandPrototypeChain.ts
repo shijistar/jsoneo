@@ -112,10 +112,14 @@ function expandPrototypeChainRecursively(
     } else if (source instanceof Set) {
       result = Array.from(source);
       types.push({ path: paths, type: 'Set' });
-    } else if (source instanceof WeakMap) {
+    } else if (Object.prototype.isPrototypeOf.call(WeakMap.prototype, source)) {
       result = {};
-    } else if (source instanceof WeakSet) {
+    } else if (Object.prototype.isPrototypeOf.call(WeakSet.prototype, source)) {
       result = [];
+    } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
+      result = Array.from(source);
+      types.push({ path: paths, type: 'Buffer' });
+      return result;
     } else if (TypedArrays.some((Type) => source instanceof Type)) {
       result = serializeBinary(source as InstanceType<(typeof TypedArrays)[number]>);
       types.push({ path: paths, type: source.constructor.name });
@@ -125,10 +129,6 @@ function expandPrototypeChainRecursively(
     } else if (source instanceof DataView) {
       result = serializeBinary(source);
       types.push({ path: paths, type: 'DataView' });
-    } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
-      result = Array.from(source);
-      types.push({ path: paths, type: 'Buffer' });
-      return result;
     } else if (Array.isArray(source)) {
       result = [...source];
     } else if (source.toJSON && typeof source.toJSON === 'function') {

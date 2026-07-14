@@ -35,7 +35,9 @@ export function serializeRecursively(
   } else if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
     return source;
   } else if (typeof source === 'number') {
-    if (Number.isNaN(source)) {
+    if (Object.is(source, -0)) {
+      return `${ST}-0${ET}`;
+    } else if (Number.isNaN(source)) {
       return `${ST}NaN${ET}`;
     } else if (source === Number.POSITIVE_INFINITY) {
       return `${ST}Infinity${ET}`;
@@ -123,6 +125,11 @@ export function serializeFunction(funcStr: string) {
     funcStr = funcStr.replace(/^(get|set)\s+/, '');
     funcStr = `function ${funcStr}`;
     return funcStr;
+  }
+  // Handle generator methods, including computed methods like { *[Symbol.iterator]() {} }.
+  if (funcStr.startsWith('*')) {
+    funcStr = funcStr.replace(/^\*\s*(?:\[[^\]]+\]|[\w$]+)/, '');
+    return `function* ${funcStr}`;
   }
   if (
     // function () {}

@@ -343,5 +343,7 @@ function decodeFormat(
   return content
     ?.replace(new RegExp(`\\\\?['"]${escapedTS}`, 'g'), '')
     .replace(new RegExp(`${escapedTE}\\\\?['"]`, 'g'), '')
-    .replace(/\\n/g, '\n');
+    .replace(/\\r/g, '\r')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t');
 }
