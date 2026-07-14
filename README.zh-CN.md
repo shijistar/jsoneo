@@ -148,7 +148,7 @@ const fixture: SharedFixture = {
   matcher: /^user:\w+$/i,
   bigNumber: 9007199254740993n,
   canAccess(scope: string) {
-    // 推荐使用自包含函数，或通过 parse(text, { closure }) 显式传入外部变量。
+    // 推荐使用自包含函数、parse(text, { closure })，或函数对象属性。
     const roles = this as SharedFixture & Record<symbol, string | undefined>;
     return scope === 'admin' && roles[Symbol.for('role')] === 'admin';
   },
@@ -293,7 +293,7 @@ const value = parse(text, options);
 | `prettyPrint` | `boolean`                 | `true`           | 在 debug 输出中格式化生成的反序列化代码。 |
 | `debug`       | `boolean`                 | `false`          | 是否打印反序列化调试信息。                |
 
-### 使用 `closure` 恢复函数依赖
+### 处理函数依赖
 
 函数体可以被序列化，但 JavaScript 的词法闭包无法自动捕获。如果恢复后的函数依赖外部变量，需要通过 `parse(text, options)` 的 `closure` 选项显式传入。
 
@@ -319,10 +319,34 @@ const restored = parse(text, {
 console.log(restored.canRead({ role: 'admin' })); // true
 ```
 
+另一种方式是把可序列化的外部值直接挂载到具名函数对象上，然后在函数内部通过 `functionName.xxx` 读取。函数本身也是对象，`jsoneo` 可以把这些属性和函数一起保留下来。
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+function canRead(user: { role: string }) {
+  return canRead.allowedRoles.includes(user.role);
+}
+
+namespace canRead {
+  export let allowedRoles: string[];
+}
+
+canRead.allowedRoles = ['admin', 'editor'];
+
+const text = stringify({ canRead });
+const restored = parse(text) as { canRead: typeof canRead };
+
+console.log(restored.canRead({ role: 'admin' })); // true
+console.log(restored.canRead.allowedRoles); // ['admin', 'editor']
+```
+
+这种写法请使用具名函数。匿名函数、箭头函数或对象方法简写无法在函数体内提供同样稳定的 `functionName.xxx` 自引用。
+
 ## 重要说明与限制
 
 - `parse` 只应处理由 `stringify` 生成且来自可信来源的数据。
-- 函数源码可以被序列化，但闭包不会被自动捕获。外部变量请使用 `parse(text, options)` 的 `closure` 选项显式传入。
+- 函数源码可以被序列化，但闭包不会被自动捕获。外部变量可以使用 `parse(text, options)` 的 `closure` 选项显式传入，也可以挂载到具名函数对象上并在函数体内通过 `functionName.xxx` 访问。
 - 原生函数无法序列化，因为它们的源码通常是 `[native code]`。
 - 避免使用 `Function.prototype.bind()`：绑定函数接近原生函数，通常无法可靠重建。
 - 匿名 Symbol 的能力有限，尤其是作为对象 key 使用时。为了稳定往返，优先使用 well-known symbol 或 `Symbol.for()`。
@@ -369,7 +393,7 @@ console.log(restored.canRead({ role: 'admin' })); // true
 
 ### 可以序列化闭包吗？
 
-不能。它可以序列化函数体，但不能自动捕获词法闭包。请使用自包含函数，或通过 `parse(text, options)` 的 `closure` 选项传入必要的外部变量。
+不能。它可以序列化函数体，但不能自动捕获词法闭包。请使用自包含函数，通过 `parse(text, options)` 的 `closure` 选项传入必要的外部变量，或把这些值挂载到具名函数对象上并在函数体内通过 `functionName.xxx` 访问。
 
 ### 支持循环引用吗？
 
