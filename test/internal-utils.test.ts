@@ -53,9 +53,11 @@ describe('internal binary and encoding helpers', () => {
     expect(deserializeBinary(serializeBinary(view) as never)).toBeInstanceOf(DataView);
     expect(deserializeBinary(serializeBinary(buffer) as never)).toBeInstanceOf(ArrayBuffer);
     expect(Array.from(deserializeBinary(serializeTypedArray(typed as never)) as Uint16Array)).toEqual([5, 6]);
-    expect(() => serializeTypedArray(Buffer.from([1]) as unknown as never)).toThrow(
-      'Unsupported TypedArray type: Buffer'
-    );
+    if (typeof Buffer !== 'undefined') {
+      expect(() => serializeTypedArray(Buffer.from([1]) as unknown as never)).toThrow(
+        'Unsupported TypedArray type: Buffer'
+      );
+    }
     expect(() => deserializeBinary({ kind: 'Other', base64: '', byteLength: 0 } as never)).toThrow(
       'Invalid serialized typed array'
     );

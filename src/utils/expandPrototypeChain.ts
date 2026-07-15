@@ -13,7 +13,8 @@ import type {
   PathType,
   StringifyOptions,
 } from '../types';
-import { serializeBinary, TypedArrays } from './binary';
+import type { TypedArrays } from './binary';
+import { serializeBinary, TypedArrayNames } from './binary';
 import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
 import { stringToBase64 } from './encode';
 import { getFullKeys } from './get';
@@ -81,12 +82,14 @@ function expandPrototypeChainRecursively(
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: any;
+  const isError = 'isError' in Error && typeof Error.isError === 'function' && Error.isError(source);
   if (
     Array.isArray(source) ||
     (typeof source === 'object' &&
       typeName !== '[object Date]' &&
       typeName !== '[object RegExp]' &&
       typeName !== '[object Error]' &&
+      !isError &&
       typeName !== '[object Symbol]')
   ) {
     if (assertCircular(source, paths)) {
@@ -95,42 +98,39 @@ function expandPrototypeChainRecursively(
     }
     if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
       return source;
-    } else if (typeof URL !== 'undefined' && source instanceof URL) {
+    } else if (typeof URL !== 'undefined' && typeName === '[object URL]') {
       result = source.toString();
       types.push({ path: paths, type: 'URL' });
       return result;
-    } else if (typeof URLSearchParams !== 'undefined' && source instanceof URLSearchParams) {
+    } else if (typeof URLSearchParams !== 'undefined' && typeName === '[object URLSearchParams]') {
       result = source.toString();
       types.push({ path: paths, type: 'URLSearchParams' });
       return result;
-    } else if (source instanceof Map) {
-      result = Array.from(source.keys()).reduce(
-        (acc, key) => {
-          acc[key] = source.get(key);
-          return acc;
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {} as Record<any, any>
-      );
+    } else if (typeName === '[object Map]') {
+      const sourceMap: Map<unknown, unknown> = source;
+      result = Array.from(source.keys()).reduce<Record<string, unknown>>((acc, key) => {
+        acc[key as string] = sourceMap.get(key);
+        return acc;
+      }, {});
       types.push({ path: paths, type: 'Map' });
-    } else if (source instanceof Set) {
+    } else if (typeName === '[object Set]') {
       result = Array.from(source);
       types.push({ path: paths, type: 'Set' });
-    } else if (source instanceof WeakMap || typeName === '[object WeakMap]') {
+    } else if (typeName === '[object WeakMap]') {
       result = {};
-    } else if (source instanceof WeakSet || typeName === '[object WeakSet]') {
+    } else if (typeName === '[object WeakSet]') {
       result = [];
-    } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
+    } else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(source)) {
       result = Array.from(source);
       types.push({ path: paths, type: 'Buffer' });
       return result;
-    } else if (TypedArrays.some((Type) => source instanceof Type)) {
+    } else if (TypedArrayNames.includes(typeName)) {
       result = serializeBinary(source as InstanceType<(typeof TypedArrays)[number]>);
       types.push({ path: paths, type: source.constructor.name });
-    } else if (source instanceof ArrayBuffer) {
+    } else if (typeName === '[object ArrayBuffer]') {
       result = serializeBinary(source);
       types.push({ path: paths, type: 'ArrayBuffer' });
-    } else if (source instanceof DataView) {
+    } else if (typeName === '[object DataView]') {
       result = serializeBinary(source);
       types.push({ path: paths, type: 'DataView' });
     } else if (Array.isArray(source)) {
@@ -295,7 +295,7 @@ function addPatch(result: any, options: { paths: PathType[]; patches: PatchInfo[
     if (Array.isArray(result)) {
       skipKeys = ['length'];
     } else {
-      skipKeys = ['length', 'name', 'arguments', 'caller', 'prototype'];
+      skipKeys = ['length', 'name', 'arguments', 'caller'];
     }
     const patchValueKeys = getFullKeys(result).filter((key) => !skipKeys.includes(key as string));
     if (patchValueKeys.length > 0) {

@@ -7,9 +7,10 @@ export default defineConfig({
     testTimeout: 10_000,
     browser: {
       enabled: true,
-      headless: true,
+      headless: process.env.DEBUG !== '1',
+      ui: process.env.DEBUG === '1',
       provider: playwright(),
-      instances: [{ browser: 'chromium' }],
+      instances: [{ browser: 'chromium' }, { browser: 'firefox' }, { browser: 'webkit' }],
     },
   },
 });

@@ -117,7 +117,7 @@ export function serializeRecursively(
 }
 
 export function serializeFunction(funcStr: string) {
-  if (funcStr.includes('{ [native code] }')) {
+  if (funcStr.match(/\{\s*?\[native code\]\s*\}/)) {
     return undefined;
   }
   // Handle getter and setter functions, { get prop() {}, set assign(v) {} }

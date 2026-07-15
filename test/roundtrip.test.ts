@@ -176,7 +176,6 @@ describe('jsoneo round trips binary values', () => {
 
   it.runIf(typeof Buffer !== 'undefined')('preserves Buffer in Node.js', () => {
     const restored = roundTrip(Buffer.from([9, 8, 7]));
-
     expect(Buffer.isBuffer(restored)).toBe(true);
     expect(Array.from(restored)).toEqual([9, 8, 7]);
   });
