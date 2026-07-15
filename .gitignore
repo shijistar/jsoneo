@@ -6,6 +6,8 @@ tslib
 tses
 src/version.ts
 test/utils/version.ts
+test/__screenshots__
+.vitest-attachments
 types-legacy/*/*.d.ts
 node_modules
 npm-debug.log

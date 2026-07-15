@@ -8,11 +8,15 @@ const TYPED_ARRAY_CTORS = {
   Uint32Array,
   Float32Array,
   Float64Array,
+  /* v8 ignore next -- BigInt64Array exists in supported Node/browser test runtimes */
   BigInt64Array: typeof BigInt64Array !== 'undefined' ? BigInt64Array : undefined!,
+  /* v8 ignore next -- BigUint64Array exists in supported Node/browser test runtimes */
   BigUint64Array: typeof BigUint64Array !== 'undefined' ? BigUint64Array : undefined!,
 };
 
 export const TypedArrays = Object.values(TYPED_ARRAY_CTORS).filter(Boolean);
+type TypedArrayName = keyof typeof TYPED_ARRAY_CTORS;
+export const TypedArrayNames = TypedArrays.map((ctor) => Object.prototype.toString.call(new ctor()));
 
 /** ArrayBuffer -> Base64 */
 export function arrayBufferToBase64(buf: ArrayBuffer): string {
@@ -55,7 +59,7 @@ function sliceArrayBuffer(view: ArrayBufferView): ArrayBuffer {
 /* Serialize TypedArray to a serialized result */
 export function serializeTypedArray<T extends AnyTypedArray>(data: T): SerializedTypedArray<GetTypedArrayName<T>> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ctorName: TypedArrayNames = data.constructor && (data.constructor as any).name;
+  const ctorName: TypedArrayName = data.constructor && (data.constructor as any).name;
   if (!ctorName || !(ctorName in TYPED_ARRAY_CTORS)) {
     throw new Error('Unsupported TypedArray type: ' + ctorName);
   }
@@ -116,11 +120,9 @@ export function deserializeBinary<T extends AnyTypedArray>(
   return new Ctor(ab) as any;
 }
 
-type TypedArrayNames = keyof typeof TYPED_ARRAY_CTORS;
-
 type AnyTypedArray = InstanceType<(typeof TypedArrays)[number]>;
 
-interface SerializedTypedArray<N extends TypedArrayNames> {
+interface SerializedTypedArray<N extends TypedArrayName> {
   kind: 'TypedArray';
   type: N;
   base64: string;

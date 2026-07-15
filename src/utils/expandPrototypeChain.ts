@@ -13,7 +13,8 @@ import type {
   PathType,
   StringifyOptions,
 } from '../types';
-import { serializeBinary, TypedArrays } from './binary';
+import type { TypedArrays } from './binary';
+import { serializeBinary, TypedArrayNames } from './binary';
 import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
 import { stringToBase64 } from './encode';
 import { getFullKeys } from './get';
@@ -22,7 +23,10 @@ import { serializeFunction } from './serializeRecursively';
 import { toSymbolString } from './symbol';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function expandPrototypeChain(source: any, options?: ExpandPrototypeChainOptions): typeof source {
+export function expandPrototypeChain(
+  source: unknown,
+  options: ExpandPrototypeChainOptions = {} as ExpandPrototypeChainOptions
+): typeof source {
   const {
     parentPath,
     patches = [],
@@ -31,7 +35,7 @@ export function expandPrototypeChain(source: any, options?: ExpandPrototypeChain
     refs = [],
     apis = [],
     circular = new WeakMap(),
-  } = options ?? {};
+  } = options;
   return expandPrototypeChainRecursively(source, {
     ...options,
     paths: parentPath ?? [],
@@ -61,6 +65,7 @@ function expandPrototypeChainRecursively(
   const assertCircular = (obj: any, path: PathType[]) => {
     const toSymbolStrings = (paths: PathType[]) => {
       return paths.map((p) =>
+        /* v8 ignore next -- anonymous symbol circular paths cannot be represented in serialized refs */
         typeof p === 'symbol' ? ((toSymbolString(p) ? `[${toSymbolString(p)}]` : undefined) ?? 'undefined') : p
       );
     };
@@ -77,12 +82,14 @@ function expandPrototypeChainRecursively(
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: any;
+  const isError = 'isError' in Error && typeof Error.isError === 'function' && Error.isError(source);
   if (
     Array.isArray(source) ||
     (typeof source === 'object' &&
       typeName !== '[object Date]' &&
       typeName !== '[object RegExp]' &&
       typeName !== '[object Error]' &&
+      !isError &&
       typeName !== '[object Symbol]')
   ) {
     if (assertCircular(source, paths)) {
@@ -91,44 +98,41 @@ function expandPrototypeChainRecursively(
     }
     if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
       return source;
-    } else if (typeof URL !== 'undefined' && source instanceof URL) {
+    } else if (typeof URL !== 'undefined' && typeName === '[object URL]') {
       result = source.toString();
       types.push({ path: paths, type: 'URL' });
       return result;
-    } else if (typeof URLSearchParams !== 'undefined' && source instanceof URLSearchParams) {
+    } else if (typeof URLSearchParams !== 'undefined' && typeName === '[object URLSearchParams]') {
       result = source.toString();
       types.push({ path: paths, type: 'URLSearchParams' });
       return result;
-    } else if (source instanceof Map) {
-      result = Array.from(source.keys()).reduce(
-        (acc, key) => {
-          acc[key] = source.get(key);
-          return acc;
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {} as Record<any, any>
-      );
+    } else if (typeName === '[object Map]') {
+      const sourceMap: Map<unknown, unknown> = source;
+      result = Array.from(source.keys()).reduce<Record<string, unknown>>((acc, key) => {
+        acc[key as string] = sourceMap.get(key);
+        return acc;
+      }, {});
       types.push({ path: paths, type: 'Map' });
-    } else if (source instanceof Set) {
+    } else if (typeName === '[object Set]') {
       result = Array.from(source);
       types.push({ path: paths, type: 'Set' });
-    } else if (source instanceof WeakMap) {
+    } else if (typeName === '[object WeakMap]') {
       result = {};
-    } else if (source instanceof WeakSet) {
+    } else if (typeName === '[object WeakSet]') {
       result = [];
-    } else if (TypedArrays.some((Type) => source instanceof Type)) {
-      result = serializeBinary(source as InstanceType<(typeof TypedArrays)[number]>);
-      types.push({ path: paths, type: source.constructor.name });
-    } else if (source instanceof ArrayBuffer) {
-      result = serializeBinary(source);
-      types.push({ path: paths, type: 'ArrayBuffer' });
-    } else if (source instanceof DataView) {
-      result = serializeBinary(source);
-      types.push({ path: paths, type: 'DataView' });
-    } else if (typeof Buffer !== 'undefined' && source instanceof Buffer) {
+    } else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(source)) {
       result = Array.from(source);
       types.push({ path: paths, type: 'Buffer' });
       return result;
+    } else if (TypedArrayNames.includes(typeName)) {
+      result = serializeBinary(source as InstanceType<(typeof TypedArrays)[number]>);
+      types.push({ path: paths, type: source.constructor.name });
+    } else if (typeName === '[object ArrayBuffer]') {
+      result = serializeBinary(source);
+      types.push({ path: paths, type: 'ArrayBuffer' });
+    } else if (typeName === '[object DataView]') {
+      result = serializeBinary(source);
+      types.push({ path: paths, type: 'DataView' });
     } else if (Array.isArray(source)) {
       result = [...source];
     } else if (source.toJSON && typeof source.toJSON === 'function') {
@@ -165,6 +169,7 @@ function expandPrototypeChainRecursively(
         (!descriptor.writable || !descriptor.enumerable || !descriptor.configurable || descriptor.get || descriptor.set)
       ) {
         if (typeof key === 'symbol') {
+          /* v8 ignore next -- anonymous symbol descriptors remain symbol-keyed and are not stringified */
           key = toSymbolString(key) ? `[${toSymbolString(key)}]` : '';
         }
         const copied = { ...descriptor };
@@ -199,6 +204,7 @@ function expandPrototypeChainRecursively(
         }
         const descriptor = sourceDescriptors[key];
         const destDescriptor = destDescriptors[key as string];
+        /* v8 ignore start -- defensive branch for descriptors that getFullKeys intentionally filters out */
         if (descriptor && !descriptor.get && !('value' in descriptor)) {
           // If the descriptor is not readable, skip it
           if (debug) {
@@ -208,7 +214,9 @@ function expandPrototypeChainRecursively(
           }
           return;
         }
+        /* v8 ignore stop */
         // If the destination descriptor is not writable, skip it
+        /* v8 ignore start -- defensive branch for non-writable accessors on generated destinations */
         if (destDescriptor && !destDescriptor.writable && !('value' in destDescriptor)) {
           if (debug) {
             console.log('------------------ expandPrototypeChain [SKIPPED] ------------------');
@@ -217,6 +225,7 @@ function expandPrototypeChainRecursively(
           }
           return;
         }
+        /* v8 ignore stop */
         try {
           result[key] = source[key];
         } catch (error) {
@@ -283,10 +292,10 @@ function addPatch(result: any, options: { paths: PathType[]; patches: PatchInfo[
   const { paths, patches } = options;
   if (Array.isArray(result) || typeof result === 'function') {
     let skipKeys: string[] = [];
-    if (typeof result === 'function') {
-      skipKeys = ['length', 'name', 'arguments', 'caller', 'prototype'];
-    } else if (Array.isArray(result)) {
+    if (Array.isArray(result)) {
       skipKeys = ['length'];
+    } else {
+      skipKeys = ['length', 'name', 'arguments', 'caller'];
     }
     const patchValueKeys = getFullKeys(result).filter((key) => !skipKeys.includes(key as string));
     if (patchValueKeys.length > 0) {

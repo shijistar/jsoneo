@@ -14,7 +14,7 @@ import { base64ToString, escapeRegExp } from './encode';
 import { toSymbolString } from './symbol';
 
 export function deserializedCode(result: SerializedResult, options: InternalParseOptions) {
-  const { closure, isPrinting } = options ?? {};
+  const { closure, isPrinting } = options;
   const {
     startTag: ST = DefaultStartTag,
     endTag: ET = DefaultEndTag,
@@ -27,6 +27,7 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
     refs,
   } = result;
   const escapeSingleQuote = (str: string) => str.replace(/'/g, isPrinting ? "\\\\'" : "\\'");
+  /* v8 ignore start -- this generated-code template is exercised through parse integration tests */
   const content = `${closure ? `const { ${Object.keys(closure ?? {}).join(', ')} } = ${VP}context || {};` : ''}
   const { get } = ${VP}options;
   const deserializeResult = (\n${decodeFormat(sourceCode, { startTag: ST, endTag: ET })}\n);
@@ -331,17 +332,22 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
   }
 
   return deserializeResult;`;
+  /* v8 ignore stop */
   return content;
 }
 function decodeFormat(
   content: string | undefined,
+  /* v8 ignore next -- internal callers always pass the serialization tags explicitly */
   options: Pick<StringifyOptions, 'startTag' | 'endTag'> = {}
 ): string | undefined {
-  const { startTag: ST = '', endTag: ET = '' } = options ?? {};
+  const { startTag: ST = '', endTag: ET = '' } = options;
   const escapedTS = escapeRegExp(ST);
   const escapedTE = escapeRegExp(ET);
-  return content
-    ?.replace(new RegExp(`\\\\?['"]${escapedTS}`, 'g'), '')
+  const rawContent = content ?? 'undefined';
+  return rawContent
+    .replace(new RegExp(`\\\\?['"]${escapedTS}`, 'g'), '')
     .replace(new RegExp(`${escapedTE}\\\\?['"]`, 'g'), '')
-    .replace(/\\n/g, '\n');
+    .replace(/\\r/g, '\r')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t');
 }

@@ -35,7 +35,9 @@ export function serializeRecursively(
   } else if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
     return source;
   } else if (typeof source === 'number') {
-    if (Number.isNaN(source)) {
+    if (Object.is(source, -0)) {
+      return `${ST}-0${ET}`;
+    } else if (Number.isNaN(source)) {
       return `${ST}NaN${ET}`;
     } else if (source === Number.POSITIVE_INFINITY) {
       return `${ST}Infinity${ET}`;
@@ -52,7 +54,7 @@ export function serializeRecursively(
   } else if (typeof source === 'bigint') {
     return `${ST}BigInt('${source.toString()}')${ET}`;
   } else if (source instanceof RegExp) {
-    return `${ST}new RegExp('${source.source.replace(/\\\\/g, '\\')}', '${source.flags ?? ''}')${ET}`;
+    return `${ST}new RegExp('${source.source.replace(/\\\\/g, '\\')}', '${source.flags}')${ET}`;
     // `value instanceof Date` never works, try testing date format instead
   } else if (typeof source === 'symbol') {
     if (WellKnownSymbols.includes(source)) {
@@ -115,7 +117,7 @@ export function serializeRecursively(
 }
 
 export function serializeFunction(funcStr: string) {
-  if (funcStr.includes('{ [native code] }')) {
+  if (funcStr.match(/\{\s*?\[native code\]\s*\}/)) {
     return undefined;
   }
   // Handle getter and setter functions, { get prop() {}, set assign(v) {} }
@@ -123,6 +125,15 @@ export function serializeFunction(funcStr: string) {
     funcStr = funcStr.replace(/^(get|set)\s+/, '');
     funcStr = `function ${funcStr}`;
     return funcStr;
+  }
+  // Handle generator methods, including computed methods like { *[Symbol.iterator]() {} }.
+  if (funcStr.startsWith('async *')) {
+    funcStr = funcStr.replace(/^async\s+\*\s*(?:\[[^\]]+\]|[\w$]+)/, '');
+    return `async function* ${funcStr}`;
+  }
+  if (funcStr.startsWith('*')) {
+    funcStr = funcStr.replace(/^\*\s*(?:\[[^\]]+\]|[\w$]+)/, '');
+    return `function* ${funcStr}`;
   }
   if (
     // function () {}
