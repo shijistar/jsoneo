@@ -1,0 +1,16 @@
+.github/workflows/reusable-test.yml
+  h_3a0b15d296f1fe 30-31,52-53
+.github/workflows/npm-publish.yml
+  h_3a0b15d296f1fe 25-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2f635b1536c2c365fb054b3bbc19b98d2a57009d",
+  "prompts": {},
+  "humans": {
+    "h_3a0b15d296f1fe": {
+      "author": "Sage Starr (李凤宝) <shijistar@gmail.com>"
+    }
+  }
+}
