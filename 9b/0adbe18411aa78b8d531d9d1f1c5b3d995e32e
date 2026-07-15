@@ -1,0 +1,16 @@
+README.md
+  h_3a0b15d296f1fe 40-47,49-81,83-89,91-106,108-109,111-112,136,250,252
+README.zh-CN.md
+  h_3a0b15d296f1fe 40-47,49-81,83-89,91-106,108-109,111-112,250,252
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9b0adbe18411aa78b8d531d9d1f1c5b3d995e32e",
+  "prompts": {},
+  "humans": {
+    "h_3a0b15d296f1fe": {
+      "author": "Sage Starr (李凤宝) <shijistar@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+src/utils/serializeRecursively.ts
+  h_282d460392904f 120
+package.json
+  h_282d460392904f 53-55,57,59,75
+.gitignore
+  h_282d460392904f 9-10
+test/internal-utils.test.ts
+  h_282d460392904f 56,60
+vitest.browser.config.ts
+  h_282d460392904f 10-11,13
+src/utils/expandPrototypeChain.ts
+  h_282d460392904f 16-17,85,92,101,105,109-112,116,123,127,130,133
+src/utils/binary.ts
+  h_282d460392904f 18-19,62,125
+test/roundtrip.test.ts
+  h_282d460392904f 180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f1dd93b3258e643497eacfc5743168c405bcd3ea",
+  "prompts": {},
+  "humans": {
+    "h_282d460392904f": {
+      "author": "lifb2 <lifb2@lenovo.com>"
+    }
+  }
+}
