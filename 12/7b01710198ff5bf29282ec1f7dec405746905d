@@ -1,0 +1,20 @@
+src/utils/expandPrototypeChain.ts
+  h_3a0b15d296f1fe 85,100,102
+test/internal-utils.test.ts
+  h_3a0b15d296f1fe 193
+.github/workflows/reusable-test.yml
+  h_3a0b15d296f1fe 39-40,60-62
+src/utils/serializeRecursively.ts
+  h_3a0b15d296f1fe 31-33,38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "127b01710198ff5bf29282ec1f7dec405746905d",
+  "prompts": {},
+  "humans": {
+    "h_3a0b15d296f1fe": {
+      "author": "Sage Starr (李凤宝) <shijistar@gmail.com>"
+    }
+  }
+}
