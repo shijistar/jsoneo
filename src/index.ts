@@ -60,7 +60,7 @@ import { version } from './version';
  *
  * # However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
  *
- * sources`. Never run `parse`with user input or data from`untrusted sources`, as it may embed
+ * sources`. Never run `parse` with user input or data from `untrusted sources`, as it may embed
  * malicious code.
  *
  * 7. Supports raw JSON objects (via JSON.rawJSON() method).
