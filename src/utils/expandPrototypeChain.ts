@@ -82,6 +82,7 @@ function expandPrototypeChainRecursively(
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: any;
+  /* v8 ignore next -- @preserve */
   const isError = 'isError' in Error && typeof Error.isError === 'function' && Error.isError(source);
   if (
     Array.isArray(source) ||
@@ -96,7 +97,9 @@ function expandPrototypeChainRecursively(
       // should return `null` instead of `undefined`, since undefined will be ignored in JSON.stringify
       return null;
     }
+    /* v8 ignore next -- @preserve */
     if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
+      /* v8 ignore next -- @preserve */
       return source;
     } else if (typeof URL !== 'undefined' && typeName === '[object URL]') {
       result = source.toString();

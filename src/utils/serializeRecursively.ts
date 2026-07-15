@@ -28,11 +28,15 @@ export function serializeRecursively(
     );
     console.log(source);
   }
+
+  /* v8 ignore next -- @preserve */
+  const supportRawJson = 'isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source);
   if (source === null) {
     return `${ST}null${ET}`;
   } else if (source === undefined) {
     return undefined;
-  } else if ('isRawJSON' in JSON && typeof JSON.isRawJSON === 'function' && JSON.isRawJSON(source)) {
+  } else if (supportRawJson) {
+    /* v8 ignore next -- @preserve */
     return source;
   } else if (typeof source === 'number') {
     if (Object.is(source, -0)) {

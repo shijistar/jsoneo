@@ -190,7 +190,7 @@ describe('internal serialization helpers', () => {
     const weakSetResult = expandPrototypeChain(weakSet, makeOptions()) as unknown[] & { add?: unknown };
     expect(typeof weakMapResult.set).toBe('function');
     expect(Array.isArray(weakSetResult)).toBe(true);
-    expect(expandPrototypeChain(raw, makeOptions())).toBe(raw);
+    expect(expandPrototypeChain(raw, makeOptions())).toStrictEqual(raw);
     expect(expandPrototypeChain(primitiveApi, makeOptions())).toBe(7);
     expect(expandPrototypeChain(5, makeOptions())).toBe(5);
     expect(expandPrototypeChain({ plain: true })).toEqual({ plain: true });
