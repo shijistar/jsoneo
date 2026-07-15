@@ -127,6 +127,10 @@ export function serializeFunction(funcStr: string) {
     return funcStr;
   }
   // Handle generator methods, including computed methods like { *[Symbol.iterator]() {} }.
+  if (funcStr.startsWith('async *')) {
+    funcStr = funcStr.replace(/^async\s+\*\s*(?:\[[^\]]+\]|[\w$]+)/, '');
+    return `async function* ${funcStr}`;
+  }
   if (funcStr.startsWith('*')) {
     funcStr = funcStr.replace(/^\*\s*(?:\[[^\]]+\]|[\w$]+)/, '');
     return `function* ${funcStr}`;
