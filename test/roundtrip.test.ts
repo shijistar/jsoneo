@@ -214,6 +214,33 @@ describe('jsoneo round trips functions and callable edge cases', () => {
     expect(asyncValues).toEqual(['a', 'b']);
   });
 
+  it('preserves async generator object methods and computed async iterator methods', async () => {
+    const source = {
+      async *stream() {
+        yield 'first';
+        yield 'second';
+      },
+      async *[Symbol.asyncIterator]() {
+        yield 'iterable-first';
+        yield 'iterable-second';
+      },
+    };
+
+    const restored = roundTrip(source);
+
+    const streamValues: string[] = [];
+    for await (const value of restored.stream()) {
+      streamValues.push(value);
+    }
+    expect(streamValues).toEqual(['first', 'second']);
+
+    const iterableValues: string[] = [];
+    for await (const value of restored) {
+      iterableValues.push(value);
+    }
+    expect(iterableValues).toEqual(['iterable-first', 'iterable-second']);
+  });
+
   it('provides external values through parse closure option', () => {
     const allowedRoles = ['admin', 'editor'];
     const source = {

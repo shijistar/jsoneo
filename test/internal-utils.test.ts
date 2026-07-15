@@ -133,6 +133,8 @@ describe('internal serialization helpers', () => {
     expect(serializeFunction('get value() { return 1; }')).toBe('function value() { return 1; }');
     expect(serializeFunction('set value(v) { this.v = v; }')).toBe('function value(v) { this.v = v; }');
     expect(serializeFunction('*[Symbol.iterator]() { yield 1; }')).toBe('function* () { yield 1; }');
+    expect(serializeFunction('async *stream() { yield 1; }')).toBe('async function* () { yield 1; }');
+    expect(serializeFunction('async *[Symbol.asyncIterator]() { yield 1; }')).toBe('async function* () { yield 1; }');
     expect(serializeFunction('method() { return 1; }')).toBe('function method() { return 1; }');
     expect(serializeFunction('[Symbol.toPrimitive]() { return 1; }')).toBe('function () { return 1; }');
     expect(serializeFunction('function native() { [native code] }')).toBeUndefined();
