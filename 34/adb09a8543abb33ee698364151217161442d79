@@ -1,0 +1,27 @@
+package.json
+  s_88c641297bc527::t_714954a1f8328c 76
+  h_282d460392904f 65,69-70,77-78,82,86
+tsconfig.json
+  h_282d460392904f 5-6,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "34adb09a8543abb33ee698364151217161442d79",
+  "prompts": {},
+  "humans": {
+    "h_282d460392904f": {
+      "author": "lifb2 <lifb2@lenovo.com>"
+    }
+  },
+  "sessions": {
+    "s_88c641297bc527": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a4406d8-34bf-4304-a45b-d9df77dfdefb",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "lifb2 <lifb2@lenovo.com>"
+    }
+  }
+}
