@@ -6,13 +6,11 @@
 
 **English** | [简体中文](./README.zh-CN.md)
 
-> JSON, upgraded for real JavaScript objects.
+> What JSON.stringify discards, jsoneo preserves.
 
 `jsoneo` is a JSON enhancement library for serializing and deserializing complex JavaScript values that native `JSON.stringify()` and `JSON.parse()` cannot represent well: `Date`, `RegExp`, `BigInt`, `Symbol`, functions, `Map`, `Set`, typed arrays, property descriptors, prototype members, circular references, and more.
 
 It is especially useful when you need to move rich test fixtures or object graphs between Node.js, browsers, and end-to-end test environments.
-
-> Write once, run in multiple environments.
 
 ## Why jsoneo?
 
