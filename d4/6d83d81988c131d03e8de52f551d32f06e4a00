@@ -1,0 +1,16 @@
+security/SECURITY_EVALUATION.md
+  h_282d460392904f 1-490
+security/SECURITY_EVALUATION_REPORT.md
+  h_282d460392904f 1-764
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "d46d83d81988c131d03e8de52f551d32f06e4a00",
+  "prompts": {},
+  "humans": {
+    "h_282d460392904f": {
+      "author": "lifb2 <lifb2@lenovo.com>"
+    }
+  }
+}
