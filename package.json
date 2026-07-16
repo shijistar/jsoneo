@@ -62,30 +62,28 @@
   },
   "overrides": {
     "@umijs/babel-preset-umi": {
-      "@babel/runtime": "^7.28.3"
-    },
-    "esbuild": "^0.25.9"
+      "@babel/runtime": "^7.29.7"
+    }
   },
   "devDependencies": {
-    "@tiny-codes/code-style-all-in-one": "^1.1.5",
-    "@types/node": "^22.16.2",
+    "@tiny-codes/code-style-all-in-one": "^2.0.2",
+    "@types/node": "^24.13.3",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
     "cross-env": "^10.0.0",
-    "esbuild": "^0.25.9",
-    "father": "^4.6.3",
-    "glob": "^11.0.3",
-    "npm-run-all2": "^8.0.4",
+    "father": "^4.6.31",
+    "glob": "^13.0.6",
+    "npm-run-all2": "^9.0.2",
     "playwright": "^1.61.1",
     "shx": "^0.4.0",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
+    "typescript": "^7.0.2",
     "vite": "^7.3.6",
     "vitest": "^4.1.10"
   },
-  "packageManager": "npm@11.4.2",
+  "packageManager": "npm@11.18.0",
   "engines": {
     "node": ">=12"
   },
