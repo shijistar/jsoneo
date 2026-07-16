@@ -6,13 +6,11 @@
 
 [English](./README.md) | **简体中文**
 
-> 面向真实 JavaScript 对象的增强版 JSON。
+> 被 JSON.stringify 丢掉的，jsoneo 可以保留！
 
-`jsoneo` 是一个 JSON 增强序列化/反序列化库，用来处理原生 `JSON.stringify()` 和 `JSON.parse()` 难以完整表达的复杂 JavaScript 值，例如 `Date`、`RegExp`、`BigInt`、`Symbol`、函数、`Map`、`Set`、TypedArray、属性描述符、原型成员、循环引用等。
+`JSONeo`（发音为/ˈdʒeɪ.sən ˌniː.oʊ/，类似JSON new）是一个 JSON 增强序列化/反序列化库，用来处理原生 `JSON.stringify()` 和 `JSON.parse()` 难以完整表达的复杂 JavaScript 值，例如 `Date`、`RegExp`、`BigInt`、`Symbol`、函数、`Map`、`Set`、TypedArray、属性描述符、原型成员、循环引用等。
 
 当你需要在 Node.js、浏览器、端到端测试环境之间传递复杂测试数据或对象图时，`jsoneo` 会非常有用。
-
-> 一次编写，多环境复用。
 
 ## 为什么使用 jsoneo？
 
