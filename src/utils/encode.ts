@@ -25,7 +25,7 @@ export function base64ToString(base64: string) {
  */
 export function escapeRegExp(
   regExp: string | RegExp,
-  options?: { escapeTwice?: boolean; format?: (result: string) => string }
+  options?: { escapeTwice?: boolean; format?: (result: string) => string },
 ): string {
   const { escapeTwice = false, format } = options ?? {};
   const content = typeof regExp === 'string' ? regExp : regExp.source;

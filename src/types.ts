@@ -122,5 +122,5 @@ export type GetFunc = (
   /** The object to get the value from */
   obj: unknown,
   /** The path to the value */
-  path: (string | number | symbol)[]
+  path: (string | number | symbol)[],
 ) => unknown;

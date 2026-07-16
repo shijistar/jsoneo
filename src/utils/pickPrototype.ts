@@ -11,7 +11,7 @@ import { getFullKeys } from './get';
 export function pickPrototype(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   source: any,
-  options?: Pick<StringifyOptions, 'preserveClassConstructor' | 'debug'>
+  options?: Pick<StringifyOptions, 'preserveClassConstructor' | 'debug'>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string | symbol, any> {
   const { preserveClassConstructor = true, debug } = options ?? {};

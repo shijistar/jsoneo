@@ -215,7 +215,7 @@ const text = stringify(value, options);
 | `startTag`                 | `string`  | `'$SJS$_'` | Internal marker used to encode JavaScript expressions.           |
 | `endTag`                   | `string`  | `'_$SJE$'` | Internal marker used to encode JavaScript expressions.           |
 | `variablePrefix`           | `string`  | `'$SJV$_'` | Prefix used for generated variable names.                        |
-| `preserveClassConstructor` | `boolean` | `false`    | Whether to preserve class constructor code during serialization. |
+| `preserveClassConstructor` | `boolean` | `true`     | Whether to preserve class constructor code during serialization. |
 | `preserveDescriptors`      | `boolean` | `true`     | Whether to preserve custom property descriptors.                 |
 | `debug`                    | `boolean` | `false`    | Print serialization debug information.                           |
 
@@ -286,7 +286,6 @@ Use a named function for this pattern. Anonymous functions, arrow functions, or 
 - Function source code can be serialized, but closures are not captured automatically. Use the `closure` option of `parse(text, options)` for external values, or attach serializable values to a named function object and access them through `functionName.xxx`.
 - Native functions are dropped during serialization because their source is reported as `[native code]` and cannot be reconstructed.
 - Avoid `Function.prototype.bind()`: bound functions are native-like and cannot be reconstructed reliably.
-- Class constructors are not preserved by default. Use `preserveClassConstructor` to preserve them.
 - Private class fields and private methods are not accessible from outside the object and are not suitable serialization targets.
 - `Map` values are supported, but non-string keys are all converted to strings, just like `object`, in the current implementation.
 - In browsers, Node.js `Buffer` values are restored as `Uint8Array` when `Buffer` is unavailable.

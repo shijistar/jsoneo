@@ -40,9 +40,9 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
         ...api,
         toJSON: `${ST}${base64ToString(api.toJSON)}${ET}`,
         fromJSON: api.fromJSON ? `${ST}${base64ToString(api.fromJSON)}${ET}` : undefined,
-      }))
+      })),
     ),
-    { startTag: ST, endTag: ET }
+    { startTag: ST, endTag: ET },
   )} ?? [];
   const descriptors = ${decodeFormat(
     JSON.stringify(
@@ -53,16 +53,16 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
           get: d.descriptor.get ? `${ST}${base64ToString(d.descriptor.get)}${ET}` : undefined,
           set: d.descriptor.set ? `${ST}${base64ToString(d.descriptor.set)}${ET}` : undefined,
         },
-      }))
+      })),
     ),
-    { startTag: ST, endTag: ET }
+    { startTag: ST, endTag: ET },
   )} ?? [];
   const TYPED_ARRAY_CTORS = {
     ${TypedArrays.map((ctor) => ctor.name).join(',\n    ')}
   };
   const symbolKeyRegExps = [
     ${SymbolKeyRegExps.map(
-      (regExp) => `new RegExp('^${escapeRegExp(regExp, { escapeTwice: isPrinting, format: escapeSingleQuote })}$')`
+      (regExp) => `new RegExp('^${escapeRegExp(regExp, { escapeTwice: isPrinting, format: escapeSingleQuote })}$')`,
     ).join(',\n    ')}
   ]
   const symbolKeyPrefixRegExp = new RegExp('^${escapeRegExp(SymbolKeyPrefixRegExp, { escapeTwice: isPrinting })}');
@@ -338,7 +338,7 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
 function decodeFormat(
   content: string | undefined,
   /* v8 ignore next -- internal callers always pass the serialization tags explicitly */
-  options: Pick<StringifyOptions, 'startTag' | 'endTag'> = {}
+  options: Pick<StringifyOptions, 'startTag' | 'endTag'> = {},
 ): string | undefined {
   const { startTag: ST = '', endTag: ET = '' } = options;
   const escapedTS = escapeRegExp(ST);

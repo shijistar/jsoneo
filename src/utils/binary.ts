@@ -75,7 +75,7 @@ export function serializeTypedArray<T extends AnyTypedArray>(data: T): Serialize
 
 /** Serialize ArrayBuffer, DataView, TypedArray to a serialized result */
 export function serializeBinary<T extends AnyTypedArray | ArrayBuffer | DataView>(
-  value: T | ArrayBuffer | DataView
+  value: T | ArrayBuffer | DataView,
 ): T extends ArrayBuffer | DataView
   ? SerializedArrayBuffer
   : T extends AnyTypedArray
@@ -103,7 +103,7 @@ export function serializeBinary<T extends AnyTypedArray | ArrayBuffer | DataView
 }
 
 export function deserializeBinary<T extends AnyTypedArray>(
-  obj: SerializedTypedArray<GetTypedArrayName<T>> | SerializedArrayBuffer
+  obj: SerializedTypedArray<GetTypedArrayName<T>> | SerializedArrayBuffer,
 ): T extends never ? ArrayBuffer | DataView : T {
   if (obj.kind === 'ArrayBuffer') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

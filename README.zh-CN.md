@@ -215,7 +215,7 @@ const text = stringify(value, options);
 | `startTag`                 | `string`  | `'$SJS$_'` | 用于编码 JavaScript 表达式的内部起始标记。  |
 | `endTag`                   | `string`  | `'_$SJE$'` | 用于编码 JavaScript 表达式的内部结束标记。  |
 | `variablePrefix`           | `string`  | `'$SJV$_'` | 生成变量名时使用的前缀。                    |
-| `preserveClassConstructor` | `boolean` | `false`    | 是否在序列化时保留 class constructor 代码。 |
+| `preserveClassConstructor` | `boolean` | `true`     | 是否在序列化时保留 class constructor 代码。 |
 | `preserveDescriptors`      | `boolean` | `true`     | 是否保留自定义属性描述符。                  |
 | `debug`                    | `boolean` | `false`    | 是否打印序列化调试信息。                    |
 
@@ -286,7 +286,6 @@ restored.canRead.allowedRoles; // ['admin', 'editor']
 - 函数源码可以被序列化，但闭包不会被自动捕获。外部变量可以使用 `parse(text, options)` 的 `closure` 选项显式传入，也可以挂载到具名函数对象上并在函数体内通过 `functionName.xxx` 访问。
 - 原生函数在序列化时会被丢弃，因为它们的源码通常是 `[native code]`，无法被重建。
 - 避免使用 `Function.prototype.bind()`：绑定函数接近原生函数，通常无法可靠重建。
-- Class的构造函数默认不会保留，请使用 `preserveClassConstructor` 来保留构造函数。
 - Class的私有字段和私有方法无法从对象外部访问，不适合作为序列化目标。
 - `Map` 的值支持往返，但在当前版本中非字符串 key 都会被转换为字符串，就像 `object` 一样。
 - 在浏览器中，如果没有 Node.js `Buffer`，`Buffer` 会被恢复为 `Uint8Array`。

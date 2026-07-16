@@ -60,7 +60,7 @@ import { version } from './version';
  *
  * # However, make sure `parse` is only evaluated with data produced by `stringify` and from `trusted
  *
- * sources`. Never run `parse` with user input or data from `untrusted sources`, as it may embed
+ * sources`. Never run `parse`with user input or data from`untrusted sources`, as it may embed
  * malicious code.
  *
  * 7. Supports raw JSON objects (via JSON.rawJSON() method).
@@ -162,7 +162,7 @@ export function parse(input: string, options?: ParseOptions) {
     const printCode = prettyPrint ? prettyPrintCode : realCode;
     console.log('------------------ deserialize ------------------');
     console.log(
-      `new Function('${VP}context', '${VP}options', ${printCode})(${closure ? 'closure' : 'undefined'}, { get: getByPath });`
+      `new Function('${VP}context', '${VP}options', ${printCode})(${closure ? 'closure' : 'undefined'}, { get: getByPath });`,
     );
     console.log('closure =', closure);
     console.log(getByPath.toString());

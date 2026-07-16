@@ -25,7 +25,7 @@ import { toSymbolString } from './symbol';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function expandPrototypeChain(
   source: unknown,
-  options: ExpandPrototypeChainOptions = {} as ExpandPrototypeChainOptions
+  options: ExpandPrototypeChainOptions = {} as ExpandPrototypeChainOptions,
 ): typeof source {
   const {
     parentPath,
@@ -54,7 +54,7 @@ function expandPrototypeChainRecursively(
   options: {
     paths: PathType[];
   } & Pick<ExpandPrototypeChainOptions, 'patches' | 'descriptors' | 'types' | 'refs' | 'apis' | 'circular'> &
-    Pick<StringifyOptions, 'preserveClassConstructor' | 'preserveDescriptors' | 'debug'>
+    Pick<StringifyOptions, 'preserveClassConstructor' | 'preserveDescriptors' | 'debug'>,
 ): typeof source {
   const { debug, patches, preserveDescriptors = true, descriptors, types, paths, refs, apis, circular } = options;
   if (source == null || source === Array.prototype || source === Object.prototype) {
@@ -66,7 +66,7 @@ function expandPrototypeChainRecursively(
     const toSymbolStrings = (paths: PathType[]) => {
       return paths.map((p) =>
         /* v8 ignore next -- anonymous symbol circular paths cannot be represented in serialized refs */
-        typeof p === 'symbol' ? ((toSymbolString(p) ? `[${toSymbolString(p)}]` : undefined) ?? 'undefined') : p
+        typeof p === 'symbol' ? ((toSymbolString(p) ? `[${toSymbolString(p)}]` : undefined) ?? 'undefined') : p,
       );
     };
     if (circular.has(obj)) {

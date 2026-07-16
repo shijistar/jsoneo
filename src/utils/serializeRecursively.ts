@@ -8,7 +8,7 @@ export function serializeRecursively(
   options: InternalStringifyOptions & {
     printLabel?: string;
     printPath?: (options: Pick<InternalStringifyOptions, 'parentPath'> & { key: string }) => void;
-  }
+  },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<keyof any, any> | any[] | string | undefined {
   const {
@@ -24,7 +24,7 @@ export function serializeRecursively(
     console.log(
       `------------------ serializeRecursively${printLabel ? ` (${printLabel})` : ''}`,
       ['BEGIN'],
-      ' ------------------'
+      ' ------------------',
     );
     console.log(source);
   }
@@ -97,7 +97,7 @@ export function serializeRecursively(
           console.log(
             `------------------ serializeRecursively${printLabel ? ` (${printLabel})` : ''}`,
             printPath ? printPath({ parentPath, key }) : [...parentPath, key],
-            ' ------------------'
+            ' ------------------',
           );
           console.log('value:', subValue);
           console.log('result:');
