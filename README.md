@@ -89,7 +89,7 @@ const json = {
 
   // Functions
   welcome() {
-    return `你好，${this.name}！`;
+    return `Hi! ${this.name}`;
   },
   loadProfile: async function () {
     return { name: this.name, status: 'loaded' };
