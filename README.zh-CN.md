@@ -38,76 +38,94 @@ npm install jsoneo
 import { parse, stringify } from 'jsoneo';
 
 const json = {
-  // String
   name: 'John',
-  // Number
   age: 30,
-  // Boolean
   isAdmin: false,
-  // Date
-  createdAt: new Date(),
-  // RegExp
-  pattern: /abc/gi,
-  // BigInt
-  bigValue: 12345678901234567890n,
-  // Plain object
-  address: {
-    city: '纽约',
-    zip: '10001',
-  },
-  // Plain array
+  address: { city: '纽约', zip: '10001' },
   tags: ['developer', 'javascript'],
-  // Array with objects
-  projects: [
-    {
-      id: 1,
-      name: '项目1',
-      createdAt: new Date(),
-    },
-    {
-      id: 2,
-      name: '项目2',
-      createdAt: new Date(),
-    },
-  ],
-  // URL
+  projects: [{ id: 1, name: '项目1' }],
+
+  // 特殊原始值
+  negativeZero: -0,
+  notANumber: NaN,
+  positiveInfinity: Infinity,
+  negativeInfinity: -Infinity,
+  bigValue: 12345678901234567890n,
+
+  // 内置对象
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  invalidDate: new Date(NaN),
+  pattern: /abc/gi,
+  error: new Error('boom'),
   homepage: new URL('https://example.com?id=123'),
-  // Symbols
+  query: new URLSearchParams('id=123&tab=profile'),
+
+  // Symbol 值和对象键
   id: Symbol.for('id'),
+  wellKnownSymbol: Symbol.iterator,
+  localSymbol: Symbol('localId'),
+  [Symbol.for('role')]: 'admin',
   [Symbol.toStringTag]: 'User',
-  // Map and Set
+
+  // 集合
   roles: new Map([
-    [Symbol.for('admin'), true],
-    [Symbol.for('editor'), false],
+    ['admin', true],
+    ['editor', false],
   ]),
   permissions: new Set(['read', 'write']),
-  // TypedArray
+
+  // 二进制数据
   bytes: new Uint8Array([1, 2, 3, 4]),
-  // ArrayBuffer
+  typedArrays: {
+    int8: new Int8Array([-1, 2]),
+    int16: new Int16Array([-1234, 2345]),
+    int32: new Int32Array([-123456, 234567]),
+    float32: new Float32Array([1.5, -2.25]),
+    float64: new Float64Array([Math.PI, -Math.E]),
+    bigInt64: new BigInt64Array([-1n, 2n]),
+  },
   buffer: new ArrayBuffer(8),
-  // function
-  sayHello: () => `你好，${this.name}！`,
+  view: new DataView(new ArrayBuffer(8)),
+
+  // 函数
+  welcome() {
+    return `你好，${this.name}！`;
+  },
+  loadProfile: async function () {
+    return { name: this.name, status: 'loaded' };
+  },
+  add: (a: number, b: number) => a + b,
+  *numbers() {
+    yield 1;
+    yield 2;
+  },
+  iterable: {
+    *[Symbol.iterator]() {
+      yield 'a';
+      yield 'b';
+    },
+  },
 };
+
+// 属性描述符
 Object.defineProperties(json, {
-  readonlyValue: {
-    value: 42,
-    writable: false,
-  },
-  getter: {
-    get: () => 'getter value',
+  birthday: { value: '2000-01-01', writable: false, enumerable: true },
+  _value: { value: 1, writable: true, enumerable: false },
+  publicValue: {
+    get() {
+      return this._value;
+    },
+    set(value) {
+      this._value = value;
+    },
     enumerable: true,
-    configurable: true,
-  },
-  setter: {
-    set: (value) => console.log('setter called with', value),
-    enumerable: true,
-    configurable: true,
   },
 });
+// 循环引用
+json.self = json;
 
 // 序列化
 const serialized = stringify(json); // [一个长字符串]
-
 // 反序列化
 const deserialized = parse(serialized);
 ```
