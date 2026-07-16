@@ -238,30 +238,28 @@ const value = parse(text, options);
 | `prettyPrint` | `boolean`                 | `true`               | Pretty-print generated deserialization code in debug output.           |
 | `debug`       | `boolean`                 | `false`              | Print deserialization debug information.                               |
 
-### Handling function dependencies
+### Using /closure/ for functions
 
-Function bodies can be serialized, but JavaScript closures cannot be captured automatically. If a restored function needs external values, provide them through the `closure` option of `parse(text, options)`.
+Function bodies can be serialized, but JavaScript closures cannot be captured automatically. If a restored function needs external values, provide them through the `closure` option of `parse(text, options)`, or attach them directly to a named function object.
 
 ```ts
 import { parse, stringify } from 'jsoneo';
 
 const allowedRoles = ['admin', 'editor'];
-
 const source = {
   canRead(user: { role: string }) {
     return allowedRoles.includes(user.role);
   },
 };
 
-const text = stringify(source);
-const restored = parse(text, {
+const restored = parse(stringify(source), {
   // The function body references `allowedRoles`, so provide it explicitly.
   closure: {
     allowedRoles,
   },
 });
 
-console.log(restored.canRead({ role: 'admin' })); // true
+restored.canRead({ role: 'admin' }); // true
 ```
 
 Alternatively, attach serializable values directly to a named function object, then read them inside the function through `functionName.xxx`. Because functions are objects, `jsoneo` can preserve those properties together with the function.
@@ -272,18 +270,12 @@ import { parse, stringify } from 'jsoneo';
 function canRead(user: { role: string }) {
   return canRead.allowedRoles.includes(user.role);
 }
-
-namespace canRead {
-  export let allowedRoles: string[];
-}
-
 canRead.allowedRoles = ['admin', 'editor'];
 
-const text = stringify({ canRead });
-const restored = parse(text) as { canRead: typeof canRead };
+const restored = parse(stringify({ canRead })) as { canRead: typeof canRead };
 
-console.log(restored.canRead({ role: 'admin' })); // true
-console.log(restored.canRead.allowedRoles); // ['admin', 'editor']
+restored.canRead({ role: 'admin' }); // true
+restored.canRead.allowedRoles; // ['admin', 'editor']
 ```
 
 Use a named function for this pattern. Anonymous functions, arrow functions, or object method shorthand do not provide the same reliable self-reference for `functionName.xxx` inside the function body.
@@ -292,14 +284,13 @@ Use a named function for this pattern. Anonymous functions, arrow functions, or 
 
 - `parse` should only be used with strings produced by `stringify` and from trusted sources.
 - Function source code can be serialized, but closures are not captured automatically. Use the `closure` option of `parse(text, options)` for external values, or attach serializable values to a named function object and access them through `functionName.xxx`.
-- Native functions cannot be serialized because their source is reported as `[native code]`.
+- Native functions are dropped during serialization because their source is reported as `[native code]` and cannot be reconstructed.
 - Avoid `Function.prototype.bind()`: bound functions are native-like and cannot be reconstructed reliably.
-- Anonymous symbols are limited, especially when used as object keys. Prefer well-known symbols or `Symbol.for()` for stable round trips.
-- Class constructors are not preserved by default. Use `preserveClassConstructor` only when you understand the trade-offs.
+- Class constructors are not preserved by default. Use `preserveClassConstructor` to preserve them.
 - Private class fields and private methods are not accessible from outside the object and are not suitable serialization targets.
-- `Map` values are supported, but non-string keys are not guaranteed to round-trip faithfully in the current implementation.
+- `Map` values are supported, but non-string keys are all converted to strings, just like `object`, in the current implementation.
 - In browsers, Node.js `Buffer` values are restored as `Uint8Array` when `Buffer` is unavailable.
-- `WeakMap` and `WeakSet` entries are not enumerable, so only their structure can be represented.
+- `WeakMap` and `WeakSet` entries are not enumerable, so only their structure (`{}` or `[]`) can be represented.
 
 ## Security
 

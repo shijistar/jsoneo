@@ -238,30 +238,28 @@ const value = parse(text, options);
 | `prettyPrint` | `boolean`                 | `true`           | 在 debug 输出中格式化生成的反序列化代码。 |
 | `debug`       | `boolean`                 | `false`          | 是否打印反序列化调试信息。                |
 
-### 处理函数依赖
+### 处理函数闭包
 
-函数体可以被序列化，但 JavaScript 的词法闭包无法自动捕获。如果恢复后的函数依赖外部变量，需要通过 `parse(text, options)` 的 `closure` 选项显式传入。
+函数体可以被序列化，但 JavaScript 的词法闭包无法自动捕获。如果恢复后的函数依赖外部变量，需要通过 `parse(text, options)` 的 `closure` 选项显式传入，或者直接挂载到具名函数对象上。
 
 ```ts
 import { parse, stringify } from 'jsoneo';
 
 const allowedRoles = ['admin', 'editor'];
-
 const source = {
   canRead(user: { role: string }) {
     return allowedRoles.includes(user.role);
   },
 };
 
-const text = stringify(source);
-const restored = parse(text, {
+const restored = parse(stringify(source), {
   // 函数体引用了 `allowedRoles`，因此需要显式传入。
   closure: {
     allowedRoles,
   },
 });
 
-console.log(restored.canRead({ role: 'admin' })); // true
+restored.canRead({ role: 'admin' }); // true
 ```
 
 另一种方式是把可序列化的外部值直接挂载到具名函数对象上，然后在函数内部通过 `functionName.xxx` 读取。函数本身也是对象，`jsoneo` 可以把这些属性和函数一起保留下来。
@@ -272,18 +270,12 @@ import { parse, stringify } from 'jsoneo';
 function canRead(user: { role: string }) {
   return canRead.allowedRoles.includes(user.role);
 }
-
-namespace canRead {
-  export let allowedRoles: string[];
-}
-
 canRead.allowedRoles = ['admin', 'editor'];
 
-const text = stringify({ canRead });
-const restored = parse(text) as { canRead: typeof canRead };
+const restored = parse(stringify({ canRead })) as { canRead: typeof canRead };
 
-console.log(restored.canRead({ role: 'admin' })); // true
-console.log(restored.canRead.allowedRoles); // ['admin', 'editor']
+restored.canRead({ role: 'admin' }); // true
+restored.canRead.allowedRoles; // ['admin', 'editor']
 ```
 
 这种写法请使用具名函数。匿名函数、箭头函数或对象方法简写无法在函数体内提供同样稳定的 `functionName.xxx` 自引用。
@@ -292,14 +284,13 @@ console.log(restored.canRead.allowedRoles); // ['admin', 'editor']
 
 - `parse` 只应处理由 `stringify` 生成且来自可信来源的数据。
 - 函数源码可以被序列化，但闭包不会被自动捕获。外部变量可以使用 `parse(text, options)` 的 `closure` 选项显式传入，也可以挂载到具名函数对象上并在函数体内通过 `functionName.xxx` 访问。
-- 原生函数无法序列化，因为它们的源码通常是 `[native code]`。
+- 原生函数在序列化时会被丢弃，因为它们的源码通常是 `[native code]`，无法被重建。
 - 避免使用 `Function.prototype.bind()`：绑定函数接近原生函数，通常无法可靠重建。
-- 匿名 Symbol 的能力有限，尤其是作为对象 key 使用时。为了稳定往返，优先使用 well-known symbol 或 `Symbol.for()`。
-- class constructor 默认不会保留。只有在理解权衡后才建议使用 `preserveClassConstructor`。
-- 私有 class 字段和私有方法无法从对象外部访问，不适合作为序列化目标。
-- `Map` 的值支持往返；但当前实现不保证非字符串 key 能完整保真。
+- Class的构造函数默认不会保留，请使用 `preserveClassConstructor` 来保留构造函数。
+- Class的私有字段和私有方法无法从对象外部访问，不适合作为序列化目标。
+- `Map` 的值支持往返，但在当前版本中非字符串 key 都会被转换为字符串，就像 `object` 一样。
 - 在浏览器中，如果没有 Node.js `Buffer`，`Buffer` 会被恢复为 `Uint8Array`。
-- `WeakMap` 和 `WeakSet` 的条目不可枚举，因此只能表示其结构，不能保留内部条目。
+- `WeakMap` 和 `WeakSet` 的条目不可枚举，因此只能表示其结构（`{}` 或 `[]`），不能保留内部条目。
 
 ## 安全注意事项
 
