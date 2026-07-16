@@ -1,0 +1,16 @@
+README.zh-CN.md
+  h_282d460392904f 44,46,66-67,87-88,90-91,94-101,110,112,113,114-120,124
+README.md
+  h_282d460392904f 44,46,63,66-67,87-88,90-101,110,112,113,114-120,124,127-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "5ac435de8134e33cfe7a13dc82e59e68bf84adca",
+  "prompts": {},
+  "humans": {
+    "h_282d460392904f": {
+      "author": "lifb2 <lifb2@lenovo.com>"
+    }
+  }
+}
