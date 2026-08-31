@@ -14,6 +14,7 @@ const config: StorybookConfig = {
   },
   async viteFinal(baseConfig) {
     return mergeConfig(baseConfig, {
+      base: '/jsoneo/',
       build: {
         rollupOptions: {
           onwarn(warning: RollupLog, defaultHandler: (warning: string | RollupLog) => void) {
