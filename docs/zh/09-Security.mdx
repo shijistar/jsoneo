@@ -1,0 +1,50 @@
+---
+title: 安全
+sidebar_position: 9
+---
+
+# 安全
+
+## 概览
+
+jsoneo 可以恢复函数、访问器、属性描述符、原型相关数据和其他复杂 JavaScript 结构。`parse()` 会生成并执行 JavaScript 代码来恢复这些内容。
+
+因此，**jsoneo 不是 sandbox，也不是安全边界**。
+
+## 安全规则
+
+### ✅ 安全使用
+
+```ts
+// 只解析由可信代码中的 stringify 生成的数据
+const serialized = stringify(myTrustedObject);
+const restored = parse(serialized);
+```
+
+### ❌ 不安全使用
+
+```ts
+// 不要解析用户输入、未知网络数据或任意字符串
+const userInput = getUserInput();
+const result = parse(userInput);
+```
+
+攻击者控制序列化字符串时，可能注入会在解析阶段执行的代码。`closure`、原型恢复和函数恢复都不能提供沙箱隔离。
+
+## 建议
+
+1. 只解析本应用或受控测试 fixture 生成的数据。
+2. 外部数据优先使用 `JSON.parse()`、Protocol Buffers 等数据型格式。
+3. 不要提供“输入任意字符串并 parse”的在线工具。
+4. 若必须接收外部数据，先进行独立的结构校验和风险评估。
+5. 通过安全渠道报告漏洞，不要公开发布可利用细节。
+
+## 何时使用原生 JSON
+
+| 场景               | 建议             |
+| ------------------ | ---------------- |
+| 用户输入和表单数据 | `JSON.parse()`   |
+| 不可信 API 响应    | `JSON.parse()`   |
+| 用户提供的配置文件 | `JSON.parse()`   |
+| 受控测试 fixture   | `jsoneo.parse()` |
+| 内部对象快照       | `jsoneo.parse()` |

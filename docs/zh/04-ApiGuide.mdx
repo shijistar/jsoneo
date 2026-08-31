@@ -1,0 +1,112 @@
+---
+title: API 指南
+sidebar_position: 4
+---
+
+# API 参考
+
+## `stringify(value, options?)`
+
+将 JavaScript 值序列化为字符串。
+
+```ts
+import { stringify } from 'jsoneo';
+
+const text = stringify(value, options);
+```
+
+### `StringifyOptions`
+
+| 选项                       | 类型      | 默认值     | 说明                               |
+| -------------------------- | --------- | ---------- | ---------------------------------- |
+| `startTag`                 | `string`  | `'$SJS$_'` | 用于标记序列化字符串开始的内部标记 |
+| `endTag`                   | `string`  | `'_$SJE$'` | 用于标记序列化字符串结束的内部标记 |
+| `variablePrefix`           | `string`  | `'$SJV$_'` | 生成变量名时使用的前缀             |
+| `preserveClassConstructor` | `boolean` | `false`    | 序列化时是否保留类构造函数代码     |
+| `preserveDescriptors`      | `boolean` | `true`     | 是否保留自定义属性描述符           |
+| `debug`                    | `boolean` | `false`    | 打印序列化调试信息                 |
+
+---
+
+## `parse(input, options?)`
+
+反序列化由 `stringify` 产生的字符串。
+
+```ts
+import { parse } from 'jsoneo';
+
+const value = parse(text, options);
+```
+
+### `ParseOptions`
+
+| 选项          | 类型                      | 默认值         | 说明                               |
+| ------------- | ------------------------- | -------------- | ---------------------------------- |
+| `closure`     | `Record<string, unknown>` | `undefined`    | 恢复序列化函数时可用的外部变量     |
+| `get`         | `GetFunc`                 | 内置路径获取器 | 恢复补丁时用于读取子值的自定义函数 |
+| `prettyPrint` | `boolean`                 | `true`         | 调试输出时美化生成的反序列化代码   |
+| `debug`       | `boolean`                 | `false`        | 打印反序列化调试信息               |
+
+---
+
+## 类型定义
+
+```ts
+// 来自 src/types.ts
+
+export interface StringifyOptions {
+  startTag?: string;
+  endTag?: string;
+  variablePrefix?: string;
+  preserveClassConstructor?: boolean;
+  preserveDescriptors?: boolean;
+  debug?: boolean;
+}
+
+export interface ParseOptions {
+  closure?: Record<string, unknown>;
+  get?: GetFunc;
+  prettyPrint?: boolean;
+  debug?: boolean;
+}
+
+export type GetFunc = (obj: unknown, path: (string | number | symbol)[]) => unknown;
+```
+
+---
+
+## 使用 Closure 处理函数
+
+函数体可以序列化，但 JavaScript 闭包无法自动捕获。如果恢复的函数需要外部值，请通过 `closure` 选项提供：
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const allowedRoles = ['admin', 'editor'];
+const source = {
+  canRead(user: { role: string }) {
+    return allowedRoles.includes(user.role);
+  },
+};
+
+const restored = parse(stringify(source), {
+  closure: { allowedRoles },
+});
+
+restored.canRead({ role: 'admin' }); // true
+```
+
+或者，将可序列化的值直接附加到命名函数对象上：
+
+```ts
+function canRead(user: { role: string }) {
+  return canRead.allowedRoles.includes(user.role);
+}
+canRead.allowedRoles = ['admin', 'editor'];
+
+const restored = parse(stringify({ canRead })) as { canRead: typeof canRead };
+restored.canRead({ role: 'admin' }); // true
+restored.canRead.allowedRoles; // ['admin', 'editor']
+```
+
+> **必须使用命名函数** 才能使此模式可靠工作。匿名函数、箭头函数或对象方法简写无法提供相同的可靠自引用。

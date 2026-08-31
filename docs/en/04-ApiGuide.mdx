@@ -1,0 +1,112 @@
+---
+title: API Guide
+sidebar_position: 4
+---
+
+# API Reference
+
+## `stringify(value, options?)`
+
+Serializes a JavaScript value into a string.
+
+```ts
+import { stringify } from 'jsoneo';
+
+const text = stringify(value, options);
+```
+
+### `StringifyOptions`
+
+| Option                     | Type      | Default    | Description                                                     |
+| -------------------------- | --------- | ---------- | --------------------------------------------------------------- |
+| `startTag`                 | `string`  | `'$SJS$_'` | Internal marker used to encode JavaScript expressions           |
+| `endTag`                   | `string`  | `'_$SJE$'` | Internal marker used to encode JavaScript expressions           |
+| `variablePrefix`           | `string`  | `'$SJV$_'` | Prefix used for generated variable names                        |
+| `preserveClassConstructor` | `boolean` | `false`    | Whether to preserve class constructor code during serialization |
+| `preserveDescriptors`      | `boolean` | `true`     | Whether to preserve custom property descriptors                 |
+| `debug`                    | `boolean` | `false`    | Print serialization debug information                           |
+
+---
+
+## `parse(input, options?)`
+
+Deserializes a string produced by `stringify`.
+
+```ts
+import { parse } from 'jsoneo';
+
+const value = parse(text, options);
+```
+
+### `ParseOptions`
+
+| Option        | Type                      | Default              | Description                                                           |
+| ------------- | ------------------------- | -------------------- | --------------------------------------------------------------------- |
+| `closure`     | `Record<string, unknown>` | `undefined`          | External variables made available when restoring serialized functions |
+| `get`         | `GetFunc`                 | built-in path getter | Custom function used to read child values while restoring patches     |
+| `prettyPrint` | `boolean`                 | `true`               | Pretty-print generated deserialization code in debug output           |
+| `debug`       | `boolean`                 | `false`              | Print deserialization debug information                               |
+
+---
+
+## Type Definitions
+
+```ts
+// From src/types.ts
+
+export interface StringifyOptions {
+  startTag?: string;
+  endTag?: string;
+  variablePrefix?: string;
+  preserveClassConstructor?: boolean;
+  preserveDescriptors?: boolean;
+  debug?: boolean;
+}
+
+export interface ParseOptions {
+  closure?: Record<string, unknown>;
+  get?: GetFunc;
+  prettyPrint?: boolean;
+  debug?: boolean;
+}
+
+export type GetFunc = (obj: unknown, path: (string | number | symbol)[]) => unknown;
+```
+
+---
+
+## Using Closure for Functions
+
+Function bodies can be serialized, but JavaScript closures cannot be captured automatically. If a restored function needs external values, provide them through the `closure` option:
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const allowedRoles = ['admin', 'editor'];
+const source = {
+  canRead(user: { role: string }) {
+    return allowedRoles.includes(user.role);
+  },
+};
+
+const restored = parse(stringify(source), {
+  closure: { allowedRoles },
+});
+
+restored.canRead({ role: 'admin' }); // true
+```
+
+Alternatively, attach serializable values directly to a named function object:
+
+```ts
+function canRead(user: { role: string }) {
+  return canRead.allowedRoles.includes(user.role);
+}
+canRead.allowedRoles = ['admin', 'editor'];
+
+const restored = parse(stringify({ canRead })) as { canRead: typeof canRead };
+restored.canRead({ role: 'admin' }); // true
+restored.canRead.allowedRoles; // ['admin', 'editor']
+```
+
+> Use a **named function** for this pattern. Anonymous functions, arrow functions, or object method shorthand do not provide the same reliable self-reference.

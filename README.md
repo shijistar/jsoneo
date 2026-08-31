@@ -30,6 +30,14 @@ Native JSON is simple and portable, but it loses JavaScript-specific information
 npm install jsoneo
 ```
 
+## Storybook documentation
+
+Interactive documentation and API demos are available in the Storybook site:
+
+- Online site: [https://shijistar.github.io/jsoneo/](https://shijistar.github.io/jsoneo/) (available after GitHub Pages is enabled)
+- Local development: `npm run storybook`
+- Static build: `npm run build-storybook`
+
 ## Quick start
 
 ```ts

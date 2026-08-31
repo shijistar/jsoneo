@@ -1,0 +1,119 @@
+---
+title: 快速开始
+sidebar_position: 3
+---
+
+# 快速开始
+
+```ts
+import { parse, stringify } from 'jsoneo';
+
+const json = {
+  // JSON 基础类型
+  name: 'John',
+  age: 30,
+  isAdmin: false,
+  address: { city: 'New York', zip: '10001' },
+  tags: ['developer', 'javascript'],
+  projects: [{ id: 1, name: 'Project 1' }],
+
+  // 特殊基础值
+  negativeZero: -0,
+  notANumber: NaN,
+  positiveInfinity: Infinity,
+  negativeInfinity: -Infinity,
+  bigValue: 12345678901234567890n,
+
+  // 内建对象
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  invalidDate: new Date(NaN),
+  pattern: /abc/gi,
+  error: new Error('boom'),
+  homepage: new URL('https://example.com?id=123'),
+  query: new URLSearchParams('id=123&tab=profile'),
+
+  // Symbol 值和对象键
+  id: Symbol.for('id'),
+  wellKnownSymbol: Symbol.iterator,
+  localSymbol: Symbol('localId'),
+  [Symbol.for('role')]: 'admin',
+  [Symbol.toStringTag]: 'User',
+
+  // 集合
+  roles: new Map([
+    ['admin', true],
+    ['editor', false],
+  ]),
+  permissions: new Set(['read', 'write']),
+
+  // 二进制数据
+  bytes: new Uint8Array([1, 2, 3, 4]),
+  typedArrays: {
+    int8: new Int8Array([-1, 2]),
+    int16: new Int16Array([-1234, 2345]),
+    int32: new Int32Array([-123456, 234567]),
+    float32: new Float32Array([1.5, -2.25]),
+    float64: new Float64Array([Math.PI, -Math.E]),
+    bigInt64: new BigInt64Array([-1n, 2n]),
+  },
+  buffer: new ArrayBuffer(8),
+  view: new DataView(new ArrayBuffer(8)),
+
+  // 函数
+  welcome() {
+    return `Hi! ${this.name}!`;
+  },
+  loadProfile: async function () {
+    return { name: this.name, status: 'loaded' };
+  },
+  add: (a: number, b: number) => a + b,
+  *numbers() {
+    yield 1;
+    yield 2;
+  },
+  iterable: {
+    *[Symbol.iterator]() {
+      yield 'a';
+      yield 'b';
+    },
+  },
+};
+
+// 属性描述符
+Object.defineProperties(json, {
+  birthday: { value: '2000-01-01', writable: false, enumerable: true },
+  _value: { value: 1, writable: true, enumerable: false },
+  publicValue: {
+    get() {
+      return this._value;
+    },
+    set(value) {
+      this._value = value;
+    },
+    enumerable: true,
+  },
+});
+
+// 循环引用
+json.self = json;
+
+// 序列化
+const serialized = stringify(json);
+console.log('Serialized:', serialized);
+
+// 反序列化
+const deserialized = parse(serialized);
+console.log('Deserialized:', deserialized);
+```
+
+## 预期结果
+
+运行上述代码后：
+
+- `deserialized.createdAt` 将是 `Date` 实例
+- `deserialized.roles` 将是 `Map` 实例
+- `deserialized.permissions` 将是 `Set` 实例
+- `deserialized.bytes` 将是 `Uint8Array` 实例
+- `deserialized.welcome()` 作为函数正常工作
+- `deserialized.self === deserialized` 为 `true`（循环引用已恢复）
+- 属性描述符如 `birthday`（只读）和 `publicValue`（访问器）被保留
