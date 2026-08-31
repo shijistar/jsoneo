@@ -1,0 +1,34 @@
+.storybook/stories/40-Compatibility.stories.tsx
+  h_99cad05bea77d1 239-242
+.storybook/stories/21-SpecialValues.stories.tsx
+  h_99cad05bea77d1 182
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 4,210-212
+package.json
+  h_99cad05bea77d1 41,46,48,53,56-58
+.storybook/utils/roundTrip.ts
+  h_99cad05bea77d1 51-52
+.storybook/stories/23-BinaryValues.stories.tsx
+  h_99cad05bea77d1 161,166,171,176,181,186,191,196,201,206
+.gitignore
+  h_99cad05bea77d1 10-11
+.storybook/stories/22-BuiltinsAndCollections.stories.tsx
+  h_99cad05bea77d1 164,169,174
+.storybook/stories/10-Workbench.stories.bak.tsx
+  h_99cad05bea77d1 13,263
+scripts/update-docs-title.ts
+  h_99cad05bea77d1 1-71
+scripts/update-stories-title.ts
+  h_99cad05bea77d1 1-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "29215277e1eca9612c69e509b416245bf3b9acd8",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
