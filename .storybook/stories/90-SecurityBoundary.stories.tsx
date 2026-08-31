@@ -8,9 +8,9 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: 'Security / Boundary',
+  title: 'Security Concern / Security Boundary',
   // @ts-expect-error: because titleCN is an extension field
-  titleCN: '安全 / 边界',
+  titleCN: '安全性 / 安全边界',
   component: SecurityBoundaryStory,
   parameters: {
     docs: {

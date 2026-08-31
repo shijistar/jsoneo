@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import type { RollupLog } from 'rollup';
 import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
@@ -9,13 +10,30 @@ const config: StorybookConfig = {
     options: {},
   },
   docs: {
-    defaultName: 'Docs',
+    defaultName: 'All',
   },
   async viteFinal(baseConfig) {
     return mergeConfig(baseConfig, {
-      base: '/jsoneo/',
+      build: {
+        rollupOptions: {
+          onwarn(warning: RollupLog, defaultHandler: (warning: string | RollupLog) => void) {
+            if (shouldIgnoreUseClientWarning(warning)) {
+              return;
+            }
+            defaultHandler(warning);
+          },
+        },
+      },
     });
   },
 };
+
+function shouldIgnoreUseClientWarning(warning: RollupLog) {
+  return (
+    warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+    typeof warning.message === 'string' &&
+    warning.message.includes('"use client"')
+  );
+}
 
 export default config;
