@@ -9,6 +9,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Special Values',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 特殊值',
+  component: SpecialValuesStory,
   parameters: {
     docs: {
       description: {
@@ -29,8 +32,7 @@ const meta: Meta = {
 
 type StoryArgs = { input: unknown };
 
-const SpecialValuesStory = (args: StoryArgs) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+function SpecialValuesStory(args: StoryArgs) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,6 @@ const SpecialValuesStory = (args: StoryArgs) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -86,19 +87,6 @@ const SpecialValuesStory = (args: StoryArgs) => {
           Run stringify → parse
         </Button>
       </div>
-
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
 
       {serialized && (
         <div className="sb-section">
@@ -149,41 +137,57 @@ const SpecialValuesStory = (args: StoryArgs) => {
       )}
     </div>
   );
-};
+}
 
-export default {
-  ...meta,
-  component: SpecialValuesStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const UndefinedValue: Story = {
+  name: 'Undefined Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'undefined 值',
   args: { input: { value: undefined } },
 };
 
 export const NaNValue: Story = {
   name: 'NaN Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'NaN 值',
   args: { input: { value: NaN } },
 };
 
 export const PositiveInfinity: Story = {
+  name: 'Positive Infinity',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '正无穷大',
   args: { input: { value: Infinity } },
 };
 
 export const NegativeInfinity: Story = {
+  name: 'Negative Infinity',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '负无穷大',
   args: { input: { value: -Infinity } },
 };
 
 export const NegativeZero: Story = {
+  name: 'Negative Zero',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '负零',
   args: { input: { value: -0 } },
 };
 
 export const BigIntValue: Story = {
   name: 'BigInt Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'BigInt 值',
   args: { input: { value: 9007199254740991n } },
 };
 
 export const MixedSpecialValues: Story = {
+  name: 'Mixed Special Values',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '混合特殊值',
   args: {
     input: {
       undefined: undefined,

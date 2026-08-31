@@ -9,6 +9,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Security / Boundary',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '安全 / 边界',
+  component: SecurityBoundaryStory,
   parameters: {
     docs: {
       description: {
@@ -29,8 +32,7 @@ const meta: Meta = {
 
 type StoryArgs = { input: unknown };
 
-const SecurityBoundaryStory = (args: StoryArgs) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+function SecurityBoundaryStory(args: StoryArgs) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,6 @@ const SecurityBoundaryStory = (args: StoryArgs) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -96,19 +97,6 @@ const SecurityBoundaryStory = (args: StoryArgs) => {
           Run stringify → parse (Trusted Fixture)
         </Button>
       </div>
-
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input (Trusted)</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
 
       {serialized && (
         <div className="sb-section">
@@ -194,15 +182,15 @@ const result = parse(arbitraryString); // EXECUTES ARBITRARY CODE`}
       </div>
     </div>
   );
-};
+}
 
-export default {
-  ...meta,
-  component: SecurityBoundaryStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const TrustedRoundTrip: Story = {
+  name: 'Trusted Round Trip',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '可信往返',
   args: {
     input: {
       user: {
@@ -219,6 +207,9 @@ export const TrustedRoundTrip: Story = {
 };
 
 export const ComplexTrustedObject: Story = {
+  name: 'Complex Trusted Object',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '复杂可信对象',
   args: {
     input: (() => {
       const obj: any = {

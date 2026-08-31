@@ -9,6 +9,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Built-ins & Collections',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 内置与集合',
+  component: BuiltinsCollectionsStory,
   parameters: {
     docs: {
       description: {
@@ -28,8 +31,7 @@ const meta: Meta = {
 
 type StoryArgs = { input: unknown };
 
-const BuiltinsCollectionsStory = (args: StoryArgs) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+function BuiltinsCollectionsStory(args: StoryArgs) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,6 @@ const BuiltinsCollectionsStory = (args: StoryArgs) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -85,19 +86,6 @@ const BuiltinsCollectionsStory = (args: StoryArgs) => {
           Run stringify → parse
         </Button>
       </div>
-
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
 
       {serialized && (
         <div className="sb-section">
@@ -148,34 +136,43 @@ const BuiltinsCollectionsStory = (args: StoryArgs) => {
       )}
     </div>
   );
-};
+}
 
-export default {
-  ...meta,
-  component: BuiltinsCollectionsStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const DateValue: Story = {
+  name: 'Date Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Date 值',
   args: { input: { date: new Date('2026-01-01T00:00:00.000Z') } },
 };
 
 export const RegExpValue: Story = {
   name: 'RegExp Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'RegExp 值',
   args: { input: { regexp: /abc/gi } },
 };
 
 export const URLValue: Story = {
   name: 'URL Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'URL 值',
   args: { input: { url: new URL('https://example.com?id=123') } },
 };
 
 export const URLSearchParamsValue: Story = {
   name: 'URLSearchParams Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'URLSearchParams 值',
   args: { input: { params: new URLSearchParams('id=123&tab=profile') } },
 };
 
 export const MapValue: Story = {
+  name: 'Map Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Map 值',
   args: {
     input: {
       map: new Map<string, unknown>([
@@ -187,10 +184,16 @@ export const MapValue: Story = {
 };
 
 export const SetValue: Story = {
+  name: 'Set Value',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Set 值',
   args: { input: { set: new Set(['a', 'b', 'c']) } },
 };
 
 export const MixedCollections: Story = {
+  name: 'Mixed Collections',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '混合集合',
   args: {
     input: {
       date: new Date('2026-01-01T00:00:00.000Z'),

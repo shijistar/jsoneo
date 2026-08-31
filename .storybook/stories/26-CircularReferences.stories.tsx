@@ -9,6 +9,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Circular References',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 循环引用',
+  component: CircularReferencesStory,
   parameters: {
     docs: {
       description: {
@@ -29,8 +32,7 @@ const meta: Meta = {
 
 type StoryArgs = { input: unknown };
 
-const CircularReferencesStory = (args: StoryArgs) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+function CircularReferencesStory(args: StoryArgs) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,6 @@ const CircularReferencesStory = (args: StoryArgs) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -86,19 +87,6 @@ const CircularReferencesStory = (args: StoryArgs) => {
           Run stringify → parse
         </Button>
       </div>
-
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
 
       {serialized && (
         <div className="sb-section">
@@ -149,15 +137,15 @@ const CircularReferencesStory = (args: StoryArgs) => {
       )}
     </div>
   );
-};
+}
 
-export default {
-  ...meta,
-  component: CircularReferencesStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SimpleCircular: Story = {
+  name: 'Simple Circular',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '简单循环',
   args: {
     input: (() => {
       const circular: any = { name: 'circular', value: 42 };
@@ -169,6 +157,9 @@ export const SimpleCircular: Story = {
 };
 
 export const CircularArray: Story = {
+  name: 'Circular Array',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '循环数组',
   args: {
     input: (() => {
       const arr: any = [1, 2, 3];
@@ -179,6 +170,9 @@ export const CircularArray: Story = {
 };
 
 export const CircularObjectGraph: Story = {
+  name: 'Circular Object Graph',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '循环对象图',
   args: {
     input: (() => {
       const a: any = { name: 'a' };
@@ -190,6 +184,9 @@ export const CircularObjectGraph: Story = {
 };
 
 export const DeepCircular: Story = {
+  name: 'Deep Circular',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '深层循环',
   args: {
     input: (() => {
       const root: any = { level: 0 };

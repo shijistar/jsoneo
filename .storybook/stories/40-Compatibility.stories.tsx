@@ -9,6 +9,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Compatibility / Runtime Environments',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '兼容性 / 运行时环境',
+  component: CompatibilityStory,
   parameters: {
     docs: {
       description: {
@@ -29,8 +32,7 @@ const meta: Meta = {
 
 type StoryArgs = { input: unknown };
 
-const CompatibilityStory = (args: StoryArgs) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+function CompatibilityStory(args: StoryArgs) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,6 @@ const CompatibilityStory = (args: StoryArgs) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -104,19 +105,6 @@ const CompatibilityStory = (args: StoryArgs) => {
         </Button>
       </div>
 
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
-
       {serialized && (
         <div className="sb-section">
           <h3 className="sb-section-title">Serialized Output (stringify)</h3>
@@ -166,15 +154,15 @@ const CompatibilityStory = (args: StoryArgs) => {
       )}
     </div>
   );
-};
+}
 
-export default {
-  ...meta,
-  component: CompatibilityStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const BufferSupport: Story = {
+  name: 'Buffer Support',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Buffer 支持',
   args: {
     input: (() => {
       if (typeof Buffer !== 'undefined') {
@@ -186,6 +174,9 @@ export const BufferSupport: Story = {
 };
 
 export const BigIntTypedArrays: Story = {
+  name: 'BigInt Typed Arrays',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'BigInt 类型化数组',
   args: {
     input: {
       bigInt64: new BigInt64Array([-1n, 2n, -3n]),
@@ -195,6 +186,9 @@ export const BigIntTypedArrays: Story = {
 };
 
 export const CrossEnvironmentObject: Story = {
+  name: 'Cross Environment Object',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '跨环境对象',
   args: {
     input: {
       string: 'test',
@@ -211,6 +205,9 @@ export const CrossEnvironmentObject: Story = {
 };
 
 export const SymbolSupport: Story = {
+  name: 'Symbol Support',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Symbol 支持',
   args: {
     input: {
       globalSymbol: Symbol.for('global.key'),
@@ -224,6 +221,9 @@ export const SymbolSupport: Story = {
 };
 
 export const ErrorObject: Story = {
+  name: 'Error Object',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: 'Error 对象',
   args: {
     input: {
       error: new Error('Test error'),
@@ -234,6 +234,9 @@ export const ErrorObject: Story = {
 };
 
 export const IterablesAndGenerators: Story = {
+  name: 'Iterables And Generators',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '可迭代与生成器',
   args: {
     input: {
       // generator: (function* () {

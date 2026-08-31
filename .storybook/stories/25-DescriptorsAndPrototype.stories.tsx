@@ -10,6 +10,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Descriptors & Prototype',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 描述符与原型',
+  component: DescriptorsPrototypeStory,
   parameters: {
     docs: {
       description: {
@@ -40,9 +43,8 @@ type StoryArgs = {
 
 type DescriptorsPrototypeProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
 
-const DescriptorsPrototypeStory = (args: DescriptorsPrototypeProps) => {
+function DescriptorsPrototypeStory(args: DescriptorsPrototypeProps) {
   const { updateArgs } = args;
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,6 @@ const DescriptorsPrototypeStory = (args: DescriptorsPrototypeProps) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {
         preserveDescriptors: args.preserveDescriptors,
       };
@@ -114,19 +115,6 @@ const DescriptorsPrototypeStory = (args: DescriptorsPrototypeProps) => {
         </Button>
       </div>
 
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
-
       {serialized && (
         <div className="sb-section">
           <h3 className="sb-section-title">Serialized Output (stringify)</h3>
@@ -176,7 +164,7 @@ const DescriptorsPrototypeStory = (args: DescriptorsPrototypeProps) => {
       )}
     </div>
   );
-};
+}
 
 // useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
 const renderWithArgs = (storyArgs: StoryArgs) => {
@@ -184,13 +172,13 @@ const renderWithArgs = (storyArgs: StoryArgs) => {
   return <DescriptorsPrototypeStory {...args} updateArgs={updateArgs} />;
 };
 
-export default {
-  ...meta,
-  component: DescriptorsPrototypeStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CustomDescriptors: Story = {
+  name: 'Custom Descriptors',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '自定义描述符',
   render: renderWithArgs,
   args: {
     input: (() => {
@@ -215,6 +203,9 @@ export const CustomDescriptors: Story = {
 };
 
 export const DescriptorsDisabled: Story = {
+  name: 'Descriptors Disabled',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '禁用描述符',
   render: renderWithArgs,
   args: {
     input: (() => {
@@ -239,6 +230,9 @@ export const DescriptorsDisabled: Story = {
 };
 
 export const PrototypeChain: Story = {
+  name: 'Prototype Chain',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '原型链',
   render: renderWithArgs,
   args: {
     input: (() => {
@@ -256,6 +250,9 @@ export const PrototypeChain: Story = {
 };
 
 export const MixedDescriptorsAndPrototype: Story = {
+  name: 'Mixed Descriptors And Prototype',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '描述符与原型混合',
   render: renderWithArgs,
   args: {
     input: (() => {

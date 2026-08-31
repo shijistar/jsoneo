@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Input, Segmented, Switch, Tooltip } from 'antd';
+import { Button, Input, Switch, Tooltip } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
@@ -10,6 +10,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Options',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 选项',
+  component: OptionsView,
   parameters: {
     docs: {
       description: {
@@ -88,7 +91,7 @@ const OPTIONS_PRESETS: Record<string, OptionsArgs> = {
   },
 };
 
-const OptionsView = ({
+function OptionsView({
   input,
   startTag,
   endTag,
@@ -98,8 +101,7 @@ const OptionsView = ({
   debug,
   prettyPrint,
   updateArgs,
-}: OptionsArgs & { updateArgs: (patch: Partial<OptionsArgs>) => void }) => {
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
+}: OptionsArgs & { updateArgs: (patch: Partial<OptionsArgs>) => void }) {
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +111,6 @@ const OptionsView = ({
     setError(null);
     try {
       const value = input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {
         startTag: startTag || undefined,
         endTag: endTag || undefined,
@@ -231,19 +232,6 @@ const OptionsView = ({
         </Button>
       </div>
 
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
-
       {serialized && (
         <div className="sb-section">
           <h3 className="sb-section-title">Serialized Output (stringify)</h3>
@@ -293,7 +281,7 @@ const OptionsView = ({
       )}
     </div>
   );
-};
+}
 
 // useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
 const renderOptions = () => {
@@ -301,13 +289,13 @@ const renderOptions = () => {
   return <OptionsView {...args} updateArgs={updateArgs} />;
 };
 
-export default {
-  ...meta,
-  component: OptionsView,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Options: Story = {
+  name: 'Options',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '选项',
   args: OPTIONS_PRESETS.default,
   render: renderOptions,
 };

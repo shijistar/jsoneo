@@ -10,6 +10,9 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 
 const meta: Meta = {
   title: 'Core API / Functions & Closure',
+  // @ts-expect-error: because titleCN is an extension field
+  titleCN: '核心 API / 函数与闭包',
+  component: FunctionsClosureStory,
   parameters: {
     docs: {
       description: {
@@ -41,9 +44,8 @@ type StoryArgs = {
 
 type FunctionsClosureProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
 
-const FunctionsClosureStory = (args: FunctionsClosureProps) => {
+function FunctionsClosureStory(args: FunctionsClosureProps) {
   const { updateArgs } = args;
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +55,6 @@ const FunctionsClosureStory = (args: FunctionsClosureProps) => {
     setError(null);
     try {
       const value = args.input;
-      setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
@@ -124,19 +125,6 @@ const FunctionsClosureStory = (args: FunctionsClosureProps) => {
         </Button>
       </div>
 
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">Original Input</h3>
-          <ResultPanel
-            label={`Type: ${getTypeSummary(originalValue)}`}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
-
       {serialized && (
         <div className="sb-section">
           <h3 className="sb-section-title">Serialized Output (stringify)</h3>
@@ -186,7 +174,7 @@ const FunctionsClosureStory = (args: FunctionsClosureProps) => {
       )}
     </div>
   );
-};
+}
 
 // useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
 const renderWithArgs = (storyArgs: StoryArgs) => {
@@ -194,13 +182,13 @@ const renderWithArgs = (storyArgs: StoryArgs) => {
   return <FunctionsClosureStory {...args} updateArgs={updateArgs} />;
 };
 
-export default {
-  ...meta,
-  component: FunctionsClosureStory,
-} as Meta;
+export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RegularFunction: Story = {
+  name: 'Regular Function',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '普通函数',
   render: renderWithArgs,
   args: {
     input: {
@@ -213,6 +201,9 @@ export const RegularFunction: Story = {
 };
 
 export const ArrowFunction: Story = {
+  name: 'Arrow Function',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '箭头函数',
   render: renderWithArgs,
   args: {
     input: {
@@ -223,6 +214,9 @@ export const ArrowFunction: Story = {
 };
 
 export const AsyncFunction: Story = {
+  name: 'Async Function',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '异步函数',
   render: renderWithArgs,
   args: {
     input: {
@@ -236,6 +230,9 @@ export const AsyncFunction: Story = {
 };
 
 export const GeneratorFunction: Story = {
+  name: 'Generator Function',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '生成器函数',
   render: renderWithArgs,
   args: {
     input: {
@@ -249,6 +246,9 @@ export const GeneratorFunction: Story = {
 };
 
 export const MethodObject: Story = {
+  name: 'Method Object',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '方法对象',
   render: renderWithArgs,
   args: {
     input: {
@@ -264,6 +264,9 @@ export const MethodObject: Story = {
 };
 
 export const FunctionWithClosure: Story = {
+  name: 'Function With Closure',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '带闭包函数',
   render: renderWithArgs,
   args: {
     input: (() => {
@@ -278,6 +281,9 @@ export const FunctionWithClosure: Story = {
 };
 
 export const FunctionWithAttachedProperties: Story = {
+  name: 'Function With Attached Properties',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '带附加属性函数',
   render: renderWithArgs,
   args: {
     input: (() => {
@@ -291,6 +297,9 @@ export const FunctionWithAttachedProperties: Story = {
 };
 
 export const MixedFunctions: Story = {
+  name: 'Mixed Functions',
+  // @ts-expect-error: because nameCN is an extension field
+  nameCN: '混合函数',
   render: renderWithArgs,
   args: {
     input: {
