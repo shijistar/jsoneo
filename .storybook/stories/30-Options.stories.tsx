@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Input, Segmented, Switch } from 'antd';
+import { Button, Input, Segmented, Switch, Tooltip } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
@@ -207,7 +207,9 @@ const OptionsView = ({
           </label>
           <label className="sb-card">
             <span style={{ marginRight: '0.5rem' }}>debug</span>
-            <Switch checked={debug} onChange={(checked) => updateArgs({ debug: checked })} />
+            <Tooltip title="Toggle debug mode, shows additional information in console">
+              <Switch checked={debug} onChange={(checked) => updateArgs({ debug: checked })} />
+            </Tooltip>
           </label>
         </div>
       </div>

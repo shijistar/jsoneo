@@ -7,8 +7,8 @@ tses
 src/version.ts
 test/utils/version.ts
 test/__screenshots__
-.stroybook/docs/titles.json
-.stroybook/stories/titles.json
+.storybook/docs/titles.json
+.storybook/stories/titles.json
 .vitest-attachments
 types-legacy/*/*.d.ts
 node_modules

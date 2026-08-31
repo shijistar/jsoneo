@@ -236,10 +236,10 @@ export const ErrorObject: Story = {
 export const IterablesAndGenerators: Story = {
   args: {
     input: {
-      generator: (function* () {
-        yield 1;
-        yield 2;
-      })(),
+      // generator: (function* () {
+      //   yield 1;
+      //   yield 2;
+      // })(),
       iterable: {
         *[Symbol.iterator]() {
           yield 'a';

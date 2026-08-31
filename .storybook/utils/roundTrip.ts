@@ -48,6 +48,8 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
     return `new ArrayBuffer()`;
   } else if (value instanceof DataView) {
     return `new DataView()`;
+  } else if (value instanceof Error) {
+    return `new Error("${value.message}")`;
   } else if (typeof value === 'symbol') {
     if (Symbol.keyFor(value)) {
       return `Symbol.for("${Symbol.keyFor(value)}")`;

@@ -179,6 +179,7 @@ export const NegativeZero: Story = {
 };
 
 export const BigIntValue: Story = {
+  name: 'BigInt Value',
   args: { input: { value: 9007199254740991n } },
 };
 

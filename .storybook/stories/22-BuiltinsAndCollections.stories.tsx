@@ -161,14 +161,17 @@ export const DateValue: Story = {
 };
 
 export const RegExpValue: Story = {
+  name: 'RegExp Value',
   args: { input: { regexp: /abc/gi } },
 };
 
 export const URLValue: Story = {
+  name: 'URL Value',
   args: { input: { url: new URL('https://example.com?id=123') } },
 };
 
 export const URLSearchParamsValue: Story = {
+  name: 'URLSearchParams Value',
   args: { input: { params: new URLSearchParams('id=123&tab=profile') } },
 };
 

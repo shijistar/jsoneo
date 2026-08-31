@@ -10,7 +10,7 @@ import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip'
 import { createFixture, FIXTURE_LABELS, FIXTURE_TYPES } from './shared/fixtures';
 
 const meta: Meta = {
-  title: '10 Workbench / Playground',
+  title: 'Workbench/Playground',
   parameters: {
     docs: {
       description: {
@@ -260,6 +260,7 @@ export default {
 type Story = StoryObj<typeof meta>;
 
 export const Workbench: Story = {
+  name: 'Playground',
   args: {
     fixture: 'primitives',
     preserveDescriptors: true,

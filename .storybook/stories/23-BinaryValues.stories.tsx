@@ -158,42 +158,52 @@ export default {
 type Story = StoryObj<typeof meta>;
 
 export const Uint8ArrayValue: Story = {
+  name: 'Uint8Array Value',
   args: { input: { data: new Uint8Array([1, 2, 3, 4, 5]) } },
 };
 
 export const Int8ArrayValue: Story = {
+  name: 'Int8Array Value',
   args: { input: { data: new Int8Array([-1, 2, -3, 4]) } },
 };
 
 export const Int16ArrayValue: Story = {
+  name: 'Int16Array Value',
   args: { input: { data: new Int16Array([-1234, 2345, -3456]) } },
 };
 
 export const Int32ArrayValue: Story = {
+  name: 'Int32Array Value',
   args: { input: { data: new Int32Array([-123456, 234567]) } },
 };
 
 export const Float32ArrayValue: Story = {
+  name: 'Float32Array Value',
   args: { input: { data: new Float32Array([1.5, -2.25, 3.14159]) } },
 };
 
 export const Float64ArrayValue: Story = {
+  name: 'Float64Array Value',
   args: { input: { data: new Float64Array([Math.PI, -Math.E, 2.71828]) } },
 };
 
 export const BigInt64ArrayValue: Story = {
+  name: 'BigInt64Array Value',
   args: { input: { data: new BigInt64Array([-1n, 2n, -3n]) } },
 };
 
 export const BigUint64ArrayValue: Story = {
+  name: 'BigUint64Array Value',
   args: { input: { data: new BigUint64Array([1n, 2n, 3n]) } },
 };
 
 export const ArrayBufferValue: Story = {
+  name: 'ArrayBuffer Value',
   args: { input: { buffer: new ArrayBuffer(16) } },
 };
 
 export const DataViewValue: Story = {
+  name: 'DataView Value',
   args: { input: { view: new DataView(new ArrayBuffer(8)) } },
 };
 
