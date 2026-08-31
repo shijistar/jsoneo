@@ -173,6 +173,7 @@ export const UndefinedValue: Story = {
 };
 
 export const NaNValue: Story = {
+  name: 'NaN Value',
   args: { input: { value: NaN } },
 };
 
