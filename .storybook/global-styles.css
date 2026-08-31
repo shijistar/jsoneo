@@ -1,0 +1,17 @@
+/* Global styles for Storybook */
+:root {
+  --storybook-font-family: -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, oxygen, ubuntu, cantarell, sans-serif;
+  --storybook-code-font-family: 'SF Mono', 'Fira Code', 'Fira Mono', menlo, consolas, monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--storybook-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code,
+pre {
+  font-family: var(--storybook-code-font-family);
+}

@@ -30,6 +30,14 @@
 npm install jsoneo
 ```
 
+## Storybook 文档
+
+交互式文档和 API demo 将发布到 Storybook：
+
+- 在线地址：[https://shijistar.github.io/jsoneo/](https://shijistar.github.io/jsoneo/)（启用 GitHub Pages 后可访问）
+- 本地开发：`npm run storybook`
+- 静态构建：`npm run build-storybook`
+
 ## 快速开始
 
 ```ts
