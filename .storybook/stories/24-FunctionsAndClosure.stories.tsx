@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useArgs } from 'storybook/preview-api';
+import { Button, Select } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
@@ -37,7 +39,10 @@ type StoryArgs = {
   closure: string;
 };
 
-const FunctionsClosureStory = (args: StoryArgs) => {
+type FunctionsClosureProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
+
+const FunctionsClosureStory = (args: FunctionsClosureProps) => {
+  const { updateArgs } = args;
   const [originalValue, setOriginalValue] = useState<unknown>(null);
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
@@ -94,9 +99,19 @@ const FunctionsClosureStory = (args: StoryArgs) => {
         <h3 className="sb-section-title">Parse Options</h3>
         <div className="sb-card">
           <div style={{ fontSize: '0.875rem' }}>
-            Closure fixture: {args.closure === 'allowedRoles' ? 'allowedRoles = [admin, editor]' : 'none'}
+            Closure fixture:
+            <Select
+              value={args.closure}
+              onChange={(next) => updateArgs({ closure: next })}
+              options={[
+                { value: '', label: 'none' },
+                { value: 'allowedRoles', label: 'allowedRoles = [admin, editor]' },
+              ]}
+              style={{ width: 260, marginLeft: '0.5rem' }}
+            />
             <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
-              Choose a trusted fixture from the Controls panel; arbitrary closure input is intentionally unavailable.
+              Only predefined trusted closure fixtures are available; arbitrary closure input is intentionally
+              unavailable.
             </p>
           </div>
         </div>
@@ -104,21 +119,9 @@ const FunctionsClosureStory = (args: StoryArgs) => {
 
       <div className="sb-section">
         <h3 className="sb-section-title">Actions</h3>
-        <button
-          onClick={runSerialization}
-          className="sb-copy-button"
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '0.875rem',
-            background: '#0969da',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+        <Button type="primary" onClick={runSerialization}>
           Run stringify → parse
-        </button>
+        </Button>
       </div>
 
       {originalValue !== null && (
@@ -141,9 +144,9 @@ const FunctionsClosureStory = (args: StoryArgs) => {
             label={
               <>
                 Length: {serialized.length} chars
-                <button onClick={() => navigator.clipboard.writeText(serialized)} className="sb-copy-button">
+                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
                   Copy
-                </button>
+                </Button>
               </>
             }
           >
@@ -185,6 +188,12 @@ const FunctionsClosureStory = (args: StoryArgs) => {
   );
 };
 
+// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
+const renderWithArgs = (storyArgs: StoryArgs) => {
+  const [args, updateArgs] = useArgs<StoryArgs>();
+  return <FunctionsClosureStory {...args} updateArgs={updateArgs} />;
+};
+
 export default {
   ...meta,
   component: FunctionsClosureStory,
@@ -192,6 +201,7 @@ export default {
 type Story = StoryObj<typeof meta>;
 
 export const RegularFunction: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       regularFunction: function greet(name: string) {
@@ -203,6 +213,7 @@ export const RegularFunction: Story = {
 };
 
 export const ArrowFunction: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       arrowFunction: (x: number) => x * 2,
@@ -212,6 +223,7 @@ export const ArrowFunction: Story = {
 };
 
 export const AsyncFunction: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       asyncFunction: async () => {
@@ -224,6 +236,7 @@ export const AsyncFunction: Story = {
 };
 
 export const GeneratorFunction: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       generatorFunction: function* numbers() {
@@ -236,6 +249,7 @@ export const GeneratorFunction: Story = {
 };
 
 export const MethodObject: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       method: {
@@ -250,6 +264,7 @@ export const MethodObject: Story = {
 };
 
 export const FunctionWithClosure: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       function canRead(user: { role: string }) {
@@ -263,6 +278,7 @@ export const FunctionWithClosure: Story = {
 };
 
 export const FunctionWithAttachedProperties: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       function getConfig() {
@@ -275,6 +291,7 @@ export const FunctionWithAttachedProperties: Story = {
 };
 
 export const MixedFunctions: Story = {
+  render: renderWithArgs,
   args: {
     input: {
       regular: function add(a: number, b: number) {

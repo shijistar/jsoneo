@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { Button } from 'antd';
 
 interface ResultPanelProps {
   label: React.ReactNode;
@@ -86,18 +87,9 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
           </span>
         )}
         {copyText && onCopy && (
-          <button
-            onClick={onCopy}
-            className="sb-copy-button"
-            style={
-              {
-                background: isDark ? '#21262d' : '#f3f4f6',
-                borderColor: isDark ? '#30363d' : '#d1d5db',
-              } as React.CSSProperties
-            }
-          >
+          <Button size="small" onClick={onCopy}>
             Copy
-          </button>
+          </Button>
         )}
       </div>
       <pre className="sb-json-output">{children ?? ''}</pre>

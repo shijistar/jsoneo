@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Alert } from 'antd';
 
 interface TrustedInputNoticeProps {
   variant?: 'warning' | 'info';
@@ -14,24 +14,14 @@ export const TrustedInputNotice = ({ variant = 'warning', children }: TrustedInp
     </>
   );
 
-  const bgColor = variant === 'warning' ? '#fff8c5' : '#e7f3ff';
-  const borderColor = variant === 'warning' ? '#d4a700' : '#0969da';
-  const darkBgColor = variant === 'warning' ? '#3d2e00' : '#0d1117';
-  const darkBorderColor = variant === 'warning' ? '#d4a700' : '#388bfd';
-
   return (
-    <div
-      className="sb-trusted-notice"
+    <Alert
+      type={variant}
+      showIcon
       role="alert"
-      style={
-        {
-          background: bgColor,
-          borderColor,
-        } as React.CSSProperties
-      }
-    >
-      <div className="sb-trusted-notice-title">{variant === 'warning' ? '⚠️ Security Notice' : 'ℹ️ Information'}</div>
-      <div className="sb-trusted-notice-content">{children || defaultContent}</div>
-    </div>
+      style={{ marginBottom: '1rem' }}
+      message={variant === 'warning' ? '⚠️ Security Notice' : 'ℹ️ Information'}
+      description={children || defaultContent}
+    />
   );
 };

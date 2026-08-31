@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useArgs } from 'storybook/preview-api';
+import { Button, Switch } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
@@ -36,7 +38,10 @@ type StoryArgs = {
   preserveDescriptors: boolean;
 };
 
-const DescriptorsPrototypeStory = (args: StoryArgs) => {
+type DescriptorsPrototypeProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
+
+const DescriptorsPrototypeStory = (args: DescriptorsPrototypeProps) => {
+  const { updateArgs } = args;
   const [originalValue, setOriginalValue] = useState<unknown>(null);
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
@@ -92,30 +97,21 @@ const DescriptorsPrototypeStory = (args: StoryArgs) => {
       <div className="sb-section">
         <h3 className="sb-section-title">Stringify Options</h3>
         <div className="sb-grid">
-          <label className="sb-card" style={{ cursor: 'default' }}>
-            <input type="checkbox" disabled checked={args.preserveDescriptors} />
-            <span>preserveDescriptors ({String(args.preserveDescriptors)})</span>
+          <label className="sb-card">
+            <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
+            <Switch
+              checked={args.preserveDescriptors}
+              onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
+            />
           </label>
         </div>
       </div>
 
       <div className="sb-section">
         <h3 className="sb-section-title">Actions</h3>
-        <button
-          onClick={runSerialization}
-          className="sb-copy-button"
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '0.875rem',
-            background: '#0969da',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+        <Button type="primary" onClick={runSerialization}>
           Run stringify → parse
-        </button>
+        </Button>
       </div>
 
       {originalValue !== null && (
@@ -138,9 +134,9 @@ const DescriptorsPrototypeStory = (args: StoryArgs) => {
             label={
               <>
                 Length: {serialized.length} chars
-                <button onClick={() => navigator.clipboard.writeText(serialized)} className="sb-copy-button">
+                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
                   Copy
-                </button>
+                </Button>
               </>
             }
           >
@@ -182,6 +178,12 @@ const DescriptorsPrototypeStory = (args: StoryArgs) => {
   );
 };
 
+// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
+const renderWithArgs = (storyArgs: StoryArgs) => {
+  const [args, updateArgs] = useArgs<StoryArgs>();
+  return <DescriptorsPrototypeStory {...args} updateArgs={updateArgs} />;
+};
+
 export default {
   ...meta,
   component: DescriptorsPrototypeStory,
@@ -189,6 +191,7 @@ export default {
 type Story = StoryObj<typeof meta>;
 
 export const CustomDescriptors: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       const obj = { value: 1 };
@@ -212,6 +215,7 @@ export const CustomDescriptors: Story = {
 };
 
 export const DescriptorsDisabled: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       const obj = { value: 1 };
@@ -235,6 +239,7 @@ export const DescriptorsDisabled: Story = {
 };
 
 export const PrototypeChain: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       const parent = {
@@ -251,6 +256,7 @@ export const PrototypeChain: Story = {
 };
 
 export const MixedDescriptorsAndPrototype: Story = {
+  render: renderWithArgs,
   args: {
     input: (() => {
       const obj = { value: 1 };

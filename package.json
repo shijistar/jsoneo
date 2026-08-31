@@ -79,6 +79,7 @@
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
+    "antd": "^6.6.2",
     "cross-env": "^10.0.0",
     "father": "^4.6.31",
     "glob": "^13.0.6",

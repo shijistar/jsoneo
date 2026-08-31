@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useArgs } from 'storybook/preview-api';
+import { Button, Select, Switch } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
 import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
-import { createFixture, FIXTURE_TYPES, type FixtureType } from './shared/fixtures';
+import { createFixture, FIXTURE_LABELS, FIXTURE_TYPES, type FixtureType } from './shared/fixtures';
 
 const meta: Meta = {
   title: '10 Workbench / Playground',
@@ -52,12 +54,26 @@ const meta: Meta = {
   },
 };
 
-const WorkbenchStory = (args: {
+const FIXTURE_OPTIONS = FIXTURE_TYPES.map((type) => ({ value: type, label: type }));
+const CLOSURE_OPTIONS = [
+  { value: '', label: 'none' },
+  { value: 'allowedRoles', label: 'allowedRoles = [admin, editor]' },
+];
+
+type WorkbenchArgs = {
   fixture: FixtureType;
   preserveDescriptors: boolean;
   debug: boolean;
   closure: string;
-}) => {
+};
+
+const WorkbenchView = ({
+  fixture,
+  preserveDescriptors,
+  debug,
+  closure,
+  updateArgs,
+}: WorkbenchArgs & { updateArgs: (patch: Partial<WorkbenchArgs>) => void }) => {
   const [originalValue, setOriginalValue] = useState<unknown>(null);
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
@@ -67,20 +83,20 @@ const WorkbenchStory = (args: {
   const runSerialization = useCallback(() => {
     setError(null);
     try {
-      const value = createFixture(args.fixture);
+      const value = createFixture(fixture);
       setOriginalValue(value);
       const stringifyOpts: StringifyOptions = {
-        preserveDescriptors: args.preserveDescriptors,
-        debug: args.debug,
+        preserveDescriptors,
+        debug,
       };
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
       try {
         const closureObj: Record<string, unknown> | undefined =
-          args.closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
+          closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
         const parseOpts: ParseOptions = {
           closure: closureObj,
-          debug: args.debug,
+          debug,
           prettyPrint: true,
         };
         const restoredValue = parse(serializedResult, parseOpts);
@@ -100,7 +116,7 @@ const WorkbenchStory = (args: {
       setRestored(null);
       setRoundTripResult(null);
     }
-  }, [args.fixture, args.preserveDescriptors, args.debug, args.closure]);
+  }, [fixture, preserveDescriptors, debug, closure]);
 
   return (
     <div className="sb-story-container">
@@ -111,18 +127,15 @@ const WorkbenchStory = (args: {
         <div className="sb-grid">
           <div className="sb-card">
             <div className="sb-card-title">Input Fixture</div>
-            <select
-              value={args.fixture}
-              disabled
-              className="sb-copy-button"
-              style={{ width: '100%', padding: '0.5rem', fontSize: '0.875rem' }}
-            >
-              {FIXTURE_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+            <Select
+              value={fixture}
+              onChange={(next) => updateArgs({ fixture: next })}
+              options={FIXTURE_OPTIONS}
+              style={{ width: '100%' }}
+            />
+            <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--storybook-text-muted)' }}>
+              {FIXTURE_LABELS[fixture]}
+            </p>
           </div>
         </div>
       </div>
@@ -130,13 +143,16 @@ const WorkbenchStory = (args: {
       <div className="sb-section">
         <h3 className="sb-section-title">Stringify Options</h3>
         <div className="sb-grid">
-          <label className="sb-card" style={{ cursor: 'default' }}>
-            <input type="checkbox" disabled checked={args.preserveDescriptors} />
-            <span>preserveDescriptors ({String(args.preserveDescriptors)})</span>
+          <label className="sb-card">
+            <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
+            <Switch
+              checked={preserveDescriptors}
+              onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
+            />
           </label>
-          <label className="sb-card" style={{ cursor: 'default' }}>
-            <input type="checkbox" disabled checked={args.debug} />
-            <span>debug ({String(args.debug)})</span>
+          <label className="sb-card">
+            <span style={{ marginRight: '0.5rem' }}>debug</span>
+            <Switch checked={debug} onChange={(checked) => updateArgs({ debug: checked })} />
           </label>
         </div>
       </div>
@@ -145,9 +161,16 @@ const WorkbenchStory = (args: {
         <h3 className="sb-section-title">Parse Options</h3>
         <div className="sb-card">
           <div style={{ fontSize: '0.875rem' }}>
-            Closure fixture: {args.closure === 'allowedRoles' ? 'allowedRoles = [admin, editor]' : 'none'}
+            Closure fixture:
+            <Select
+              value={closure}
+              onChange={(next) => updateArgs({ closure: next })}
+              options={CLOSURE_OPTIONS}
+              style={{ width: 260, marginLeft: '0.5rem' }}
+            />
             <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
-              Choose a trusted fixture from the Controls panel; arbitrary closure input is intentionally unavailable.
+              Only predefined trusted closure fixtures are available; arbitrary closure input is intentionally
+              unavailable.
             </p>
           </div>
         </div>
@@ -155,21 +178,9 @@ const WorkbenchStory = (args: {
 
       <div className="sb-section">
         <h3 className="sb-section-title">Actions</h3>
-        <button
-          onClick={runSerialization}
-          className="sb-copy-button"
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '0.875rem',
-            background: '#0969da',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+        <Button type="primary" onClick={runSerialization}>
           Run stringify → parse
-        </button>
+        </Button>
       </div>
 
       {originalValue !== null && (
@@ -192,9 +203,9 @@ const WorkbenchStory = (args: {
             label={
               <>
                 Length: {serialized.length} chars
-                <button onClick={() => navigator.clipboard.writeText(serialized)} className="sb-copy-button">
+                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
                   Copy
-                </button>
+                </Button>
               </>
             }
           >
@@ -236,9 +247,15 @@ const WorkbenchStory = (args: {
   );
 };
 
+// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
+const renderWorkbench = () => {
+  const [args, updateArgs] = useArgs<WorkbenchArgs>();
+  return <WorkbenchView {...args} updateArgs={updateArgs} />;
+};
+
 export default {
   ...meta,
-  component: WorkbenchStory,
+  component: WorkbenchView,
 } as Meta;
 type Story = StoryObj<typeof meta>;
 
@@ -249,4 +266,5 @@ export const Workbench: Story = {
     debug: false,
     closure: '',
   },
+  render: renderWorkbench,
 };

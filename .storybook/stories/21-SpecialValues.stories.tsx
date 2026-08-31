@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
@@ -81,21 +82,9 @@ const SpecialValuesStory = (args: StoryArgs) => {
 
       <div className="sb-section">
         <h3 className="sb-section-title">Actions</h3>
-        <button
-          onClick={runSerialization}
-          className="sb-copy-button"
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '0.875rem',
-            background: '#0969da',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+        <Button type="primary" onClick={runSerialization}>
           Run stringify → parse
-        </button>
+        </Button>
       </div>
 
       {originalValue !== null && (
@@ -118,9 +107,9 @@ const SpecialValuesStory = (args: StoryArgs) => {
             label={
               <>
                 Length: {serialized.length} chars
-                <button onClick={() => navigator.clipboard.writeText(serialized)} className="sb-copy-button">
+                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
                   Copy
-                </button>
+                </Button>
               </>
             }
           >
