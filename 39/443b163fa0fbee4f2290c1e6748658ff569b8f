@@ -1,0 +1,14 @@
+.github/workflows/storybook.yml
+  h_99cad05bea77d1 65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "39443b163fa0fbee4f2290c1e6748658ff569b8f",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
