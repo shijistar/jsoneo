@@ -162,7 +162,10 @@ const SpecialValuesStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: SpecialValuesStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const UndefinedValue: Story = {

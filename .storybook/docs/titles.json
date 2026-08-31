@@ -1,0 +1,52 @@
+[
+  {
+    "fileName": ".storybook/docs/01-Introduce.mdx",
+    "title": "Introduce",
+    "titleCN": "介绍"
+  },
+  {
+    "fileName": ".storybook/docs/02-Install.mdx",
+    "title": "Install",
+    "titleCN": "安装"
+  },
+  {
+    "fileName": ".storybook/docs/03-GetStarted.mdx",
+    "title": "Get Started",
+    "titleCN": "快速开始"
+  },
+  {
+    "fileName": ".storybook/docs/04-ApiGuide.mdx",
+    "title": "API Guide",
+    "titleCN": "API 指南"
+  },
+  {
+    "fileName": ".storybook/docs/05-SupportedValues.mdx",
+    "title": "Supported Values",
+    "titleCN": "支持的值类型"
+  },
+  {
+    "fileName": ".storybook/docs/06-Options.mdx",
+    "title": "Options",
+    "titleCN": "选项"
+  },
+  {
+    "fileName": ".storybook/docs/07-AdvancedPatterns.mdx",
+    "title": "Advanced Patterns",
+    "titleCN": "高级模式"
+  },
+  {
+    "fileName": ".storybook/docs/08-Limitations.mdx",
+    "title": "Limitations",
+    "titleCN": "限制"
+  },
+  {
+    "fileName": ".storybook/docs/09-Security.mdx",
+    "title": "Security",
+    "titleCN": "安全"
+  },
+  {
+    "fileName": ".storybook/docs/10-FAQ.mdx",
+    "title": "FAQ",
+    "titleCN": "常见问题"
+  }
+]

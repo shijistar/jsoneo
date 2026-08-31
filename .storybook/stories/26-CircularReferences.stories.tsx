@@ -162,7 +162,10 @@ const CircularReferencesStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: CircularReferencesStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const SimpleCircular: Story = {

@@ -1,0 +1,126 @@
+# Limitations and Known Issues
+
+## Closure Limitation
+
+**Function lexical closures are NOT captured automatically.**
+
+```ts
+const secret = 'hidden';
+
+function getSecret() {
+  return secret; // This closure variable is NOT serialized
+}
+
+const serialized = stringify({ getSecret });
+const restored = parse(serialized);
+
+restored.getSecret(); // ReferenceError: secret is not defined
+```
+
+### Workarounds
+
+1. **Use the `closure` option:**
+
+```ts
+const restored = parse(serialized, { closure: { secret: 'hidden' } });
+```
+
+2. **Attach to named function:**
+
+```ts
+function getSecret() {
+  return getSecret.secret;
+}
+getSecret.secret = 'hidden';
+```
+
+## Symbol Limitations
+
+- **Anonymous/local symbols** in object keys and values cannot be reliably serialized or restored
+- Use **well-known symbols** (`Symbol.iterator`, etc.) or **global symbols** (`Symbol.for()`) instead
+
+```ts
+// NOT reliably supported
+const localSym = Symbol('local');
+const obj = { [localSym]: 'value' };
+
+// SUPPORTED
+const globalSym = Symbol.for('global.key');
+const obj = { [globalSym]: 'value' };
+```
+
+## Map Key Limitation
+
+Non-string Map keys are all converted to strings during serialization, just like plain objects.
+
+```ts
+const map = new Map([
+  [123, 'number key'],
+  [true, 'boolean key'],
+  [{}, 'object key'],
+]);
+
+// All keys become strings: "123", "true", "[object Object]"
+```
+
+## WeakMap / WeakSet
+
+Only structure is preserved (`{}` for WeakMap, `[]` for WeakSet). Entries are not enumerable and cannot be serialized.
+
+## Private Class Fields
+
+Private fields (`#field`) and private methods are not accessible from outside the class and cannot be serialized.
+
+```ts
+class Example {
+  #privateField = 'secret';
+  #privateMethod() {
+    return 'hidden';
+  }
+}
+```
+
+## Native Functions
+
+Native functions (built-in browser/Node APIs) are dropped during serialization because their source is reported as `[native code]` and cannot be reconstructed.
+
+```ts
+stringify({ nativeFn: Array.prototype.map }); // nativeFn is dropped
+```
+
+## Function.prototype.bind()
+
+Bound functions are native-like and cannot be reliably reconstructed.
+
+```ts
+const bound = someFunction.bind(thisArg); // Will be dropped or not restored correctly
+```
+
+## Browser vs Node.js Differences
+
+| Feature          | Node.js      | Browser                   |
+| ---------------- | ------------ | ------------------------- |
+| `Buffer`         | Full support | Converted to `Uint8Array` |
+| `BigInt64Array`  | Full support | Requires runtime support  |
+| `JSON.rawJSON()` | Node 22+     | Limited support           |
+
+## Security
+
+⚠️ **jsoneo.parse() executes generated JavaScript code.**
+
+- Only parse data produced by `jsoneo.stringify()`
+- Only parse data from trusted sources
+- Never parse untrusted user input or network data
+- jsoneo is NOT a sandbox
+
+## Performance
+
+- Serialization/deserialization of large object graphs can be slow
+- Debug mode significantly impacts performance
+- Consider chunking large datasets
+
+## Version Compatibility
+
+- Serialized format includes version marker
+- Future versions may not be backward compatible
+- Always use same jsoneo version for stringify/parse

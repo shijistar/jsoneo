@@ -162,7 +162,10 @@ const BinaryValuesStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: BinaryValuesStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const Uint8ArrayValue: Story = {

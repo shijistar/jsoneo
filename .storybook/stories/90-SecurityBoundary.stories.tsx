@@ -207,7 +207,10 @@ const result = parse(arbitraryString); // EXECUTES ARBITRARY CODE`}
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: SecurityBoundaryStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const TrustedRoundTrip: Story = {

@@ -236,7 +236,10 @@ const WorkbenchStory = (args: {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: WorkbenchStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const Workbench: Story = {

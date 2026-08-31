@@ -182,7 +182,10 @@ const DescriptorsPrototypeStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: DescriptorsPrototypeStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const CustomDescriptors: Story = {

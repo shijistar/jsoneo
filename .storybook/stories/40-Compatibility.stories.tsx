@@ -179,7 +179,10 @@ const CompatibilityStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: CompatibilityStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const BufferSupport: Story = {

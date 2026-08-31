@@ -185,7 +185,10 @@ const FunctionsClosureStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: FunctionsClosureStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const RegularFunction: Story = {

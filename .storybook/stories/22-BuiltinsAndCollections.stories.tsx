@@ -161,7 +161,10 @@ const BuiltinsCollectionsStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: BuiltinsCollectionsStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const DateValue: Story = {

@@ -1,0 +1,143 @@
+# Options Reference
+
+## StringifyOptions
+
+```ts
+interface StringifyOptions {
+  /** The start token to mark the start of the serialized string. Default is `$SJS$_`. */
+  startTag?: string;
+
+  /** The end token to mark the end of the serialized string. Default is `_$SJE$`. */
+  endTag?: string;
+
+  /** The prefix of the variable name to be used in the serialized string. Default is `$SJV$_`. */
+  variablePrefix?: string;
+
+  /** Whether to preserve the code of class constructor during serialization. Default is `false`. */
+  preserveClassConstructor?: boolean;
+
+  /**
+   * Whether to preserve custom property descriptors during serialization. Default is `true`.
+   *
+   * - `true` - Preserve custom property descriptors of source objects
+   * - `false` - Do not preserve custom property descriptors, replace with underlying values
+   */
+  preserveDescriptors?: boolean;
+
+  /** Whether to print debug information during serialization. Default is `false`. */
+  debug?: boolean;
+}
+```
+
+### Option Details
+
+#### `startTag`, `endTag`, `variablePrefix`
+
+These are internal markers used to encode JavaScript expressions within the serialized JSON string. You typically don't need to change them unless you have a collision with your data.
+
+```ts
+// Default markers
+stringify(value); // Uses $SJS$_, _$SJE$, $SJV$_
+
+// Custom markers (rarely needed)
+stringify(value, {
+  startTag: '<<START>>',
+  endTag: '<<END>>',
+  variablePrefix: '<<VAR>>',
+});
+```
+
+#### `preserveClassConstructor`
+
+When `true`, class constructor code is included in the serialized output. Default is `false` because constructors often depend on external scope.
+
+```ts
+class User {
+  constructor(public name: string) {}
+  greet() {
+    return `Hi, ${this.name}`;
+  }
+}
+
+stringify(new User('John'), { preserveClassConstructor: true });
+// Output includes constructor code
+```
+
+#### `preserveDescriptors`
+
+When `true` (default), custom property descriptors (getters, setters, writable, enumerable, configurable) are preserved. When `false`, only the underlying values are serialized.
+
+```ts
+const obj = { value: 1 };
+Object.defineProperties(obj, {
+  readonly: { value: 'constant', writable: false, enumerable: true },
+  accessor: {
+    get() {
+      return this.value;
+    },
+    set(v) {
+      this.value = v;
+    },
+    enumerable: true,
+  },
+});
+
+stringify(obj, { preserveDescriptors: true }); // Preserves descriptors
+stringify(obj, { preserveDescriptors: false }); // Only values
+```
+
+#### `debug`
+
+When `true`, prints detailed debug information to console during serialization.
+
+---
+
+## ParseOptions
+
+```ts
+interface ParseOptions {
+  /** External variables made available when restoring serialized functions. */
+  closure?: Record<string, unknown>;
+
+  /** Custom function used to read child values while restoring patches. */
+  get?: GetFunc;
+
+  /** Pretty-print generated deserialization code. Default is `true`. */
+  prettyPrint?: boolean;
+
+  /** Print deserialization debug information. Default is `false`. */
+  debug?: boolean;
+}
+```
+
+### Option Details
+
+#### `closure`
+
+Provides external variables that serialized functions may reference. This is the primary way to handle closure variables.
+
+```ts
+const allowedRoles = ['admin', 'editor'];
+
+const source = {
+  canRead(user) {
+    return allowedRoles.includes(user.role);
+  },
+};
+
+const restored = parse(stringify(source), {
+  closure: { allowedRoles },
+});
+```
+
+#### `get`
+
+Custom path getter for restoring patched values. Default uses a built-in path getter similar to `lodash.get`.
+
+#### `prettyPrint`
+
+When `true` (default), pretty-prints generated deserialization code in debug output.
+
+#### `debug`
+
+When `true`, prints detailed debug information to console during deserialization, including the generated code.

@@ -1,0 +1,8 @@
+{
+  "storybook.preview.localeDescription": "Documentation locale",
+  "storybook.preview.locale.zhCN": "中文",
+  "storybook.preview.locale.enUS": "English",
+  "storybook.preview.themeDescription": "Theme",
+  "storybook.preview.theme.light": "Light",
+  "storybook.preview.theme.dark": "Dark"
+}

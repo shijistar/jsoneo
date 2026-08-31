@@ -5,7 +5,6 @@ on:
     branches: [master]
     paths:
       - '.storybook/**'
-      - 'docs/**'
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
@@ -14,7 +13,6 @@ on:
     branches: [master]
     paths:
       - '.storybook/**'
-      - 'docs/**'
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'

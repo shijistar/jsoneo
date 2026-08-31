@@ -306,7 +306,10 @@ const OptionsStory = (args: StoryArgs) => {
   );
 };
 
-export default meta;
+export default {
+  ...meta,
+  component: OptionsStory,
+} as Meta;
 type Story = StoryObj<typeof meta>;
 
 export const DefaultOptions: Story = {
