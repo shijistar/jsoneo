@@ -9,7 +9,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '30 Core API / Options',
+  title: 'Core API / Options',
   parameters: {
     docs: {
       description: {
@@ -63,19 +63,7 @@ const meta: Meta = {
   },
 };
 
-const PRESET_KEYS = ['default', 'customTags', 'debugMode', 'descriptorsOff', 'prettyPrintOff'] as const;
-type PresetKey = (typeof PRESET_KEYS)[number];
-
-const PRESET_LABELS: Record<PresetKey, string> = {
-  default: 'Default',
-  customTags: 'Custom Tags',
-  debugMode: 'Debug Mode',
-  descriptorsOff: 'Descriptors Off',
-  prettyPrintOff: 'Pretty Print Off',
-};
-
 type OptionsArgs = {
-  preset: PresetKey;
   input: unknown;
   startTag: string;
   endTag: string;
@@ -87,9 +75,8 @@ type OptionsArgs = {
 };
 
 // Preset data extracted verbatim from the previous five Options stories.
-const OPTIONS_PRESETS: Record<PresetKey, OptionsArgs> = {
+const OPTIONS_PRESETS: Record<string, OptionsArgs> = {
   default: {
-    preset: 'default',
     input: { value: 42, nested: { a: 1 } },
     startTag: '',
     endTag: '',
@@ -99,69 +86,9 @@ const OPTIONS_PRESETS: Record<PresetKey, OptionsArgs> = {
     debug: false,
     prettyPrint: true,
   },
-  customTags: {
-    preset: 'customTags',
-    input: { value: 'test', number: 123 },
-    startTag: '<<START>>',
-    endTag: '<<END>>',
-    variablePrefix: '<<VAR>>',
-    preserveClassConstructor: false,
-    preserveDescriptors: true,
-    debug: false,
-    prettyPrint: true,
-  },
-  debugMode: {
-    preset: 'debugMode',
-    input: { complex: { nested: { deep: 'value' } }, array: [1, 2, 3] },
-    startTag: '',
-    endTag: '',
-    variablePrefix: '',
-    preserveClassConstructor: false,
-    preserveDescriptors: true,
-    debug: true,
-    prettyPrint: true,
-  },
-  descriptorsOff: {
-    preset: 'descriptorsOff',
-    input: (() => {
-      const obj = { value: 1 };
-      Object.defineProperties(obj, {
-        readonly: { value: 'constant', writable: false, enumerable: true },
-        accessor: {
-          get() {
-            return this.value;
-          },
-          set(v: number) {
-            this.value = v;
-          },
-          enumerable: true,
-        },
-      });
-      return { obj };
-    })(),
-    startTag: '',
-    endTag: '',
-    variablePrefix: '',
-    preserveClassConstructor: false,
-    preserveDescriptors: false,
-    debug: false,
-    prettyPrint: true,
-  },
-  prettyPrintOff: {
-    preset: 'prettyPrintOff',
-    input: { a: { b: { c: { d: 'deep' } } }, list: [1, 2, 3, 4, 5] },
-    startTag: '',
-    endTag: '',
-    variablePrefix: '',
-    preserveClassConstructor: false,
-    preserveDescriptors: true,
-    debug: false,
-    prettyPrint: false,
-  },
 };
 
 const OptionsView = ({
-  preset,
   input,
   startTag,
   endTag,
@@ -220,20 +147,6 @@ const OptionsView = ({
   return (
     <div className="sb-story-container">
       <TrustedInputNotice variant="info" />
-
-      <div className="sb-section">
-        <h3 className="sb-section-title">Preset Scenarios</h3>
-        <div className="sb-card">
-          <Segmented
-            value={preset}
-            options={PRESET_KEYS.map((key) => ({ label: PRESET_LABELS[key], value: key }))}
-            onChange={(key) => updateArgs({ ...OPTIONS_PRESETS[key] })}
-          />
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--storybook-text-muted)' }}>
-            Apply a preset scenario, then tweak any option below freely.
-          </p>
-        </div>
-      </div>
 
       <div className="sb-section">
         <h3 className="sb-section-title">Test Input</h3>
@@ -392,7 +305,7 @@ export default {
 } as Meta;
 type Story = StoryObj<typeof meta>;
 
-export const DefaultOptions: Story = {
+export const Options: Story = {
   args: OPTIONS_PRESETS.default,
   render: renderOptions,
 };

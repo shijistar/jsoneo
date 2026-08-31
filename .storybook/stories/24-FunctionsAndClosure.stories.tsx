@@ -9,7 +9,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '24 Core API / Functions & Closure',
+  title: 'Core API / Functions & Closure',
   parameters: {
     docs: {
       description: {
@@ -35,8 +35,8 @@ const meta: Meta = {
 };
 
 type StoryArgs = {
-  input: unknown;
-  closure: string;
+  input?: unknown;
+  closure?: string;
 };
 
 type FunctionsClosureProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };

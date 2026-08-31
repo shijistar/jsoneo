@@ -7,7 +7,7 @@ import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
 import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
-import { createFixture, FIXTURE_LABELS, FIXTURE_TYPES, type FixtureType } from './shared/fixtures';
+import { createFixture, FIXTURE_LABELS, FIXTURE_TYPES } from './shared/fixtures';
 
 const meta: Meta = {
   title: '10 Workbench / Playground',
@@ -61,7 +61,7 @@ const CLOSURE_OPTIONS = [
 ];
 
 type WorkbenchArgs = {
-  fixture: FixtureType;
+  fixture: string;
   preserveDescriptors: boolean;
   debug: boolean;
   closure: string;

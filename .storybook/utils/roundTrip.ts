@@ -11,14 +11,53 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
     if (value === -Infinity) return '-Infinity';
     if (Object.is(value, -0)) return '-0';
     return String(value);
-  }
-  if (typeof value === 'bigint') return `${value}n`;
-  if (typeof value === 'string') return JSON.stringify(value);
-  if (typeof value === 'boolean') return String(value);
-  if (value === null) return 'null';
-  if (typeof value === 'undefined') return 'undefined';
-  if (typeof value === 'symbol') return String(value);
-  if (typeof value === 'function') {
+  } else if (typeof value === 'bigint') return `${value}n`;
+  else if (typeof value === 'string') return JSON.stringify(value);
+  else if (typeof value === 'boolean') return String(value);
+  else if (value === null) return 'null';
+  else if (typeof value === 'undefined') return 'undefined';
+  else if (value instanceof RegExp) {
+    return `/${value.source}/${value.flags}`;
+  } else if (value instanceof URL) {
+    return `new URL("${value}")`;
+  } else if (value instanceof URLSearchParams) {
+    return `new URLSearchParams("${value.toString()}")`;
+  } else if (value instanceof Map) {
+    return `new Map(${formatValueInner([...value.entries()], 0, seen)})`;
+  } else if (value instanceof Set) {
+    return `new Set(${formatValueInner([...value.values()], 0, seen)})`;
+  } else if (
+    [
+      Int8Array,
+      Uint8Array,
+      Uint8ClampedArray,
+      Int16Array,
+      Uint16Array,
+      Int32Array,
+      Uint32Array,
+      Float32Array,
+      Float64Array,
+      BigInt64Array,
+      BigUint64Array,
+    ].some((type) => value instanceof type)
+  ) {
+    return `new ${value.constructor.name}(${Array.from(value as [])})`;
+  } else if (typeof Buffer !== 'undefined' && value instanceof Buffer) {
+    return `new Buffer("${value.toString('hex')}")`;
+  } else if (value instanceof ArrayBuffer) {
+    return `new ArrayBuffer()`;
+  } else if (value instanceof DataView) {
+    return `new DataView()`;
+  } else if (typeof value === 'symbol') {
+    if (Symbol.keyFor(value)) {
+      return `Symbol.for("${Symbol.keyFor(value)}")`;
+    } else if (Object.values(Object.getOwnPropertyDescriptors(Symbol)).some((d) => d.value === value)) {
+      return value.description!;
+    } else {
+      return `Symbol("${value.description}")`;
+    }
+  } else if (value instanceof Date) return `new Date("${value.toISOString()}")`;
+  else if (typeof value === 'function') {
     const name = (value as Function).name || 'anonymous';
     return `[Function: ${name}]`;
   }
@@ -45,11 +84,11 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
         return String(value);
       }
     }
-    const keys = Object.keys(value);
+    const keys = [...Object.keys(value), ...Object.getOwnPropertySymbols(value)];
     if (keys.length === 0) return '{}';
     const items = keys.map(
       (key) =>
-        `${pad}  ${JSON.stringify(key)}: ${formatValueInner((value as Record<string, unknown>)[key], depth + 1, seen)}`,
+        `${pad}  ${typeof key === 'string' ? JSON.stringify(key) : `[${formatValueInner(key, 0, seen)}]`}: ${formatValueInner((value as Record<string | symbol, unknown>)[key], depth + 1, seen)}`,
     );
     return `{\n${items.join(',\n')}\n${pad}}`;
   } finally {

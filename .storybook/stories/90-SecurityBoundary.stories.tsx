@@ -8,7 +8,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '90 Security / Boundary',
+  title: 'Security / Boundary',
   parameters: {
     docs: {
       description: {
@@ -175,7 +175,7 @@ const result = parse(arbitraryString); // EXECUTES ARBITRARY CODE`}
 
       <div className="sb-section">
         <h3 className="sb-section-title">Security Rules</h3>
-        <ResultPanel>
+        <ResultPanel label="">
           <ul style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: 1.8 }}>
             <li>
               Only parse data produced by <code>jsoneo.stringify()</code>

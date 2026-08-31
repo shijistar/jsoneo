@@ -8,7 +8,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '40 Compatibility / Runtime Environments',
+  title: 'Compatibility / Runtime Environments',
   parameters: {
     docs: {
       description: {

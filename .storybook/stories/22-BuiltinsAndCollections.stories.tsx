@@ -8,7 +8,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '22 Core API / Built-ins & Collections',
+  title: 'Core API / Built-ins & Collections',
   parameters: {
     docs: {
       description: {

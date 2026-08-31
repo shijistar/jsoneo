@@ -9,7 +9,7 @@ import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
-  title: '25 Core API / Descriptors & Prototype',
+  title: 'Core API / Descriptors & Prototype',
   parameters: {
     docs: {
       description: {
@@ -34,8 +34,8 @@ const meta: Meta = {
 };
 
 type StoryArgs = {
-  input: unknown;
-  preserveDescriptors: boolean;
+  input?: unknown;
+  preserveDescriptors?: boolean;
 };
 
 type DescriptorsPrototypeProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };

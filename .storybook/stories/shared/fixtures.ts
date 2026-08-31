@@ -1,7 +1,5 @@
-import type { FixtureType } from '../stories/10-Workbench.stories';
-
 // Fixture type mapping - matches the fixture selector in Workbench
-export const FIXTURE_TYPES: FixtureType[] = [
+export const FIXTURE_TYPES = [
   'primitives',
   'special-values',
   'builtins-collections',
@@ -12,7 +10,7 @@ export const FIXTURE_TYPES: FixtureType[] = [
   'complex-object',
 ] as const;
 
-export const FIXTURE_LABELS: Record<FixtureType, string> = {
+export const FIXTURE_LABELS: Record<string, string> = {
   primitives: 'Primitives (string, number, boolean, null, array, object)',
   'special-values': 'Special Values (undefined, NaN, Infinity, -0, BigInt)',
   'builtins-collections': 'Built-ins & Collections (Date, RegExp, URL, Map, Set)',
@@ -23,7 +21,7 @@ export const FIXTURE_LABELS: Record<FixtureType, string> = {
   'complex-object': 'Complex Object',
 };
 
-export function createFixture(type: FixtureType): unknown {
+export function createFixture(type: string): unknown {
   switch (type) {
     case 'primitives':
       return {
