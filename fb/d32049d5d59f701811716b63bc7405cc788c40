@@ -1,0 +1,40 @@
+.storybook/stories/90-SecurityBoundary.stories.tsx
+  h_99cad05bea77d1 11,178
+.storybook/utils/roundTrip.ts
+  h_99cad05bea77d1 14-60,87,91
+.storybook/stories/26-CircularReferences.stories.tsx
+  h_99cad05bea77d1 11
+.storybook/stories/40-Compatibility.stories.tsx
+  h_99cad05bea77d1 11
+.storybook/stories/10-Workbench.stories.tsx
+  h_99cad05bea77d1 10,64
+.storybook/stories/20-PrimitiveValues.stories.tsx
+  h_99cad05bea77d1 11
+.storybook/stories/shared/fixtures.ts
+  h_99cad05bea77d1 2,13,24
+.storybook/stories/24-FunctionsAndClosure.stories.tsx
+  h_99cad05bea77d1 12,38-39
+.gitignore
+  h_99cad05bea77d1 10-11
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 12,78,308
+.storybook/stories/23-BinaryValues.stories.tsx
+  h_99cad05bea77d1 11
+.storybook/stories/25-DescriptorsAndPrototype.stories.tsx
+  h_99cad05bea77d1 12,37-38
+.storybook/stories/22-BuiltinsAndCollections.stories.tsx
+  h_99cad05bea77d1 11
+.storybook/stories/21-SpecialValues.stories.tsx
+  h_99cad05bea77d1 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fbd32049d5d59f701811716b63bc7405cc788c40",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
