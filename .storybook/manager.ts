@@ -68,13 +68,10 @@ addons.setConfig({
 });
 
 function createManagerTheme(themeName: 'light' | 'dark') {
-  return create({
-    base: themeName === 'dark' ? 'dark' : 'light',
-    brandTitle: 'jsoneo',
-    brandUrl: '/jsoneo/',
-    colorPrimary: '#e91e63',
-    colorSecondary: '#c2185b',
-  });
+  if (theme === 'dark') {
+    return create(dark);
+  }
+  return create(light);
 }
 
 function monitorTitleChanges() {

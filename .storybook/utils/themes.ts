@@ -1,4 +1,8 @@
-export const light = {
+import { themes, type ThemeVars } from 'storybook/theming';
+
+export const light: ThemeVars = {
+  ...themes.light,
+  base: 'light',
   brandTitle: 'jsoneo',
   brandUrl: '/jsoneo/',
   colorPrimary: '#e91e63',
@@ -7,7 +11,6 @@ export const light = {
   appContentBg: '#ffffff',
   appBorderColor: '#e0e0e0',
   appBorderRadius: 4,
-  base: 'light',
   textColor: '#212121',
   textInverseColor: '#ffffff',
   textMutedColor: '#757575',
@@ -20,8 +23,8 @@ export const light = {
   inputBorderRadius: 4,
 };
 
-export const dark = {
-  ...light,
+export const dark: ThemeVars = {
+  ...themes.dark,
   base: 'dark',
   appBg: '#121212',
   appContentBg: '#1e1e1e',
