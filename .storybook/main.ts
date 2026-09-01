@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     options: {},
   },
   docs: {
-    defaultName: 'All',
+    defaultName: 'Intro',
   },
   async viteFinal(baseConfig) {
     return mergeConfig(baseConfig, {

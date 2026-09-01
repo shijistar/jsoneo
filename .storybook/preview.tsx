@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { lazy, Suspense } from 'react';
 import type { DocsContainerProps } from '@storybook/addon-docs/blocks';
+import { Controls, Description, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
 import type { Preview, ReactRenderer } from '@storybook/react-vite';
 import 'antd/dist/reset.css';
 import { useStorybookDecorator } from './components/useStorybookDecorator';
@@ -55,6 +56,18 @@ const preview: Preview = {
           <ThemedDocsContainer {...props} />
         </Suspense>
       ),
+      page: () => {
+        return (
+          <>
+            <Title />
+            <Subtitle />
+            <Description />
+            {/* <Primary /> */}
+            {/* <Controls /> */}
+            {/* <Stories /> */}
+          </>
+        );
+      },
     },
   },
   decorators: [(Story, context) => useStorybookDecorator(Story, context)],

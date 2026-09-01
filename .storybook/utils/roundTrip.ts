@@ -1,3 +1,4 @@
+import { serializeFunction } from '../../src/utils/serializeRecursively';
 import { storyI18n } from '../locales';
 
 export function formatValue(value: unknown): string {
@@ -25,9 +26,9 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
   } else if (value instanceof URLSearchParams) {
     return `new URLSearchParams("${value.toString()}")`;
   } else if (value instanceof Map) {
-    return `new Map(${formatValueInner([...value.entries()], depth + 3, seen)})`;
+    return `new Map(${formatValueInner([...value.entries()], depth + 1, seen)})`;
   } else if (value instanceof Set) {
-    return `new Set(${formatValueInner([...value.values()], depth + 3, seen)})`;
+    return `new Set(${formatValueInner([...value.values()], depth + 1, seen)})`;
   } else if (
     [
       Int8Array,
@@ -63,7 +64,7 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
   } else if (value instanceof Date) return `new Date("${value.toISOString()}")`;
   else if (typeof value === 'function') {
     const name = (value as Function).name || 'anonymous';
-    return `[Function: ${name}]`;
+    return serializeFunction(value.toString()) || '';
   }
 
   // 循环引用：仅拦截当前路径上的环（进入 add、退出 delete），DAG 重复引用不误判
@@ -92,7 +93,7 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
     if (keys.length === 0) return '{}';
     const items = keys.map((key) => {
       const d = Object.getOwnPropertyDescriptor(value, key);
-      const isDefault = d?.value !== undefined && d.writable && d.enumerable && d.configurable;
+      const isDefault = d && 'value' in d && d.writable && d.enumerable && d.configurable;
       const v = isDefault
         ? formatValueInner((value as Record<string | symbol, unknown>)[key], depth + 1, seen)
         : formatValueInner(d, depth + 1, seen);

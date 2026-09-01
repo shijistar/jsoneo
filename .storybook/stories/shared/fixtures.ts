@@ -86,19 +86,35 @@ export function createFixture(type: string): unknown {
             return ++this.value;
           },
         },
+        canEdit: {
+          get() {
+            // @ts-expect-error
+            return allowedRoles.includes(this.role);
+          },
+          writable: false,
+          enumerable: true,
+        },
       };
     case 'descriptors-prototype':
-      const obj = { value: 1 };
+      const obj = { role: 'user' };
       Object.defineProperties(obj, {
         readonly: { value: 'constant', writable: false, enumerable: true },
         nonEnumerable: { value: 'hidden', writable: true, enumerable: false },
         accessor: {
           get() {
-            return this.value;
+            return this.role;
           },
-          set(v: number) {
-            this.value = v;
+          set(v: string) {
+            this.role = v;
           },
+          enumerable: true,
+        },
+        canEdit: {
+          get() {
+            // @ts-expect-error
+            return allowedRoles.includes(this.role);
+          },
+          writable: false,
           enumerable: true,
         },
       });

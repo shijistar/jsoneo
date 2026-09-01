@@ -4,6 +4,10 @@
   --storybook-code-font-family: 'SF Mono', 'Fira Code', 'Fira Mono', menlo, consolas, monospace;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   margin: 0;
   font-family: var(--storybook-font-family);

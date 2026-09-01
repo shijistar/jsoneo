@@ -6,7 +6,7 @@
   "storybook.preview.theme.light": "Light",
   "storybook.preview.theme.dark": "Dark",
 
-  "story.common.testInput": "Test Input",
+  "story.common.testInput": "Original Input",
   "story.common.actions": "Actions",
   "story.common.runStringifyParse": "Run stringify → parse",
   "story.common.serializedOutput": "Serialized Output (stringify)",
@@ -41,6 +41,17 @@
   "story.functions.closureNotice": "Only predefined trusted closure fixtures are available; arbitrary closure input is intentionally unavailable.",
 
   "story.options.debugTooltip": "Toggle debug mode, shows additional information in console",
+  "story.options.fixtureSelection": "Fixture Selection",
+  "story.options.inputFixture": "Input Fixture",
+  "story.options.originalInput": "Original Input",
+  "story.options.fixture.primitives": "Primitives (string, number, boolean, null, array, object)",
+  "story.options.fixture.specialValues": "Special Values (undefined, NaN, Infinity, -0, BigInt)",
+  "story.options.fixture.builtinsCollections": "Built-ins & Collections (Date, RegExp, URL, Map, Set)",
+  "story.options.fixture.binaryValues": "Binary Values (TypedArrays, ArrayBuffer, DataView)",
+  "story.options.fixture.functionsClosure": "Functions & Closure",
+  "story.options.fixture.descriptorsPrototype": "Descriptors & Prototype",
+  "story.options.fixture.circularReferences": "Circular References",
+  "story.options.fixture.complexObject": "Complex Object",
 
   "story.compatibility.runtimeEnvironment": "Runtime Environment",
   "story.compatibility.environmentDetection": "Environment Detection",

@@ -145,7 +145,7 @@ type Story = StoryObj<typeof meta>;
 export const UndefinedValue: Story = {
   name: 'Undefined Value',
   // @ts-expect-error: because nameCN is an extension field
-  nameCN: 'undefined 值',
+  nameCN: 'Undefined 值',
   args: { input: { value: undefined } },
 };
 
