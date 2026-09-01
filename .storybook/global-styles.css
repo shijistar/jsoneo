@@ -103,6 +103,26 @@ html[data-theme='dark'] .sbdocs-content :where(th, td) {
   border-color: #30363d;
 }
 
+/* Docs tables: match even rows (addon-docs emotion emits zebra stripes compiled
+   from the light theme via `.css-* :where(table) tr:nth-of-type(2n)`). Override
+   with the same dark surface used elsewhere so the stripes no longer stay light. */
+html.dark .sbdocs-content :where(table) tr:nth-of-type(2n),
+html[data-theme='dark'] .sbdocs-content :where(table) tr:nth-of-type(2n) {
+  background: #161b22;
+}
+
+/* Docs code source blocks: the outer pre is already darkened by the rule above,
+   but addon-docs wraps the highlighted source in a `.docblock-source` container
+   (plus inner scroll/button elements) that are compiled from the light theme and
+   stay white. Paint the whole block dark. */
+html.dark .sbdocs-content .docblock-source,
+html.dark .sbdocs-content .docblock-source *,
+html[data-theme='dark'] .sbdocs-content .docblock-source,
+html[data-theme='dark'] .sbdocs-content .docblock-source * {
+  color: #e6edf3;
+  background-color: #0d1117;
+}
+
 html.dark .sbdocs-content :where(blockquote),
 html[data-theme='dark'] .sbdocs-content :where(blockquote) {
   background: #161b22;
