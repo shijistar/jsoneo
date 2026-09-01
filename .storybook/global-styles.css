@@ -6,9 +6,22 @@
 
 body {
   margin: 0;
+  color: #212121;
   font-family: var(--storybook-font-family);
+  background: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark body,
+html[data-theme='dark'] body {
+  color: #e6edf3;
+  background: #121212;
+}
+
+html.dark,
+html[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 code,

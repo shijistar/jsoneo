@@ -14,7 +14,8 @@
   border-radius: 6px;
 }
 
-.sb-result-panel.dark {
+html.dark .sb-result-panel,
+html[data-theme='dark'] .sb-result-panel {
   background: #161b22;
   border-color: #30363d;
 }
@@ -26,7 +27,8 @@
   font-size: 0.875rem;
 }
 
-.sb-result-label.dark {
+html.dark .sb-result-label,
+html[data-theme='dark'] .sb-result-label {
   color: #e6edf3;
 }
 
@@ -34,6 +36,7 @@
   max-height: 300px;
   padding: 0.75rem;
   overflow: auto;
+  color: #24292e;
   font-size: 0.875rem;
   font-family: var(--storybook-code-font-family);
   line-height: 1.5;
@@ -44,7 +47,9 @@
   border-radius: 4px;
 }
 
-.sb-json-output.dark {
+html.dark .sb-json-output,
+html[data-theme='dark'] .sb-json-output {
+  color: #e6edf3;
   background: #0d1117;
   border-color: #30363d;
 }
@@ -63,7 +68,8 @@
   background: #dafbe1;
 }
 
-.sb-badge.success.dark {
+html.dark .sb-badge.success,
+html[data-theme='dark'] .sb-badge.success {
   color: #dafbe1;
   background: #1a7f37;
 }
@@ -73,7 +79,8 @@
   background: #fff8c5;
 }
 
-.sb-badge.warning.dark {
+html.dark .sb-badge.warning,
+html[data-theme='dark'] .sb-badge.warning {
   color: #fff8c5;
   background: #9a6700;
 }
@@ -83,7 +90,8 @@
   background: #ffdce0;
 }
 
-.sb-badge.danger.dark {
+html.dark .sb-badge.danger,
+html[data-theme='dark'] .sb-badge.danger {
   color: #ffdce0;
   background: #cf222e;
 }
@@ -91,12 +99,15 @@
 .sb-trusted-notice {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
+  color: #24292e;
   background: #fff8c5;
   border: 1px solid #d4a700;
   border-radius: 6px;
 }
 
-.sb-trusted-notice.dark {
+html.dark .sb-trusted-notice,
+html[data-theme='dark'] .sb-trusted-notice {
+  color: #e6edf3;
   background: #3d2e00;
   border-color: #d4a700;
 }
@@ -137,12 +148,15 @@
 .sb-section-title {
   margin-bottom: 0.75rem;
   padding-bottom: 0.375rem;
+  color: #24292e;
   font-weight: 600;
   font-size: 1rem;
   border-bottom: 1px solid #d0d7de;
 }
 
-.sb-section-title.dark {
+html.dark .sb-section-title,
+html[data-theme='dark'] .sb-section-title {
+  color: #e6edf3;
   border-color: #30363d;
 }
 
@@ -154,12 +168,15 @@
 
 .sb-card {
   padding: 1rem;
+  color: #24292e;
   background: #fff;
   border: 1px solid #d0d7de;
   border-radius: 6px;
 }
 
-.sb-card.dark {
+html.dark .sb-card,
+html[data-theme='dark'] .sb-card {
+  color: #e6edf3;
   background: #161b22;
   border-color: #30363d;
 }

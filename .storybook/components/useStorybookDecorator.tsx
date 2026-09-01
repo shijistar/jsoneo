@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactRenderer } from '@storybook/react-vite';
 import type { StoryContext } from 'storybook/internal/csf';
 import darkAlgorithm from 'antd/es/theme/themes/dark';
@@ -21,6 +21,7 @@ function useStorybookDecorator(Story: React.ComponentType, context: StoryContext
   const themeKey = getThemeKey(context.globals.theme);
   const isDark = themeKey === 'dark';
   const themeName = isDark ? 'dark' : 'light';
+  const [prevTheme, setPrevTheme] = useState(themeName);
 
   useEffect(() => {
     if (storyI18n.language !== localeKey) {
@@ -29,6 +30,22 @@ function useStorybookDecorator(Story: React.ComponentType, context: StoryContext
       });
     }
   }, [localeKey]);
+
+  // Reload the page if the theme changes.
+  useEffect(() => {
+    if (themeName && themeName !== prevTheme) {
+      setPrevTheme(themeName);
+      (window.top ?? window.parent ?? window).location.reload();
+    }
+  }, [themeName, prevTheme]);
+
+  // Sync dark mode class onto the iframe documentElement so CSS and
+  // components (ResultPanel etc.) can pick up the theme. The manager
+  // frame sets its own data-theme, but the story iframe is separate.
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.dataset.theme = themeName;
+  }, [isDark, themeName]);
 
   return (
     <Suspense fallback={null}>
