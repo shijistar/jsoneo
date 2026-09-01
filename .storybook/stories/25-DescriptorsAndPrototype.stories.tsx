@@ -1,18 +1,14 @@
-import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Space, Switch } from 'antd';
-import { parse, stringify } from '../../src';
-import type { ParseOptions, StringifyOptions } from '../../src/types';
-import { ResultPanel } from '../components/ResultPanel';
+import { Switch } from 'antd';
+import { RoundTripDemo } from '../components/RoundTripDemo';
 import { storyI18n, useStoryT } from '../locales';
-import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
   title: 'Core API / Descriptors & Prototype',
   // @ts-expect-error: because titleCN is an extension field
   titleCN: '核心 API / 描述符与原型',
-  component: DescriptorsPrototypeStory,
+  component: RoundTripDemo,
   parameters: {
     docs: {
       description: {
@@ -40,135 +36,31 @@ type StoryArgs = {
   preserveDescriptors?: boolean;
 };
 
-type DescriptorsPrototypeProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
-
-function DescriptorsPrototypeStory(args: DescriptorsPrototypeProps) {
-  const t = useStoryT();
-  const { updateArgs } = args;
-  const [serialized, setSerialized] = useState<string>('');
-  const [restored, setRestored] = useState<unknown>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [roundTripResult, setRoundTripResult] = useState<{ passed: boolean; reason: string } | null>(null);
-
-  const runSerialization = useCallback(() => {
-    setError(null);
-    try {
-      const value = args.input;
-      const stringifyOpts: StringifyOptions = {
-        preserveDescriptors: args.preserveDescriptors,
-      };
-      const serializedResult = stringify(value, stringifyOpts);
-      setSerialized(serializedResult);
-      try {
-        const parseOpts: ParseOptions = { prettyPrint: true };
-        const restoredValue = parse(serializedResult, parseOpts);
-        setRestored(restoredValue);
-        const rt = checkRoundTrip(value, restoredValue);
-        setRoundTripResult(rt);
-      } catch (parseError) {
-        setError(
-          t('story.common.parseFailed', {
-            message: parseError instanceof Error ? parseError.message : String(parseError),
-          }),
-        );
-        setRestored(null);
-        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
-      }
-    } catch (stringifyError) {
-      setError(
-        t('story.common.stringifyFailed', {
-          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
-        }),
-      );
-      setSerialized('');
-      setRestored(null);
-      setRoundTripResult(null);
-    }
-  }, [args.input, args.preserveDescriptors, t]);
-
-  return (
-    <div className="sb-story-container">
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
-        <ResultPanel
-          label={t('story.common.typeLabel', { type: getTypeSummary(args.input) })}
-          copyText={formatValue(args.input)}
-          onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
-        >
-          {formatValue(args.input)}
-        </ResultPanel>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.stringifyOptions')}</h3>
-        <div className="sb-grid">
-          <label className="sb-card">
-            <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
-            <Switch
-              checked={args.preserveDescriptors}
-              onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
-            />
-          </label>
-        </div>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
-        <Button type="primary" onClick={runSerialization}>
-          {t('story.common.runStringifyParse')}
-        </Button>
-      </div>
-      {serialized && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
-          <ResultPanel
-            label={
-              <Space>
-                {t('story.common.lengthLabel', { count: serialized.length })}
-                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  {t('story.common.copy')}
-                </Button>
-              </Space>
-            }
-          >
-            <pre className="sb-json-output sb-expandable">{serialized}</pre>
-          </ResultPanel>
-        </div>
-      )}
-      {error && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.error')}</h3>
-          <ResultPanel variant="error" label={error} />
-        </div>
-      )}
-      {restored !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
-          <ResultPanel
-            label={
-              <>
-                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
-                {roundTripResult && (
-                  <>
-                    <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
-                    </span>
-                    <span className="sb-badge warning">{roundTripResult.reason}</span>
-                  </>
-                )}
-              </>
-            }
-          >
-            {formatValue(restored)}
-          </ResultPanel>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
+// useArgs 只能在 story render 函数（StoryContext）内调用。
 const renderWithArgs = (storyArgs: StoryArgs) => {
   const [args, updateArgs] = useArgs<StoryArgs>();
-  return <DescriptorsPrototypeStory {...args} updateArgs={updateArgs} />;
+  const t = useStoryT();
+
+  return (
+    <RoundTripDemo
+      input={args.input}
+      stringifyOptions={{ preserveDescriptors: args.preserveDescriptors }}
+      optionsPanel={
+        <div className="sb-section">
+          <h3 className="sb-section-title">{t('story.common.stringifyOptions')}</h3>
+          <div className="sb-grid">
+            <label className="sb-card">
+              <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
+              <Switch
+                checked={args.preserveDescriptors}
+                onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
+              />
+            </label>
+          </div>
+        </div>
+      }
+    />
+  );
 };
 
 export default meta;

@@ -10,17 +10,6 @@ export const FIXTURE_TYPES = [
   'complex-object',
 ] as const;
 
-export const FIXTURE_LABELS: Record<string, string> = {
-  primitives: 'Primitives (string, number, boolean, null, array, object)',
-  'special-values': 'Special Values (undefined, NaN, Infinity, -0, BigInt)',
-  'builtins-collections': 'Built-ins & Collections (Date, RegExp, URL, Map, Set)',
-  'binary-values': 'Binary Values (TypedArrays, ArrayBuffer, DataView)',
-  'functions-closure': 'Functions & Closure',
-  'descriptors-prototype': 'Descriptors & Prototype',
-  'circular-references': 'Circular References',
-  'complex-object': 'Complex Object',
-};
-
 export function createFixture(type: string): unknown {
   switch (type) {
     case 'primitives':
@@ -110,7 +99,6 @@ export function createFixture(type: string): unknown {
             // @ts-expect-error
             return allowedRoles.includes(this.role);
           },
-          writable: false,
           enumerable: true,
         },
       });

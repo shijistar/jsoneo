@@ -1,13 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Input, Select, Space, Switch, Tooltip } from 'antd';
-import { parse, stringify } from '../../src';
+import { Input, Select, Switch, Tooltip, Typography } from 'antd';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
-import { ResultPanel } from '../components/ResultPanel';
+import { RoundTripDemo } from '../components/RoundTripDemo';
 import { TrustedInputNotice } from '../components/TrustedInputNotice';
 import { storyI18n, useStoryT } from '../locales';
-import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 import { createFixture, FIXTURE_TYPES } from './shared/fixtures';
 
 const FIXTURE_LABEL_KEYS: Record<string, string> = {
@@ -20,12 +18,22 @@ const FIXTURE_LABEL_KEYS: Record<string, string> = {
   'circular-references': 'story.options.fixture.circularReferences',
   'complex-object': 'story.options.fixture.complexObject',
 };
+const FIXTURE_DESCRIPTION_KEYS: Record<string, string> = {
+  primitives: 'story.meta.primitiveValues',
+  'special-values': 'story.meta.specialValues',
+  'builtins-collections': 'story.meta.builtinsCollections',
+  'binary-values': 'story.meta.binaryValues',
+  'functions-closure': 'story.meta.functionsClosure',
+  'descriptors-prototype': 'story.meta.descriptorsPrototype',
+  'circular-references': 'story.meta.circularReferences',
+  'complex-object': 'story.meta.complexObject',
+};
 
 const meta: Meta = {
   title: 'Core API / Options',
   // @ts-expect-error: because titleCN is an extension field
   titleCN: '核心 API / 选项',
-  component: OptionsView,
+  component: RoundTripDemo,
   parameters: {
     docs: {
       description: {
@@ -116,25 +124,10 @@ const DEFAULT_ARGS: OptionsArgs = {
   prettyPrint: true,
 };
 
-function OptionsView({
-  fixture,
-  input,
-  startTag,
-  endTag,
-  variablePrefix,
-  preserveClassConstructor,
-  preserveDescriptors,
-  debug,
-  closure,
-  prettyPrint,
-  updateArgs,
-}: OptionsArgs & { updateArgs: (patch: Partial<OptionsArgs>) => void }) {
+// useArgs 只能在 story render 函数（StoryContext）内调用。
+const renderOptions = () => {
+  const [args, updateArgs] = useArgs<OptionsArgs>();
   const t = useStoryT();
-  const [originalValue, setOriginalValue] = useState<unknown>(null);
-  const [serialized, setSerialized] = useState<string>('');
-  const [restored, setRestored] = useState<unknown>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [roundTripResult, setRoundTripResult] = useState<{ passed: boolean; reason: string } | null>(null);
 
   const handleFixtureChange = useCallback(
     (nextFixture: string) => {
@@ -144,260 +137,165 @@ function OptionsView({
     [updateArgs],
   );
 
-  const runSerialization = useCallback(() => {
-    setError(null);
-    try {
-      const value = input;
-      setOriginalValue(value);
-      const stringifyOpts: StringifyOptions = {
-        startTag: startTag || undefined,
-        endTag: endTag || undefined,
-        variablePrefix: variablePrefix || undefined,
-        preserveClassConstructor,
-        preserveDescriptors,
-        debug,
-      };
-      const serializedResult = stringify(value, stringifyOpts);
-      setSerialized(serializedResult);
-      try {
-        const closureObj: Record<string, unknown> | undefined =
-          closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
-        const parseOpts: ParseOptions = {
-          closure: closureObj,
-          prettyPrint,
-          debug,
-        };
-        const restoredValue = parse(serializedResult, parseOpts);
-        setRestored(restoredValue);
-        // window.x = restoredValue;
-        const rt = checkRoundTrip(value, restoredValue);
-        setRoundTripResult(rt);
-      } catch (parseError) {
-        setError(
-          t('story.common.parseFailed', {
-            message: parseError instanceof Error ? parseError.message : String(parseError),
-          }),
-        );
-        setRestored(null);
-        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
-      }
-    } catch (stringifyError) {
-      setError(
-        t('story.common.stringifyFailed', {
-          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
-        }),
-      );
-      setSerialized('');
-      setRestored(null);
-      setRoundTripResult(null);
-    }
-  }, [
-    input,
-    startTag,
-    endTag,
-    variablePrefix,
-    preserveClassConstructor,
-    preserveDescriptors,
-    debug,
-    closure,
-    prettyPrint,
-    t,
-  ]);
+  const stringifyOpts: StringifyOptions = {
+    startTag: args.startTag || undefined,
+    endTag: args.endTag || undefined,
+    variablePrefix: args.variablePrefix || undefined,
+    preserveClassConstructor: args.preserveClassConstructor,
+    preserveDescriptors: args.preserveDescriptors,
+    debug: args.debug,
+  };
 
-  const fixtureOptions = FIXTURE_TYPES.map((type) => ({
-    value: type,
-    label: t(FIXTURE_LABEL_KEYS[type] || type),
-  }));
+  const closureObj: Record<string, unknown> | undefined =
+    args.closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
+  const parseOpts: ParseOptions = {
+    closure: closureObj,
+    prettyPrint: args.prettyPrint,
+    debug: args.debug,
+  };
 
+  const fixtureOptions = FIXTURE_TYPES.map((type) => {
+    const text = t(FIXTURE_LABEL_KEYS[type] || type);
+    const match = text.match(/(.+?)([（\(].*[）\)])/);
+    const name = match?.[1] ?? text;
+    const description = match?.[2];
+    return {
+      value: type,
+      label: (
+        <>
+          {name}
+          {description && <Typography.Text type="secondary">{description}</Typography.Text>}
+        </>
+      ),
+    };
+  });
   const closureOptions = [
     { value: '', label: t('story.functions.none') },
     { value: 'allowedRoles', label: t('story.functions.allowedRoles') },
   ];
+  const showClosurePanel = args.fixture === 'functions-closure' || args.fixture === 'descriptors-prototype';
 
   return (
-    <div className="sb-story-container">
-      <TrustedInputNotice variant="info" />
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.options.fixtureSelection')}</h3>
-        <div className="sb-grid">
-          <div className="sb-card">
-            <div className="sb-card-title">{t('story.options.inputFixture')}</div>
-            <Select value={fixture} onChange={handleFixtureChange} options={fixtureOptions} style={{ width: '100%' }} />
-            <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--storybook-text-muted)' }}>
-              {t(FIXTURE_LABEL_KEYS[fixture] || fixture)}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
-        <ResultPanel
-          label={t('story.common.typeLabel', { type: getTypeSummary(input) })}
-          copyText={formatValue(input)}
-          onCopy={() => navigator.clipboard.writeText(formatValue(input))}
-        >
-          {formatValue(input)}
-        </ResultPanel>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.stringifyOptions')}</h3>
-        <div className="sb-grid">
-          <div className="sb-card">
-            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>startTag</label>
-            <Input
-              value={startTag}
-              onChange={(e) => updateArgs({ startTag: e.target.value })}
-              placeholder="\$SJS\$_"
-              allowClear
-            />
-          </div>
-          <div className="sb-card">
-            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>endTag</label>
-            <Input
-              value={endTag}
-              onChange={(e) => updateArgs({ endTag: e.target.value })}
-              placeholder="_\$SJE\$"
-              allowClear
-            />
-          </div>
-          <div className="sb-card">
-            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>variablePrefix</label>
-            <Input
-              value={variablePrefix}
-              onChange={(e) => updateArgs({ variablePrefix: e.target.value })}
-              placeholder="\$SJV\$_"
-              allowClear
-            />
-          </div>
-        </div>
-        <div className="sb-grid" style={{ marginTop: '0.5rem' }}>
-          <label className="sb-card">
-            <span style={{ marginRight: '0.5rem' }}>preserveClassConstructor</span>
-            <Switch
-              checked={preserveClassConstructor}
-              onChange={(checked) => updateArgs({ preserveClassConstructor: checked })}
-            />
-          </label>
-          <label className="sb-card">
-            <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
-            <Switch
-              checked={preserveDescriptors}
-              onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
-            />
-          </label>
-        </div>
-      </div>
-      {(fixture === 'functions-closure' || fixture === 'descriptors-prototype') && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.parseOptions')}</h3>
-          <div className="sb-grid">
-            <div className="sb-card">
-              <div style={{ fontSize: '0.875rem' }}>
-                {t('story.functions.closureFixture')}
+    <RoundTripDemo
+      input={args.input}
+      stringifyOptions={stringifyOpts}
+      parseOptions={parseOpts}
+      showOriginalInput
+      beforeInput={
+        <>
+          <TrustedInputNotice variant="info" />
+          <div className="sb-section">
+            <h3 className="sb-section-title">{t('story.options.fixtureSelection')}</h3>
+            <div className="sb-grid">
+              <div className="sb-card">
+                <div className="sb-card-title">{t('story.options.inputFixture')}</div>
                 <Select
-                  value={closure}
-                  onChange={(next) => updateArgs({ closure: next })}
-                  options={closureOptions}
-                  style={{ width: 260, marginLeft: '0.5rem' }}
+                  value={args.fixture}
+                  onChange={handleFixtureChange}
+                  options={fixtureOptions}
+                  style={{ width: '100%' }}
                 />
-                <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
-                  {t('story.functions.closureNotice')}
+                <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--storybook-text-muted)' }}>
+                  {t(FIXTURE_DESCRIPTION_KEYS[args.fixture] || args.fixture)}
                 </p>
               </div>
             </div>
           </div>
-        </div>
-      )}
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.parseOptions')}</h3>
-        <div className="sb-grid">
-          <label className="sb-card">
-            <Tooltip title={t('story.options.debugTooltip')}>
-              <span style={{ marginRight: '0.5rem' }}>debug</span>
-              <Switch checked={debug} onChange={(checked) => updateArgs({ debug: checked })} />
-            </Tooltip>
-          </label>
-          {debug && (
-            <label className="sb-card">
-              <Tooltip title={t('story.options.prettyPrintTooltip')}>
-                <span style={{ marginRight: '0.5rem' }}>prettyPrint</span>
-                <Switch checked={prettyPrint} onChange={(checked) => updateArgs({ prettyPrint: checked })} />
-              </Tooltip>
-            </label>
-          )}
-        </div>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
-        <Button type="primary" onClick={runSerialization}>
-          {t('story.common.runStringifyParse')}
-        </Button>
-      </div>
-      {originalValue !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.options.originalInput')}</h3>
-          <ResultPanel
-            label={t('story.common.typeLabel', { type: getTypeSummary(originalValue) })}
-            copyText={formatValue(originalValue)}
-            onCopy={() => navigator.clipboard.writeText(formatValue(originalValue))}
-          >
-            {formatValue(originalValue)}
-          </ResultPanel>
-        </div>
-      )}
-      {serialized && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
-          <ResultPanel
-            label={
-              <Space>
-                {t('story.common.lengthLabel', { count: serialized.length })}
-                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  {t('story.common.copy')}
-                </Button>
-              </Space>
-            }
-          >
-            <pre className="sb-json-output sb-expandable">{serialized}</pre>
-          </ResultPanel>
-        </div>
-      )}
-      {error && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.error')}</h3>
-          <ResultPanel variant="error" label={error} />
-        </div>
-      )}
-      {restored !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
-          <ResultPanel
-            label={
-              <>
-                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
-                {roundTripResult && (
-                  <>
-                    <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
-                    </span>
-                    <span className="sb-badge warning">{roundTripResult.reason}</span>
-                  </>
+        </>
+      }
+      optionsPanel={
+        <>
+          <div className="sb-section">
+            <h3 className="sb-section-title">{t('story.common.stringifyOptions')}</h3>
+            <div className="sb-grid">
+              <div className="sb-card">
+                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>startTag</label>
+                <Input
+                  value={args.startTag}
+                  onChange={(e) => updateArgs({ startTag: e.target.value })}
+                  placeholder="\$SJS\$_"
+                  allowClear
+                />
+              </div>
+              <div className="sb-card">
+                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>endTag</label>
+                <Input
+                  value={args.endTag}
+                  onChange={(e) => updateArgs({ endTag: e.target.value })}
+                  placeholder="_\$SJE\$"
+                  allowClear
+                />
+              </div>
+              <div className="sb-card">
+                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+                  variablePrefix
+                </label>
+                <Input
+                  value={args.variablePrefix}
+                  onChange={(e) => updateArgs({ variablePrefix: e.target.value })}
+                  placeholder="\$SJV\$_"
+                  allowClear
+                />
+              </div>
+            </div>
+            <div className="sb-grid" style={{ marginTop: '0.5rem' }}>
+              <label className="sb-card">
+                <span style={{ marginRight: '0.5rem' }}>preserveClassConstructor</span>
+                <Switch
+                  checked={args.preserveClassConstructor}
+                  onChange={(checked) => updateArgs({ preserveClassConstructor: checked })}
+                />
+              </label>
+              <label className="sb-card">
+                <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
+                <Switch
+                  checked={args.preserveDescriptors}
+                  onChange={(checked) => updateArgs({ preserveDescriptors: checked })}
+                />
+              </label>
+            </div>
+          </div>
+          {showClosurePanel && (
+            <div className="sb-section">
+              <h3 className="sb-section-title">{t('story.common.parseOptions')}</h3>
+              <div className="sb-grid">
+                <div className="sb-card">
+                  <div style={{ fontSize: '0.875rem' }}>
+                    {t('story.functions.closureFixture')}
+                    <Select
+                      value={args.closure}
+                      onChange={(next) => updateArgs({ closure: next })}
+                      options={closureOptions}
+                      style={{ width: 260, marginLeft: '0.5rem' }}
+                    />
+                    <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
+                      {t('story.functions.closureNotice')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="sb-grid" style={{ marginTop: '0.5rem' }}>
+                <label className="sb-card">
+                  <Tooltip title={t('story.options.debugTooltip')}>
+                    <span style={{ marginRight: '0.5rem' }}>debug</span>
+                    <Switch checked={args.debug} onChange={(checked) => updateArgs({ debug: checked })} />
+                  </Tooltip>
+                </label>
+                {args.debug && (
+                  <label className="sb-card">
+                    <Tooltip title={t('story.options.prettyPrintTooltip')}>
+                      <span style={{ marginRight: '0.5rem' }}>prettyPrint</span>
+                      <Switch checked={args.prettyPrint} onChange={(checked) => updateArgs({ prettyPrint: checked })} />
+                    </Tooltip>
+                  </label>
                 )}
-              </>
-            }
-          >
-            {formatValue(restored)}
-          </ResultPanel>
-        </div>
-      )}
-    </div>
+              </div>
+            </div>
+          )}
+        </>
+      }
+    />
   );
-}
-
-// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
-const renderOptions = () => {
-  const [args, updateArgs] = useArgs<OptionsArgs>();
-  return <OptionsView {...args} updateArgs={updateArgs} />;
 };
 
 export default meta;

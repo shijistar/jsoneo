@@ -111,7 +111,7 @@ export function getTypeSummary(value: unknown): string {
   if (Array.isArray(value)) return `Array[${value.length}]`;
   const typeName = Object.prototype.toString.call(value).slice(8, -1);
   if (typeName !== 'Object') return typeName;
-  return `Object{${Object.keys(value as object).length}}`;
+  return `Object {${Object.keys(value as object).length}}`;
 }
 
 export interface RoundTripResult {

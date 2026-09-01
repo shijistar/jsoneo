@@ -66,8 +66,6 @@ import { version } from './version';
  * 7. Supports raw JSON objects (via JSON.rawJSON() method).
  * 8. Supports circular references.
  * 9. Supports toJSON and fromJSON methods for custom serialization and deserialization.
- *
- * > > > > > > > Stashed changes
  */
 
 /**

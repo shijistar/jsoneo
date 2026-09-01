@@ -87,6 +87,7 @@
   "story.meta.functionsClosure": "Function serialization and deserialization. Function bodies are preserved but lexical closures are NOT captured automatically. Use the closure option to provide external variables.",
   "story.meta.descriptorsPrototype": "Custom property descriptors (writable, enumerable, configurable, getters/setters) and prototype chain handling.",
   "story.meta.circularReferences": "Circular reference handling. jsoneo tracks circular references during serialization and restores them during parsing.",
+  "story.meta.complexObject": "Complex objects. Demonstrates how jsoneo handles objects with complex structures and nested relationships.",
   "story.meta.options": "StringifyOptions and ParseOptions demonstration. Shows how options affect serialization and deserialization behavior. Switch between presets or tune every option interactively.",
   "story.meta.compatibility": "Browser and Node.js compatibility. Shows which features are available in each environment and how jsoneo handles differences.",
   "story.meta.securityBoundary": "Security boundary demonstration. jsoneo.parse() executes generated JavaScript code. This page shows the correct and incorrect ways to use jsoneo, and why you must only parse trusted data."

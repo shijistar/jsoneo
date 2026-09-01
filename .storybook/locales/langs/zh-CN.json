@@ -87,6 +87,7 @@
   "story.meta.functionsClosure": "函数序列化和反序列化。函数体得以保留，但词法闭包不会被自动捕获。使用 closure 选项提供外部变量。",
   "story.meta.descriptorsPrototype": "自定义属性描述符（writable、enumerable、configurable、getters/setters）和原型链处理。",
   "story.meta.circularReferences": "循环引用处理。jsoneo 在序列化期间跟踪循环引用，并在解析期间还原它们。",
+  "story.meta.complexObject": "复杂对象。展示 jsoneo 如何处理具有复杂结构和嵌套关系的对象。",
   "story.meta.options": "StringifyOptions 和 ParseOptions 演示。展示选项如何影响序列化和反序列化行为。在预设之间切换或交互式调整每个选项。",
   "story.meta.compatibility": "浏览器和 Node.js 兼容性。展示每个环境中可用的功能以及 jsoneo 如何处理差异。",
   "story.meta.securityBoundary": "安全边界演示。jsoneo.parse() 会执行生成的 JavaScript 代码。本页面展示使用 jsoneo 的正确和错误方式，以及为什么你必须只解析可信数据。"

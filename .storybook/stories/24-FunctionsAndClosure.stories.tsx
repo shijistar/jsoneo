@@ -1,18 +1,14 @@
-import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Select, Space } from 'antd';
-import { parse, stringify } from '../../src';
-import type { ParseOptions, StringifyOptions } from '../../src/types';
-import { ResultPanel } from '../components/ResultPanel';
+import { Select } from 'antd';
+import { RoundTripDemo } from '../components/RoundTripDemo';
 import { storyI18n, useStoryT } from '../locales';
-import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
   title: 'Core API / Functions & Closure',
   // @ts-expect-error: because titleCN is an extension field
   titleCN: '核心 API / 函数与闭包',
-  component: FunctionsClosureStory,
+  component: RoundTripDemo,
   parameters: {
     docs: {
       description: {
@@ -41,143 +37,41 @@ type StoryArgs = {
   closure?: string;
 };
 
-type FunctionsClosureProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
-
-function FunctionsClosureStory(args: FunctionsClosureProps) {
-  const t = useStoryT();
-  const { updateArgs } = args;
-  const [serialized, setSerialized] = useState<string>('');
-  const [restored, setRestored] = useState<unknown>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [roundTripResult, setRoundTripResult] = useState<{ passed: boolean; reason: string } | null>(null);
-
-  const runSerialization = useCallback(() => {
-    setError(null);
-    try {
-      const value = args.input;
-      const stringifyOpts: StringifyOptions = {};
-      const serializedResult = stringify(value, stringifyOpts);
-      setSerialized(serializedResult);
-      try {
-        const closureObj: Record<string, unknown> | undefined =
-          args.closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
-        const parseOpts: ParseOptions = { closure: closureObj, prettyPrint: true };
-        const restoredValue = parse(serializedResult, parseOpts);
-        setRestored(restoredValue);
-        const rt = checkRoundTrip(value, restoredValue);
-        setRoundTripResult(rt);
-      } catch (parseError) {
-        setError(
-          t('story.common.parseFailed', {
-            message: parseError instanceof Error ? parseError.message : String(parseError),
-          }),
-        );
-        setRestored(null);
-        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
-      }
-    } catch (stringifyError) {
-      setError(
-        t('story.common.stringifyFailed', {
-          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
-        }),
-      );
-      setSerialized('');
-      setRestored(null);
-      setRoundTripResult(null);
-    }
-  }, [args.input, args.closure, t]);
-
-  return (
-    <div className="sb-story-container">
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
-        <ResultPanel
-          label={t('story.common.typeLabel', { type: getTypeSummary(args.input) })}
-          copyText={formatValue(args.input)}
-          onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
-        >
-          {formatValue(args.input)}
-        </ResultPanel>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.parseOptions')}</h3>
-        <div className="sb-card">
-          <div style={{ fontSize: '0.875rem' }}>
-            {t('story.functions.closureFixture')}
-            <Select
-              value={args.closure}
-              onChange={(next) => updateArgs({ closure: next })}
-              options={[
-                { value: '', label: t('story.functions.none') },
-                { value: 'allowedRoles', label: t('story.functions.allowedRoles') },
-              ]}
-              style={{ width: 260, marginLeft: '0.5rem' }}
-            />
-            <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
-              {t('story.functions.closureNotice')}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
-        <Button type="primary" onClick={runSerialization}>
-          {t('story.common.runStringifyParse')}
-        </Button>
-      </div>
-      {serialized && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
-          <ResultPanel
-            label={
-              <Space>
-                {t('story.common.lengthLabel', { count: serialized.length })}
-                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  {t('story.common.copy')}
-                </Button>
-              </Space>
-            }
-          >
-            <pre className="sb-json-output sb-expandable">{serialized}</pre>
-          </ResultPanel>
-        </div>
-      )}
-      {error && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.error')}</h3>
-          <ResultPanel variant="error" label={error} />
-        </div>
-      )}
-      {restored !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
-          <ResultPanel
-            label={
-              <>
-                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
-                {roundTripResult && (
-                  <>
-                    <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
-                    </span>
-                    <span className="sb-badge warning">{roundTripResult.reason}</span>
-                  </>
-                )}
-              </>
-            }
-          >
-            {formatValue(restored)}
-          </ResultPanel>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// useArgs 只能在 story render 函数（StoryContext）内调用，组件本体保持纯展示。
+// useArgs 只能在 story render 函数（StoryContext）内调用。
 const renderWithArgs = (storyArgs: StoryArgs) => {
   const [args, updateArgs] = useArgs<StoryArgs>();
-  return <FunctionsClosureStory {...args} updateArgs={updateArgs} />;
+  const t = useStoryT();
+  const closureObj: Record<string, unknown> | undefined =
+    args.closure === 'allowedRoles' ? { allowedRoles: ['admin', 'editor'] } : undefined;
+
+  return (
+    <RoundTripDemo
+      input={args.input}
+      parseOptions={{ closure: closureObj, prettyPrint: true }}
+      optionsPanel={
+        <div className="sb-section">
+          <h3 className="sb-section-title">{t('story.common.parseOptions')}</h3>
+          <div className="sb-card">
+            <div style={{ fontSize: '0.875rem' }}>
+              {t('story.functions.closureFixture')}
+              <Select
+                value={args.closure}
+                onChange={(next) => updateArgs({ closure: next })}
+                options={[
+                  { value: '', label: t('story.functions.none') },
+                  { value: 'allowedRoles', label: t('story.functions.allowedRoles') },
+                ]}
+                style={{ width: 260, marginLeft: '0.5rem' }}
+              />
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--storybook-text-muted)' }}>
+                {t('story.functions.closureNotice')}
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    />
+  );
 };
 
 export default meta;

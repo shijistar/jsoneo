@@ -1,17 +1,13 @@
-import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Space } from 'antd';
-import { parse, stringify } from '../../src';
-import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
+import { RoundTripDemo } from '../components/RoundTripDemo';
 import { storyI18n, useStoryT } from '../locales';
-import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
   title: 'Compatibility / Runtime Environments',
   // @ts-expect-error: because titleCN is an extension field
   titleCN: '兼容性 / 运行时环境',
-  component: CompatibilityStory,
+  component: RoundTripDemo,
   parameters: {
     docs: {
       description: {
@@ -29,128 +25,23 @@ const meta: Meta = {
   },
 };
 
-type StoryArgs = { input: unknown };
-
-function CompatibilityStory(args: StoryArgs) {
+function RuntimeEnvironmentPanel() {
   const t = useStoryT();
-  const [serialized, setSerialized] = useState<string>('');
-  const [restored, setRestored] = useState<unknown>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [roundTripResult, setRoundTripResult] = useState<{ passed: boolean; reason: string } | null>(null);
-
   const isNode = typeof process !== 'undefined' && process.versions?.node;
   const hasBuffer = typeof Buffer !== 'undefined' && Buffer.isBuffer;
   const hasBigIntTypedArrays = typeof BigInt64Array !== 'undefined';
-
-  const runSerialization = useCallback(() => {
-    setError(null);
-    try {
-      const value = args.input;
-      const stringifyOpts: StringifyOptions = {};
-      const serializedResult = stringify(value, stringifyOpts);
-      setSerialized(serializedResult);
-      try {
-        const parseOpts: ParseOptions = { prettyPrint: true };
-        const restoredValue = parse(serializedResult, parseOpts);
-        setRestored(restoredValue);
-        const rt = checkRoundTrip(value, restoredValue);
-        setRoundTripResult(rt);
-      } catch (parseError) {
-        setError(
-          t('story.common.parseFailed', {
-            message: parseError instanceof Error ? parseError.message : String(parseError),
-          }),
-        );
-        setRestored(null);
-        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
-      }
-    } catch (stringifyError) {
-      setError(
-        t('story.common.stringifyFailed', {
-          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
-        }),
-      );
-      setSerialized('');
-      setRestored(null);
-      setRoundTripResult(null);
-    }
-  }, [args.input, t]);
+  const envText = JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2);
 
   return (
-    <div className="sb-story-container">
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.compatibility.runtimeEnvironment')}</h3>
-        <ResultPanel
-          label={t('story.compatibility.environmentDetection')}
-          copyText={JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2)}
-          onCopy={() =>
-            navigator.clipboard.writeText(JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2))
-          }
-        >
-          <pre className="sb-json-output">{JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2)}</pre>
-        </ResultPanel>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
-        <ResultPanel
-          label={t('story.common.typeLabel', { type: getTypeSummary(args.input) })}
-          copyText={formatValue(args.input)}
-          onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
-        >
-          {formatValue(args.input)}
-        </ResultPanel>
-      </div>
-      <div className="sb-section">
-        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
-        <Button type="primary" onClick={runSerialization}>
-          {t('story.common.runStringifyParse')}
-        </Button>
-      </div>
-      {serialized && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
-          <ResultPanel
-            label={
-              <Space>
-                {t('story.common.lengthLabel', { count: serialized.length })}
-                <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  {t('story.common.copy')}
-                </Button>
-              </Space>
-            }
-          >
-            <pre className="sb-json-output sb-expandable">{serialized}</pre>
-          </ResultPanel>
-        </div>
-      )}
-      {error && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.error')}</h3>
-          <ResultPanel variant="error" label={error} />
-        </div>
-      )}
-      {restored !== null && (
-        <div className="sb-section">
-          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
-          <ResultPanel
-            label={
-              <>
-                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
-                {roundTripResult && (
-                  <>
-                    <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
-                    </span>
-                    <span className="sb-badge warning">{roundTripResult.reason}</span>
-                  </>
-                )}
-              </>
-            }
-          >
-            {formatValue(restored)}
-          </ResultPanel>
-        </div>
-      )}
+    <div className="sb-section">
+      <h3 className="sb-section-title">{t('story.compatibility.runtimeEnvironment')}</h3>
+      <ResultPanel
+        label={t('story.compatibility.environmentDetection')}
+        copyText={envText}
+        onCopy={() => navigator.clipboard.writeText(envText)}
+      >
+        <pre className="sb-json-output">{envText}</pre>
+      </ResultPanel>
     </div>
   );
 }
@@ -170,6 +61,7 @@ export const BufferSupport: Story = {
       return { buffer: new Uint8Array([104, 101, 108, 108, 111]) };
     })(),
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
 
 export const BigIntTypedArrays: Story = {
@@ -182,6 +74,7 @@ export const BigIntTypedArrays: Story = {
       bigUint64: new BigUint64Array([1n, 2n, 3n]),
     },
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
 
 export const CrossEnvironmentObject: Story = {
@@ -201,6 +94,7 @@ export const CrossEnvironmentObject: Story = {
       dataView: new DataView(new ArrayBuffer(8)),
     },
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
 
 export const SymbolSupport: Story = {
@@ -217,6 +111,7 @@ export const SymbolSupport: Story = {
       },
     },
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
 
 export const ErrorObject: Story = {
@@ -230,6 +125,7 @@ export const ErrorObject: Story = {
       rangeError: new RangeError('Range error'),
     },
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
 
 export const IterablesAndGenerators: Story = {
@@ -250,4 +146,5 @@ export const IterablesAndGenerators: Story = {
       },
     },
   },
+  render: (args) => <RoundTripDemo input={args.input} beforeInput={<RuntimeEnvironmentPanel />} />,
 };
