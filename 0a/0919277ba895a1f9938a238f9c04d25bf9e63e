@@ -1,0 +1,23 @@
+.storybook/stories/20-PrimitiveValues.stories.tsx
+  h_99cad05bea77d1 47,75
+CHANGELOG.md
+  h_99cad05bea77d1 5-12
+  h_99cad05bea77d1 13,21,29,37,45
+src/utils/deserializedCode.ts
+  h_99cad05bea77d1 39
+src/types.ts
+  h_99cad05bea77d1 37-40
+src/index.ts
+  h_99cad05bea77d1 133-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0a0919277ba895a1f9938a238f9c04d25bf9e63e",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
