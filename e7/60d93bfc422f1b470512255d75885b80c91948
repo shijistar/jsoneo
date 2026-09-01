@@ -1,0 +1,18 @@
+.storybook/preview.tsx
+  h_99cad05bea77d1 4,6,9
+.storybook/components/StorybookDocsContainer.tsx
+  h_99cad05bea77d1 2,5-9,13-14,17-42,45-55
+.storybook/global-styles.css
+  h_99cad05bea77d1 50-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e760d93bfc422f1b470512255d75885b80c91948",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
