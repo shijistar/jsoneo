@@ -12,13 +12,15 @@ interface ThemedDocsContainerProps extends DocsContainerProps<ReactRenderer> {}
 
 let currentTheme: string | undefined = undefined;
 
-export const ThemedDocsContainer = (props: PropsWithChildren<ThemedDocsContainerProps>) => {
+export const DocPageContainer = (props: PropsWithChildren<ThemedDocsContainerProps>) => {
   const className = useMemo(() => 'sb-docs-container', []);
   // @ts-expect-error: because store is an internal api
   const localeKey = props.context.store?.userGlobals.globals.storyLocale;
   // @ts-expect-error: because store is an internal api
   const themeKey = props.context.store?.userGlobals.globals.theme;
-  const isDark = themeKey === 'dark';
+  const isPreferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = (!themeKey && isPreferDark) || themeKey === 'dark' ? 'dark' : 'light';
+  const isDark = theme === 'dark';
   const themeName = isDark ? 'dark' : 'light';
 
   // Reload the page if the theme changes.
@@ -59,7 +61,7 @@ export const ThemedDocsContainer = (props: PropsWithChildren<ThemedDocsContainer
           },
         }}
       >
-        <DocsContainer {...props} theme={themeKey === 'dark' ? dark : light}>
+        <DocsContainer {...props} theme={isDark ? dark : light}>
           {props.children}
         </DocsContainer>
       </ConfigProvider>
@@ -67,4 +69,4 @@ export const ThemedDocsContainer = (props: PropsWithChildren<ThemedDocsContainer
   );
 };
 
-export default ThemedDocsContainer;
+export default DocPageContainer;

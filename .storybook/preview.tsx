@@ -5,14 +5,14 @@ import { Description, Subtitle, Title } from '@storybook/addon-docs/blocks';
 import type { Preview, ReactRenderer } from '@storybook/react-vite';
 // @ts-expect-error
 import 'antd/dist/reset.css';
-import { useStorybookDecorator } from './components/useStorybookDecorator';
+import { useStoryPageDecorator } from './components/useStoryPageDecorator';
 import { ensureStoryI18n } from './locales';
 import './global-styles.css';
 import './story-styles.css';
 
 ensureStoryI18n();
 
-const ThemedDocsContainer = lazy(() => import('./components/StorybookDocsContainer'));
+const ThemedDocsContainer = lazy(() => import('./components/DocPageContainer'));
 
 const preview: Preview = {
   initialGlobals: {
@@ -71,7 +71,7 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [(Story, context) => useStorybookDecorator(Story, context)],
+  decorators: [(Story, context) => useStoryPageDecorator(Story, context)],
 };
 
 export default preview;
