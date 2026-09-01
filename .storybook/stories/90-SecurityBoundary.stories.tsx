@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from 'antd';
+import { Button, Space } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
 import { TrustedInputNotice } from '../components/TrustedInputNotice';
+import { storyI18n, useStoryT } from '../locales';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
@@ -15,8 +16,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Security boundary demonstration. jsoneo.parse() executes generated JavaScript code. This page shows the correct and incorrect ways to use jsoneo, and why you must only parse trusted data.',
+        component: storyI18n.t('story.meta.securityBoundary'),
       },
     },
   },
@@ -24,7 +24,7 @@ const meta: Meta = {
   argTypes: {
     input: {
       control: { disable: true },
-      description: 'Fixed trusted fixture (not editable in this demo)',
+      description: storyI18n.t('story.argTypes.fixedFixture'),
       table: { category: 'Input' },
     },
   },
@@ -33,6 +33,7 @@ const meta: Meta = {
 type StoryArgs = { input: unknown };
 
 function SecurityBoundaryStory(args: StoryArgs) {
+  const t = useStoryT();
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,88 +53,79 @@ function SecurityBoundaryStory(args: StoryArgs) {
         const rt = checkRoundTrip(value, restoredValue);
         setRoundTripResult(rt);
       } catch (parseError) {
-        setError(`Parse failed: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+        setError(
+          t('story.common.parseFailed', {
+            message: parseError instanceof Error ? parseError.message : String(parseError),
+          }),
+        );
         setRestored(null);
-        setRoundTripResult({ passed: false, reason: 'Parse error' });
+        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
       }
     } catch (stringifyError) {
       setError(
-        `Stringify failed: ${stringifyError instanceof Error ? stringifyError.message : String(stringifyError)}`,
+        t('story.common.stringifyFailed', {
+          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
+        }),
       );
       setSerialized('');
       setRestored(null);
       setRoundTripResult(null);
     }
-  }, [args.input]);
+  }, [args.input, t]);
 
   return (
     <div className="sb-story-container">
-      <TrustedInputNotice
-        variant="warning"
-        children={
-          <>
-            <strong>jsoneo.parse() executes generated JavaScript code.</strong> Only parse data produced by
-            jsoneo.stringify() from trusted sources. Never parse untrusted user input, network data from untrusted
-            sources, or arbitrary strings. jsoneo is NOT a sandbox or security boundary. For untrusted data exchange,
-            use native JSON or other data-only formats.
-          </>
-        }
-      />
-
+      <TrustedInputNotice variant="warning" children={<>{t('story.security.detailedNotice')}</>} />
       <div className="sb-section">
-        <h3 className="sb-section-title">✅ Correct Usage: Trusted Data Round-trip</h3>
+        <h3 className="sb-section-title">{t('story.security.correctUsage')}</h3>
         <ResultPanel
-          label="This is the intended usage pattern"
+          label={t('story.security.intendedUsage')}
           copyText={formatValue(args.input)}
           onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
         >
           {formatValue(args.input)}
         </ResultPanel>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Actions</h3>
+        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
         <Button type="primary" onClick={runSerialization}>
-          Run stringify → parse (Trusted Fixture)
+          {t('story.security.runTrusted')}
         </Button>
       </div>
-
       {serialized && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Serialized Output (from jsoneo.stringify)</h3>
+          <h3 className="sb-section-title">{t('story.security.serializedFrom')}</h3>
           <ResultPanel
             label={
-              <>
-                Length: {serialized.length} chars
+              <Space>
+                {t('story.common.lengthLabel', { count: serialized.length })}
                 <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  Copy
+                  {t('story.common.copy')}
                 </Button>
-              </>
+              </Space>
             }
           >
             <pre className="sb-json-output sb-expandable">{serialized}</pre>
           </ResultPanel>
         </div>
       )}
-
       {error && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Error</h3>
+          <h3 className="sb-section-title">{t('story.common.error')}</h3>
           <ResultPanel variant="error" label={error} />
         </div>
       )}
-
       {restored !== null && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Restored Result (parse)</h3>
+          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
           <ResultPanel
             label={
               <>
-                Type: {getTypeSummary(restored)}
+                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
                 {roundTripResult && (
                   <>
                     <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? '✓ Round-trip OK' : '✗ Round-trip FAIL'}
+                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
                     </span>
                     <span className="sb-badge warning">{roundTripResult.reason}</span>
                   </>
@@ -145,10 +137,9 @@ function SecurityBoundaryStory(args: StoryArgs) {
           </ResultPanel>
         </div>
       )}
-
       <div className="sb-section">
-        <h3 className="sb-section-title">❌ Incorrect Usage: Never Parse Untrusted Data</h3>
-        <ResultPanel variant="error" label="DANGER: Do not do this!">
+        <h3 className="sb-section-title">{t('story.security.incorrectUsage')}</h3>
+        <ResultPanel variant="error" label={t('story.security.danger')}>
           <pre className="sb-json-output">
             {`// NEVER do this:
 const userInput = getUserInputFromNetwork(); // Untrusted!
@@ -160,23 +151,16 @@ const result = parse(arbitraryString); // EXECUTES ARBITRARY CODE`}
           </pre>
         </ResultPanel>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Security Rules</h3>
+        <h3 className="sb-section-title">{t('story.security.securityRules')}</h3>
         <ResultPanel label="">
           <ul style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: 1.8 }}>
-            <li>
-              Only parse data produced by <code>jsoneo.stringify()</code>
-            </li>
-            <li>Only parse data from trusted sources (your own application, controlled test fixtures)</li>
-            <li>Never parse user input, API responses from untrusted services, or arbitrary strings</li>
-            <li>
-              jsoneo is NOT a sandbox — it uses <code>new Function()</code> to evaluate generated code
-            </li>
-            <li>
-              For untrusted data exchange, use native <code>JSON.parse()</code> or other data-only formats
-            </li>
-            <li>If you must parse external data, validate/sanitize it first and understand the risks</li>
+            <li>{t('story.security.rule1')}</li>
+            <li>{t('story.security.rule2')}</li>
+            <li>{t('story.security.rule3')}</li>
+            <li>{t('story.security.rule4')}</li>
+            <li>{t('story.security.rule5')}</li>
+            <li>{t('story.security.rule6')}</li>
           </ul>
         </ResultPanel>
       </div>

@@ -1,3 +1,5 @@
+import { storyI18n } from '../locales';
+
 export function formatValue(value: unknown): string {
   return formatValueInner(value, 0, new WeakSet<object>());
 }
@@ -23,9 +25,9 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
   } else if (value instanceof URLSearchParams) {
     return `new URLSearchParams("${value.toString()}")`;
   } else if (value instanceof Map) {
-    return `new Map(${formatValueInner([...value.entries()], 0, seen)})`;
+    return `new Map(${formatValueInner([...value.entries()], depth + 3, seen)})`;
   } else if (value instanceof Set) {
-    return `new Set(${formatValueInner([...value.values()], 0, seen)})`;
+    return `new Set(${formatValueInner([...value.values()], depth + 3, seen)})`;
   } else if (
     [
       Int8Array,
@@ -88,10 +90,14 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
     }
     const keys = [...Object.keys(value), ...Object.getOwnPropertySymbols(value)];
     if (keys.length === 0) return '{}';
-    const items = keys.map(
-      (key) =>
-        `${pad}  ${typeof key === 'string' ? JSON.stringify(key) : `[${formatValueInner(key, 0, seen)}]`}: ${formatValueInner((value as Record<string | symbol, unknown>)[key], depth + 1, seen)}`,
-    );
+    const items = keys.map((key) => {
+      const d = Object.getOwnPropertyDescriptor(value, key);
+      const isDefault = d?.value !== undefined && d.writable && d.enumerable && d.configurable;
+      const v = isDefault
+        ? formatValueInner((value as Record<string | symbol, unknown>)[key], depth + 1, seen)
+        : formatValueInner(d, depth + 1, seen);
+      return `${pad}  ${typeof key === 'string' ? JSON.stringify(key) : `[${formatValueInner(key, 0, seen)}]`}: ${v}`;
+    });
     return `{\n${items.join(',\n')}\n${pad}}`;
   } finally {
     seen.delete(value);
@@ -113,18 +119,22 @@ export interface RoundTripResult {
 }
 
 export function checkRoundTrip(original: unknown, restored: unknown): RoundTripResult {
-  if (original === restored) return { passed: true, reason: 'Identical references' };
+  const t = (key: string, options?: Record<string, unknown>) => storyI18n.t(key, options);
+  if (original === restored) return { passed: true, reason: t('story.roundTrip.identicalReferences') };
   if (typeof original === 'function' && typeof restored === 'function') {
-    return { passed: true, reason: 'Both functions (bodies may differ, closure not captured)' };
+    return { passed: true, reason: t('story.roundTrip.bothFunctions') };
   }
   if (typeof original !== typeof restored)
-    return { passed: false, reason: `Type mismatch: ${typeof original} vs ${typeof restored}` };
+    return {
+      passed: false,
+      reason: t('story.roundTrip.typeMismatch', { original: typeof original, restored: typeof restored }),
+    };
   try {
     const origStr = JSON.stringify(original);
     const restStr = JSON.stringify(restored);
-    if (origStr === restStr) return { passed: true, reason: 'JSON stringify match' };
+    if (origStr === restStr) return { passed: true, reason: t('story.roundTrip.jsonMatch') };
   } catch {}
-  return { passed: false, reason: 'Values differ after round-trip' };
+  return { passed: false, reason: t('story.roundTrip.valuesDiffer') };
 }
 
 // Type definitions for the jsoneo API - actual imports done in stories

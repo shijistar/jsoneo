@@ -1,4 +1,5 @@
 import { Alert } from 'antd';
+import { useStoryT } from '../locales';
 
 interface TrustedInputNoticeProps {
   variant?: 'warning' | 'info';
@@ -6,13 +7,8 @@ interface TrustedInputNoticeProps {
 }
 
 export const TrustedInputNotice = ({ variant = 'warning', children }: TrustedInputNoticeProps) => {
-  const defaultContent = (
-    <>
-      <strong>jsoneo.parse() executes generated JavaScript code.</strong> Only parse data produced by jsoneo.stringify()
-      from trusted sources. Never parse untrusted user input or arbitrary strings. This playground uses a curated
-      fixture whitelist.
-    </>
-  );
+  const t = useStoryT();
+  const defaultContent = <>{t('story.security.defaultNotice')}</>;
 
   return (
     <Alert
@@ -20,7 +16,7 @@ export const TrustedInputNotice = ({ variant = 'warning', children }: TrustedInp
       showIcon
       role="alert"
       style={{ marginBottom: '1rem' }}
-      message={variant === 'warning' ? '⚠️ Security Notice' : 'ℹ️ Information'}
+      title={variant === 'warning' ? t('story.security.warningTitle') : t('story.security.infoTitle')}
       description={children || defaultContent}
     />
   );

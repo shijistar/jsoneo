@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { Button, Switch } from 'antd';
+import { Button, Space, Switch } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
-import { TrustedInputNotice } from '../components/TrustedInputNotice';
+import { storyI18n, useStoryT } from '../locales';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
@@ -16,8 +16,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Custom property descriptors (writable, enumerable, configurable, getters/setters) and prototype chain handling.',
+        component: storyI18n.t('story.meta.descriptorsPrototype'),
       },
     },
   },
@@ -25,12 +24,12 @@ const meta: Meta = {
   argTypes: {
     input: {
       control: 'object',
-      description: 'Input value to serialize',
+      description: storyI18n.t('story.argTypes.input'),
       table: { category: 'Input' },
     },
     preserveDescriptors: {
       control: 'boolean',
-      description: 'Whether to preserve custom property descriptors',
+      description: storyI18n.t('story.argTypes.preserveDescriptors'),
       table: { category: 'StringifyOptions' },
     },
   },
@@ -44,6 +43,7 @@ type StoryArgs = {
 type DescriptorsPrototypeProps = StoryArgs & { updateArgs: (patch: Partial<StoryArgs>) => void };
 
 function DescriptorsPrototypeStory(args: DescriptorsPrototypeProps) {
+  const t = useStoryT();
   const { updateArgs } = args;
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
@@ -66,37 +66,40 @@ function DescriptorsPrototypeStory(args: DescriptorsPrototypeProps) {
         const rt = checkRoundTrip(value, restoredValue);
         setRoundTripResult(rt);
       } catch (parseError) {
-        setError(`Parse failed: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+        setError(
+          t('story.common.parseFailed', {
+            message: parseError instanceof Error ? parseError.message : String(parseError),
+          }),
+        );
         setRestored(null);
-        setRoundTripResult({ passed: false, reason: 'Parse error' });
+        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
       }
     } catch (stringifyError) {
       setError(
-        `Stringify failed: ${stringifyError instanceof Error ? stringifyError.message : String(stringifyError)}`,
+        t('story.common.stringifyFailed', {
+          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
+        }),
       );
       setSerialized('');
       setRestored(null);
       setRoundTripResult(null);
     }
-  }, [args.input, args.preserveDescriptors]);
+  }, [args.input, args.preserveDescriptors, t]);
 
   return (
     <div className="sb-story-container">
-      <TrustedInputNotice variant="info" />
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Test Input</h3>
+        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
         <ResultPanel
-          label={`Type: ${getTypeSummary(args.input)}`}
+          label={t('story.common.typeLabel', { type: getTypeSummary(args.input) })}
           copyText={formatValue(args.input)}
           onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
         >
           {formatValue(args.input)}
         </ResultPanel>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Stringify Options</h3>
+        <h3 className="sb-section-title">{t('story.common.stringifyOptions')}</h3>
         <div className="sb-grid">
           <label className="sb-card">
             <span style={{ marginRight: '0.5rem' }}>preserveDescriptors</span>
@@ -107,50 +110,46 @@ function DescriptorsPrototypeStory(args: DescriptorsPrototypeProps) {
           </label>
         </div>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Actions</h3>
+        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
         <Button type="primary" onClick={runSerialization}>
-          Run stringify → parse
+          {t('story.common.runStringifyParse')}
         </Button>
       </div>
-
       {serialized && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Serialized Output (stringify)</h3>
+          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
           <ResultPanel
             label={
-              <>
-                Length: {serialized.length} chars
+              <Space>
+                {t('story.common.lengthLabel', { count: serialized.length })}
                 <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  Copy
+                  {t('story.common.copy')}
                 </Button>
-              </>
+              </Space>
             }
           >
             <pre className="sb-json-output sb-expandable">{serialized}</pre>
           </ResultPanel>
         </div>
       )}
-
       {error && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Error</h3>
+          <h3 className="sb-section-title">{t('story.common.error')}</h3>
           <ResultPanel variant="error" label={error} />
         </div>
       )}
-
       {restored !== null && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Restored Result (parse)</h3>
+          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
           <ResultPanel
             label={
               <>
-                Type: {getTypeSummary(restored)}
+                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
                 {roundTripResult && (
                   <>
                     <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? '✓ Round-trip OK' : '✗ Round-trip FAIL'}
+                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
                     </span>
                     <span className="sb-badge warning">{roundTripResult.reason}</span>
                   </>

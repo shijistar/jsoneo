@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Button } from 'antd';
+import { useStoryT } from '../locales';
 
 interface ResultPanelProps {
   label: React.ReactNode;
@@ -11,6 +12,7 @@ interface ResultPanelProps {
 }
 
 export const ResultPanel = ({ label, children, variant = 'default', badge, copyText, onCopy }: ResultPanelProps) => {
+  const t = useStoryT();
   const isDark = document.documentElement.classList.contains('dark');
 
   const bgColors = {
@@ -88,7 +90,7 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
         )}
         {copyText && onCopy && (
           <Button size="small" onClick={onCopy}>
-            Copy
+            {t('story.common.copy')}
           </Button>
         )}
       </div>

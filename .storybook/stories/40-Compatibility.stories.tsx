@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from 'antd';
+import { Button, Space } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
 import { ResultPanel } from '../components/ResultPanel';
-import { TrustedInputNotice } from '../components/TrustedInputNotice';
+import { storyI18n, useStoryT } from '../locales';
 import { checkRoundTrip, formatValue, getTypeSummary } from '../utils/roundTrip';
 
 const meta: Meta = {
@@ -15,8 +15,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Browser and Node.js compatibility. Shows which features are available in each environment and how jsoneo handles differences.',
+        component: storyI18n.t('story.meta.compatibility'),
       },
     },
   },
@@ -24,7 +23,7 @@ const meta: Meta = {
   argTypes: {
     input: {
       control: 'object',
-      description: 'Input value to serialize',
+      description: storyI18n.t('story.argTypes.input'),
       table: { category: 'Input' },
     },
   },
@@ -33,6 +32,7 @@ const meta: Meta = {
 type StoryArgs = { input: unknown };
 
 function CompatibilityStory(args: StoryArgs) {
+  const t = useStoryT();
   const [serialized, setSerialized] = useState<string>('');
   const [restored, setRestored] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,28 +56,32 @@ function CompatibilityStory(args: StoryArgs) {
         const rt = checkRoundTrip(value, restoredValue);
         setRoundTripResult(rt);
       } catch (parseError) {
-        setError(`Parse failed: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+        setError(
+          t('story.common.parseFailed', {
+            message: parseError instanceof Error ? parseError.message : String(parseError),
+          }),
+        );
         setRestored(null);
-        setRoundTripResult({ passed: false, reason: 'Parse error' });
+        setRoundTripResult({ passed: false, reason: t('story.common.parseError') });
       }
     } catch (stringifyError) {
       setError(
-        `Stringify failed: ${stringifyError instanceof Error ? stringifyError.message : String(stringifyError)}`,
+        t('story.common.stringifyFailed', {
+          message: stringifyError instanceof Error ? stringifyError.message : String(stringifyError),
+        }),
       );
       setSerialized('');
       setRestored(null);
       setRoundTripResult(null);
     }
-  }, [args.input]);
+  }, [args.input, t]);
 
   return (
     <div className="sb-story-container">
-      <TrustedInputNotice variant="info" />
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Runtime Environment</h3>
+        <h3 className="sb-section-title">{t('story.compatibility.runtimeEnvironment')}</h3>
         <ResultPanel
-          label="Environment Detection"
+          label={t('story.compatibility.environmentDetection')}
           copyText={JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2)}
           onCopy={() =>
             navigator.clipboard.writeText(JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2))
@@ -86,61 +90,56 @@ function CompatibilityStory(args: StoryArgs) {
           <pre className="sb-json-output">{JSON.stringify({ isNode, hasBuffer, hasBigIntTypedArrays }, null, 2)}</pre>
         </ResultPanel>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Test Input</h3>
+        <h3 className="sb-section-title">{t('story.common.testInput')}</h3>
         <ResultPanel
-          label={`Type: ${getTypeSummary(args.input)}`}
+          label={t('story.common.typeLabel', { type: getTypeSummary(args.input) })}
           copyText={formatValue(args.input)}
           onCopy={() => navigator.clipboard.writeText(formatValue(args.input))}
         >
           {formatValue(args.input)}
         </ResultPanel>
       </div>
-
       <div className="sb-section">
-        <h3 className="sb-section-title">Actions</h3>
+        <h3 className="sb-section-title">{t('story.common.actions')}</h3>
         <Button type="primary" onClick={runSerialization}>
-          Run stringify → parse
+          {t('story.common.runStringifyParse')}
         </Button>
       </div>
-
       {serialized && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Serialized Output (stringify)</h3>
+          <h3 className="sb-section-title">{t('story.common.serializedOutput')}</h3>
           <ResultPanel
             label={
-              <>
-                Length: {serialized.length} chars
+              <Space>
+                {t('story.common.lengthLabel', { count: serialized.length })}
                 <Button size="small" onClick={() => navigator.clipboard.writeText(serialized)}>
-                  Copy
+                  {t('story.common.copy')}
                 </Button>
-              </>
+              </Space>
             }
           >
             <pre className="sb-json-output sb-expandable">{serialized}</pre>
           </ResultPanel>
         </div>
       )}
-
       {error && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Error</h3>
+          <h3 className="sb-section-title">{t('story.common.error')}</h3>
           <ResultPanel variant="error" label={error} />
         </div>
       )}
-
       {restored !== null && (
         <div className="sb-section">
-          <h3 className="sb-section-title">Restored Result (parse)</h3>
+          <h3 className="sb-section-title">{t('story.common.restoredResult')}</h3>
           <ResultPanel
             label={
               <>
-                Type: {getTypeSummary(restored)}
+                {t('story.common.typeLabel', { type: getTypeSummary(restored) })}
                 {roundTripResult && (
                   <>
                     <span className={`sb-badge ${roundTripResult.passed ? 'success' : 'danger'}`}>
-                      {roundTripResult.passed ? '✓ Round-trip OK' : '✗ Round-trip FAIL'}
+                      {roundTripResult.passed ? t('story.common.roundTripOk') : t('story.common.roundTripFail')}
                     </span>
                     <span className="sb-badge warning">{roundTripResult.reason}</span>
                   </>
