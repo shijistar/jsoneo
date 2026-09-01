@@ -1,0 +1,32 @@
+.storybook/locales/langs/zh-CN.json
+  h_99cad05bea77d1 9,29,36,38,41,44-54,61,65,71
+.storybook/stories/shared/fixtures.ts
+  h_99cad05bea77d1 89-96,99,105,107-108,110-115,117
+  h_99cad05bea77d1 109
+.storybook/utils/roundTrip.ts
+  h_99cad05bea77d1 1,29,31,67,96
+.storybook/stories/21-SpecialValues.stories.tsx
+  h_99cad05bea77d1 148
+.storybook/main.ts
+  h_99cad05bea77d1 13
+.storybook/locales/langs/en-US.json
+  h_99cad05bea77d1 9,44-54
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 4,8,11,13-22,38-43,79-83,94,102,106-108,115,120,128,133,139-145,151,163-164,166,201-214,218,220-230,289,293-309,319,326,335-346,409
+  h_99cad05bea77d1 12,84,109-114,116,146,193-200,219,290-292,314-316,320-325
+.storybook/preview.tsx
+  h_99cad05bea77d1 4,59-70
+.storybook/global-styles.css
+  h_99cad05bea77d1 7-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "63377c91daf12b823ba3af2535bac02ba2d302b7",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
