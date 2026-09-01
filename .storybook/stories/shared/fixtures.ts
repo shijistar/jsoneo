@@ -86,13 +86,9 @@ export function createFixture(type: string): unknown {
             return ++this.value;
           },
         },
-        canEdit: {
-          get() {
-            // @ts-expect-error
-            return allowedRoles.includes(this.role);
-          },
-          writable: false,
-          enumerable: true,
+        canEdit() {
+          // @ts-expect-error
+          return allowedRoles.includes(this.role);
         },
       };
     case 'descriptors-prototype':

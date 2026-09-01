@@ -34,7 +34,7 @@
   max-height: 300px;
   padding: 0.75rem;
   overflow: auto;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-family: var(--storybook-code-font-family);
   line-height: 1.5;
   white-space: pre-wrap;

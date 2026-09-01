@@ -33,7 +33,7 @@ const meta: Meta = {
       },
     },
   },
-  tags: ['autodocs'],
+  // tags: ['autodocs'],
   argTypes: {
     fixture: {
       control: 'select',
@@ -169,6 +169,7 @@ function OptionsView({
         };
         const restoredValue = parse(serializedResult, parseOpts);
         setRestored(restoredValue);
+        // window.x = restoredValue;
         const rt = checkRoundTrip(value, restoredValue);
         setRoundTripResult(rt);
       } catch (parseError) {
