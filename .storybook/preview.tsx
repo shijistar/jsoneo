@@ -1,11 +1,12 @@
 import type { PropsWithChildren } from 'react';
 import { lazy, Suspense } from 'react';
 import type { DocsContainerProps } from '@storybook/addon-docs/blocks';
-import { Controls, Description, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+import { Description, Subtitle, Title } from '@storybook/addon-docs/blocks';
 import type { Preview, ReactRenderer } from '@storybook/react-vite';
+// @ts-expect-error
 import 'antd/dist/reset.css';
 import { useStorybookDecorator } from './components/useStorybookDecorator';
-import { ensureStoryI18n, storyI18n } from './locales';
+import { ensureStoryI18n } from './locales';
 import './global-styles.css';
 import './story-styles.css';
 

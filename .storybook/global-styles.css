@@ -47,3 +47,65 @@ pre {
   /* stylelint-disable-next-line declaration-no-important */
   margin-bottom: 16px !important;
 }
+
+/* Dark mode for Storybook docs pages */
+html.dark .sbdocs-wrapper,
+html[data-theme='dark'] .sbdocs-wrapper {
+  background: #121212;
+}
+
+html.dark .sbdocs-content,
+html[data-theme='dark'] .sbdocs-content {
+  color: #e6edf3;
+}
+
+html.dark .sbdocs-content :where(h1, h2, h3, h4, h5, h6),
+html[data-theme='dark'] .sbdocs-content :where(h1, h2, h3, h4, h5, h6) {
+  color: #e6edf3;
+}
+
+html.dark .sbdocs-content :where(p, li, td, th, blockquote),
+html[data-theme='dark'] .sbdocs-content :where(p, li, td, th, blockquote) {
+  color: #e6edf3;
+}
+
+html.dark .sbdocs-content :where(a),
+html[data-theme='dark'] .sbdocs-content :where(a) {
+  color: #58a6ff;
+}
+
+html.dark .sbdocs-content :where(code),
+html[data-theme='dark'] .sbdocs-content :where(code) {
+  color: #e6edf3;
+  background: #161b22;
+  border-color: #30363d;
+}
+
+html.dark .sbdocs-content :where(pre),
+html[data-theme='dark'] .sbdocs-content :where(pre) {
+  color: #e6edf3;
+  background: #0d1117;
+  border-color: #30363d;
+}
+
+html.dark .sbdocs-content :where(table),
+html[data-theme='dark'] .sbdocs-content :where(table) {
+  border-color: #30363d;
+}
+
+html.dark .sbdocs-content :where(th, td),
+html[data-theme='dark'] .sbdocs-content :where(th, td) {
+  border-color: #30363d;
+}
+
+html.dark .sbdocs-content :where(blockquote),
+html[data-theme='dark'] .sbdocs-content :where(blockquote) {
+  background: #161b22;
+  border-left-color: #30363d;
+}
+
+html.dark .docs-story,
+html[data-theme='dark'] .docs-story {
+  background: #121212;
+  border-color: #30363d;
+}
