@@ -49,9 +49,14 @@ pre {
 }
 
 /* Dark mode for Storybook docs pages */
+html.dark #storybook-docs,
+html.dark .sbdocs,
 html.dark .sbdocs-wrapper,
+html[data-theme='dark'] #storybook-docs,
+html[data-theme='dark'] .sbdocs,
 html[data-theme='dark'] .sbdocs-wrapper {
-  background: #121212;
+  /* stylelint-disable-next-line declaration-no-important */
+  background: #121212 !important;
 }
 
 html.dark .sbdocs-content,
@@ -105,7 +110,16 @@ html[data-theme='dark'] .sbdocs-content :where(blockquote) {
 }
 
 html.dark .docs-story,
-html[data-theme='dark'] .docs-story {
-  background: #121212;
+html.dark #storybook-root,
+html[data-theme='dark'] .docs-story,
+html[data-theme='dark'] #storybook-root {
+  /* stylelint-disable-next-line declaration-no-important */
+  background: #121212 !important;
   border-color: #30363d;
+}
+
+html.dark .docs-story-inner,
+html[data-theme='dark'] .docs-story-inner {
+  /* stylelint-disable-next-line declaration-no-important */
+  background: #121212 !important;
 }

@@ -40,6 +40,14 @@ export const ThemedDocsContainer = (props: PropsWithChildren<ThemedDocsContainer
     }
   }, [localeKey]);
 
+  // Sync dark mode class onto the iframe documentElement. Docs pages do
+  // not go through the story decorator, so this must happen here. Without
+  // it, html.dark / html[data-theme='dark'] CSS selectors never match.
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.dataset.theme = themeName;
+  }, [isDark, themeName]);
+
   return (
     <div className={className}>
       <ConfigProvider
