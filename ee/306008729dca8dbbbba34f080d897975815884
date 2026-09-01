@@ -1,0 +1,18 @@
+.storybook/components/useStoryPageDecorator.tsx
+  h_99cad05bea77d1 18,22-24,72-73
+.storybook/components/DocPageContainer.tsx
+  h_99cad05bea77d1 1-72
+.storybook/preview.tsx
+  h_99cad05bea77d1 8,15,74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "ee306008729dca8dbbbba34f080d897975815884",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
