@@ -2,7 +2,15 @@
 
 # jsoneo Changelog
 
-- ## 1.1.0
+## UNRELEASED
+
+2026-9-1
+
+### Features
+
+- 🛠️ omit empty metadata arrays (such as `apis`, `types`, `patches`, `descriptors`, `refs`) from serialized result
+
+## 1.1.0
 
 2026-6-21
 
@@ -10,7 +18,7 @@
 
 - ✨ Allow and preserve extra info on `getter/setter` functions.
 
-- ## 1.0.3
+## 1.0.3
 
 2025-11-21
 
@@ -18,7 +26,7 @@
 
 - 🐞 Fixed an issue where prototype chain patches were not applied recursively.
 
-- ## 1.0.2
+## 1.0.2
 
 2025-11-17
 
@@ -26,7 +34,7 @@
 
 - ✨ Improved serialization of getter and setter functions.
 
-- ## 1.0.1
+## 1.0.1
 
 2025-9-4
 
@@ -34,7 +42,7 @@
 
 - ✨ Compatible with legacy `Node.js` versions, down to `v7`.
 
-- ## 1.0.0
+## 1.0.0
 
 2025-8-31
 

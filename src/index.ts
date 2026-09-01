@@ -130,6 +130,21 @@ export function stringify(value: any, options?: StringifyOptions): string {
     console.log('------------------ stringify ', ['FINAL'], ' ------------------');
     console.log(JSON.stringify(serialized));
   }
+  if (!result.apis?.length) {
+    delete result.apis;
+  }
+  if (!result.types?.length) {
+    delete result.types;
+  }
+  if (!result.patches?.length) {
+    delete result.patches;
+  }
+  if (!result.descriptors?.length) {
+    delete result.descriptors;
+  }
+  if (!result.refs?.length) {
+    delete result.refs;
+  }
   return JSON.stringify(result);
 }
 

@@ -36,7 +36,7 @@ export function deserializedCode(result: SerializedResult, options: InternalPars
   const refs = ${decodeFormat(JSON.stringify(refs), { startTag: ST, endTag: ET })} ?? [];
   const apis = ${decodeFormat(
     JSON.stringify(
-      apis.map((api) => ({
+      apis?.map((api) => ({
         ...api,
         toJSON: `${ST}${base64ToString(api.toJSON)}${ET}`,
         fromJSON: api.fromJSON ? `${ST}${base64ToString(api.fromJSON)}${ET}` : undefined,

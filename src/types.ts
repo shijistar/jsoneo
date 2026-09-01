@@ -34,10 +34,10 @@ export interface SerializedResult {
   variablePrefix?: string;
   endTag?: string;
   source: string | undefined;
-  types: TypeInfo[];
-  apis: JsonApi[];
-  patches: PatchInfo[];
-  refs: RefInfo[];
+  types?: TypeInfo[];
+  apis?: JsonApi[];
+  patches?: PatchInfo[];
+  refs?: RefInfo[];
   descriptors?: DescriptorInfo[];
 }
 

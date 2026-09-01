@@ -26,17 +26,11 @@ const meta: Meta = {
       description: storyI18n.t('story.argTypes.input'),
       table: { category: 'Input' },
     },
-    preserveDescriptors: {
-      control: 'boolean',
-      description: storyI18n.t('story.argTypes.preserveDescriptors'),
-      table: { category: 'StringifyOptions' },
-    },
   },
 };
 
 type StoryArgs = {
   input: unknown;
-  preserveDescriptors: boolean;
 };
 
 function PrimitiveStory(args: StoryArgs) {
@@ -50,9 +44,7 @@ function PrimitiveStory(args: StoryArgs) {
     setError(null);
     try {
       const value = args.input;
-      const stringifyOpts: StringifyOptions = {
-        preserveDescriptors: args.preserveDescriptors,
-      };
+      const stringifyOpts: StringifyOptions = {};
       const serializedResult = stringify(value, stringifyOpts);
       setSerialized(serializedResult);
       try {
@@ -80,7 +72,7 @@ function PrimitiveStory(args: StoryArgs) {
       setRestored(null);
       setRoundTripResult(null);
     }
-  }, [args.input, args.preserveDescriptors, t]);
+  }, [args.input, t]);
 
   return (
     <div className="sb-story-container">
@@ -167,7 +159,6 @@ export const AllPrimitives: Story = {
   nameCN: '全部原始值',
   args: {
     input: basePrimitive,
-    preserveDescriptors: true,
   },
 };
 
@@ -177,7 +168,6 @@ export const SimpleString: Story = {
   nameCN: '简单字符串',
   args: {
     input: 'simple string',
-    preserveDescriptors: true,
   },
 };
 
@@ -187,7 +177,6 @@ export const SimpleNumber: Story = {
   nameCN: '简单数字',
   args: {
     input: 123.456,
-    preserveDescriptors: true,
   },
 };
 
@@ -197,7 +186,6 @@ export const SimpleBoolean: Story = {
   nameCN: '简单布尔',
   args: {
     input: true,
-    preserveDescriptors: true,
   },
 };
 
@@ -207,7 +195,6 @@ export const SimpleArray: Story = {
   nameCN: '简单数组',
   args: {
     input: [1, 2, 3, 'four', true, null],
-    preserveDescriptors: true,
   },
 };
 
@@ -217,6 +204,5 @@ export const NestedObject: Story = {
   nameCN: '嵌套对象',
   args: {
     input: { level1: { level2: { level3: 'deep' } }, array: [{ a: 1 }, { b: 2 }] },
-    preserveDescriptors: true,
   },
 };
