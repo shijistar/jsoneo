@@ -27,6 +27,7 @@ export const dark: ThemeVars = {
   ...themes.dark,
   base: 'dark',
   appBg: '#121212',
+  appPreviewBg: '#1e1e1e',
   appContentBg: '#1e1e1e',
   appBorderColor: '#333333',
   textColor: '#ffffff',

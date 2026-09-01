@@ -6,7 +6,7 @@ import { ConfigProvider } from 'antd';
 import darkAlgorithm from 'antd/es/theme/themes/dark';
 import defaultAlgorithm from 'antd/es/theme/themes/default';
 import { storyI18n } from '../locales';
-import { getThemeKey } from '../utils/themes';
+import { dark, light } from '../utils/themes';
 
 interface ThemedDocsContainerProps extends DocsContainerProps<ReactRenderer> {}
 
@@ -59,7 +59,9 @@ export const ThemedDocsContainer = (props: PropsWithChildren<ThemedDocsContainer
           },
         }}
       >
-        <DocsContainer {...props}>{props.children}</DocsContainer>
+        <DocsContainer {...props} theme={themeKey === 'dark' ? dark : light}>
+          {props.children}
+        </DocsContainer>
       </ConfigProvider>
     </div>
   );

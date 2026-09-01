@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { irBlack, vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Button } from 'antd';
 import { useStoryT } from '../locales';
 
@@ -94,7 +95,13 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
           </Button>
         )}
       </div>
-      <pre className="sb-json-output">{children ?? ''}</pre>
+      {typeof children === 'string' ? (
+        <SyntaxHighlighter language="javascript" style={isDark ? irBlack : vs}>
+          {children ?? ''}
+        </SyntaxHighlighter>
+      ) : (
+        <pre className="sb-json-output">{children ?? ''}</pre>
+      )}
     </div>
   );
 };

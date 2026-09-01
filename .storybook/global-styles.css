@@ -4,21 +4,6 @@
   --storybook-code-font-family: 'SF Mono', 'Fira Code', 'Fira Mono', menlo, consolas, monospace;
 }
 
-body {
-  margin: 0;
-  color: #212121;
-  font-family: var(--storybook-font-family);
-  background: #fff;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html.dark body,
-html[data-theme='dark'] body {
-  color: #e6edf3;
-  background: #121212;
-}
-
 html.dark,
 html[data-theme='dark'] {
   color-scheme: dark;
@@ -46,80 +31,4 @@ pre {
 .sbdocs-content :where(h1:not(.sb-anchor, .sb-unstyled, .sb-unstyled h1)) {
   /* stylelint-disable-next-line declaration-no-important */
   margin-bottom: 16px !important;
-}
-
-/* Dark mode for Storybook docs pages */
-html.dark #storybook-docs,
-html.dark .sbdocs,
-html.dark .sbdocs-wrapper,
-html[data-theme='dark'] #storybook-docs,
-html[data-theme='dark'] .sbdocs,
-html[data-theme='dark'] .sbdocs-wrapper {
-  /* stylelint-disable-next-line declaration-no-important */
-  background: #121212 !important;
-}
-
-html.dark .sbdocs-content,
-html[data-theme='dark'] .sbdocs-content {
-  color: #e6edf3;
-}
-
-html.dark .sbdocs-content :where(h1, h2, h3, h4, h5, h6),
-html[data-theme='dark'] .sbdocs-content :where(h1, h2, h3, h4, h5, h6) {
-  color: #e6edf3;
-}
-
-html.dark .sbdocs-content :where(p, li, td, th, blockquote),
-html[data-theme='dark'] .sbdocs-content :where(p, li, td, th, blockquote) {
-  color: #e6edf3;
-}
-
-html.dark .sbdocs-content :where(a),
-html[data-theme='dark'] .sbdocs-content :where(a) {
-  color: #58a6ff;
-}
-
-html.dark .sbdocs-content :where(code),
-html[data-theme='dark'] .sbdocs-content :where(code) {
-  color: #e6edf3;
-  background: #161b22;
-  border-color: #30363d;
-}
-
-html.dark .sbdocs-content :where(pre),
-html[data-theme='dark'] .sbdocs-content :where(pre) {
-  color: #e6edf3;
-  background: #0d1117;
-  border-color: #30363d;
-}
-
-html.dark .sbdocs-content :where(table),
-html[data-theme='dark'] .sbdocs-content :where(table) {
-  border-color: #30363d;
-}
-
-html.dark .sbdocs-content :where(th, td),
-html[data-theme='dark'] .sbdocs-content :where(th, td) {
-  border-color: #30363d;
-}
-
-html.dark .sbdocs-content :where(blockquote),
-html[data-theme='dark'] .sbdocs-content :where(blockquote) {
-  background: #161b22;
-  border-left-color: #30363d;
-}
-
-html.dark .docs-story,
-html.dark #storybook-root,
-html[data-theme='dark'] .docs-story,
-html[data-theme='dark'] #storybook-root {
-  /* stylelint-disable-next-line declaration-no-important */
-  background: #121212 !important;
-  border-color: #30363d;
-}
-
-html.dark .docs-story-inner,
-html[data-theme='dark'] .docs-story-inner {
-  /* stylelint-disable-next-line declaration-no-important */
-  background: #121212 !important;
 }
