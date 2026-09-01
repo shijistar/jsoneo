@@ -1,0 +1,39 @@
+.storybook/locales/langs/zh-CN.json
+  h_99cad05bea77d1 90
+.storybook/locales/langs/en-US.json
+  h_99cad05bea77d1 90
+.storybook/utils/roundTrip.ts
+  h_99cad05bea77d1 114
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 4,6,21-30,36,127-129,141-147,149-154,157-171,176,179-184,186,188,191,193-196,198-199,204-238,241-256,258,262-269,271-290,292-293
+  h_99cad05bea77d1 1,140,155,185,187,189-190,239-240,257,259-261,270,294-297
+.storybook/stories/26-CircularReferences.stories.tsx
+  h_99cad05bea77d1 2-3,9,83
+.storybook/components/RoundTripDemo.tsx
+  h_99cad05bea77d1 1-152
+.storybook/stories/20-PrimitiveValues.stories.tsx
+  h_99cad05bea77d1 2-3,9,43,50,57,64,71,78
+.storybook/stories/21-SpecialValues.stories.tsx
+  h_99cad05bea77d1 2-3,9
+.storybook/stories/22-BuiltinsAndCollections.stories.tsx
+  h_99cad05bea77d1 2-3,9
+.storybook/stories/23-BinaryValues.stories.tsx
+  h_99cad05bea77d1 2-3,9
+.storybook/stories/24-FunctionsAndClosure.stories.tsx
+  h_99cad05bea77d1 3-4,11,40-42,44-45,48-51,53-70,72-73
+.storybook/stories/25-DescriptorsAndPrototype.stories.tsx
+  h_99cad05bea77d1 3-4,11,39-41,45-48,50-59,61-62
+.storybook/stories/40-Compatibility.stories.tsx
+  h_99cad05bea77d1 3,10,28,33,36-44,64,77,97,114,128,149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8f52b2453670bee506e8383a170c5b025e5390c9",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
