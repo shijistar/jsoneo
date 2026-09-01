@@ -1,0 +1,24 @@
+.storybook/story-styles.css
+  h_99cad05bea77d1 37
+.storybook/global-styles.css
+  h_99cad05bea77d1 18-36
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 36,172
+.storybook/components/useStorybookDecorator.tsx
+  h_99cad05bea77d1 1,4-7,9,11-12,20-23,33-51
+  h_99cad05bea77d1 10
+.storybook/stories/shared/fixtures.ts
+  h_99cad05bea77d1 89,91
+  h_99cad05bea77d1 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "5e2a36db06405e0772d54d900ddf192aa60f2e88",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
