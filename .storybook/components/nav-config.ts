@@ -7,28 +7,28 @@ import type { NavItem } from './PrevNextNav';
  * of this chain.
  */
 export const NAV_ITEMS: NavItem[] = [
-  { key: 'introduce', id: 'introduce--docs', type: 'docs', title: 'Introduce', titleCN: '介绍' },
-  { key: 'install', id: 'install--docs', type: 'docs', title: 'Install', titleCN: '安装' },
-  { key: 'get-started', id: 'get-started--docs', type: 'docs', title: 'Get Started', titleCN: '快速开始' },
-  { key: 'api-guide', id: 'api-guide--docs', type: 'docs', title: 'API Guide', titleCN: 'API 指南' },
+  { key: 'introduce', id: 'introduce--intro', type: 'docs', title: 'Introduce', titleCN: '介绍' },
+  { key: 'install', id: 'install--intro', type: 'docs', title: 'Install', titleCN: '安装' },
+  { key: 'get-started', id: 'get-started--intro', type: 'docs', title: 'Get Started', titleCN: '快速开始' },
+  { key: 'api-guide', id: 'api-guide--intro', type: 'docs', title: 'API Guide', titleCN: 'API 指南' },
   {
     key: 'supported-values',
-    id: 'supported-values--docs',
+    id: 'supported-values--intro',
     type: 'docs',
     title: 'Supported Values',
     titleCN: '支持的值类型',
   },
-  { key: 'options', id: 'options--docs', type: 'docs', title: 'Options', titleCN: '选项' },
+  { key: 'options', id: 'options--intro', type: 'docs', title: 'Options', titleCN: '选项' },
   {
     key: 'advanced-patterns',
-    id: 'advanced-patterns--docs',
+    id: 'advanced-patterns--intro',
     type: 'docs',
     title: 'Advanced Patterns',
     titleCN: '高级模式',
   },
-  { key: 'limitations', id: 'limitations--docs', type: 'docs', title: 'Limitations', titleCN: '限制' },
-  { key: 'security', id: 'security--docs', type: 'docs', title: 'Security', titleCN: '安全' },
-  { key: 'faq', id: 'faq--docs', type: 'docs', title: 'FAQ', titleCN: '常见问题' },
+  { key: 'limitations', id: 'limitations--intro', type: 'docs', title: 'Limitations', titleCN: '限制' },
+  { key: 'security', id: 'security--intro', type: 'docs', title: 'Security', titleCN: '安全' },
+  { key: 'faq', id: 'faq--intro', type: 'docs', title: 'FAQ', titleCN: '常见问题' },
   {
     key: 'core-api-primitive-values',
     id: 'core-api-primitive-values--all-primitives',
