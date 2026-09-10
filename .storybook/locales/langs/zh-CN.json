@@ -5,7 +5,6 @@
   "storybook.preview.themeDescription": "主题",
   "storybook.preview.theme.light": "浅色",
   "storybook.preview.theme.dark": "深色",
-
   "story.common.testInput": "原始输入",
   "story.common.actions": "操作",
   "story.common.runStringifyParse": "执行 stringify → parse",
@@ -23,7 +22,6 @@
   "story.common.stringifyOptions": "序列化选项",
   "story.common.parseOptions": "解析选项",
   "story.options.prettyPrintTooltip": "切换美化输出模式，仅对debug模式的输出内容有效",
-
   "story.argTypes.input": "待序列化的输入值",
   "story.argTypes.preserveDescriptors": "是否保留自定义属性描述符",
   "story.argTypes.closure": "为 parse 选择预定义的可信闭包用例",
@@ -34,12 +32,10 @@
   "story.argTypes.debug": "打印调试信息",
   "story.argTypes.prettyPrint": "美化输出反序列化代码",
   "story.argTypes.fixedFixture": "固定的可信用例（此演示中不可编辑）",
-
   "story.functions.closureFixture": "闭包参数：",
   "story.functions.none": "无",
   "story.functions.allowedRoles": "allowedRoles = [admin, editor]",
   "story.functions.closureNotice": "仅提供预定义的可信闭包参数，有意不提供任意闭包输入。",
-
   "story.options.debugTooltip": "切换调试模式，在控制台显示额外信息",
   "story.options.fixtureSelection": "用例选择",
   "story.options.inputFixture": "输入类型",
@@ -52,10 +48,8 @@
   "story.options.fixture.descriptorsPrototype": "描述符与原型",
   "story.options.fixture.circularReferences": "循环引用",
   "story.options.fixture.complexObject": "复杂对象",
-
   "story.compatibility.runtimeEnvironment": "运行时环境",
   "story.compatibility.environmentDetection": "环境检测",
-
   "story.security.warningTitle": "⚠️ 安全提示",
   "story.security.infoTitle": "注意",
   "story.security.defaultNotice": "jsoneo.parse() 会执行生成的 JavaScript 代码。仅解析由可信来源的 jsoneo.stringify() 产生的数据。切勿解析不可信的用户输入或任意字符串。本演示使用经过筛选的用例白名单。",
@@ -73,13 +67,11 @@
   "story.security.rule4": "jsoneo 不是沙箱——它使用 new Function() 来执行生成的代码",
   "story.security.rule5": "对于不可信的数据交换，请使用原生 JSON.parse() 或其他纯数据格式",
   "story.security.rule6": "如果必须解析外部数据，请先验证/清理它并了解风险",
-
   "story.roundTrip.identicalReferences": "引用相同",
   "story.roundTrip.bothFunctions": "均为函数（函数体可能不同，闭包未捕获）",
   "story.roundTrip.typeMismatch": "类型不匹配：{{original}} vs {{restored}}",
   "story.roundTrip.jsonMatch": "JSON 序列化匹配",
   "story.roundTrip.valuesDiffer": "往返后值不同",
-
   "story.meta.primitiveValues": "兼容 JSON 的原始值：string、number、boolean、null、array、plain object。",
   "story.meta.specialValues": "原生 JSON 无法表示的 JavaScript 特殊值：undefined、NaN、Infinity、-Infinity、-0、BigInt。",
   "story.meta.builtinsCollections": "内置对象和集合：Date、RegExp、URL、URLSearchParams、Map、Set。",
@@ -90,5 +82,7 @@
   "story.meta.complexObject": "复杂对象。展示 jsoneo 如何处理具有复杂结构和嵌套关系的对象。",
   "story.meta.options": "StringifyOptions 和 ParseOptions 演示。展示选项如何影响序列化和反序列化行为。在预设之间切换或交互式调整每个选项。",
   "story.meta.compatibility": "浏览器和 Node.js 兼容性。展示每个环境中可用的功能以及 jsoneo 如何处理差异。",
-  "story.meta.securityBoundary": "安全边界演示。jsoneo.parse() 会执行生成的 JavaScript 代码。本页面展示使用 jsoneo 的正确和错误方式，以及为什么你必须只解析可信数据。"
+  "story.meta.securityBoundary": "安全边界演示。jsoneo.parse() 会执行生成的 JavaScript 代码。本页面展示使用 jsoneo 的正确和错误方式，以及为什么你必须只解析可信数据。",
+  "story.prevnext.prev": "上一篇",
+  "story.prevnext.next": "下一篇"
 }

@@ -22,7 +22,7 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
     success: '#dafbe1',
   };
   const borderColors = {
-    default: '#d0d7de',
+    default: isDark ? '#30363d' : '#d0d7de',
     error: '#cf222e',
     success: '#86efac',
   };

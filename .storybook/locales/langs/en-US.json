@@ -5,7 +5,6 @@
   "storybook.preview.themeDescription": "Theme",
   "storybook.preview.theme.light": "Light",
   "storybook.preview.theme.dark": "Dark",
-
   "story.common.testInput": "Original Input",
   "story.common.actions": "Actions",
   "story.common.runStringifyParse": "Run stringify → parse",
@@ -23,7 +22,6 @@
   "story.common.stringifyOptions": "Stringify Options",
   "story.common.parseOptions": "Parse Options",
   "story.options.prettyPrintTooltip": "Toggle pretty print mode, only effective for debug mode output",
-
   "story.argTypes.input": "Input value to serialize",
   "story.argTypes.preserveDescriptors": "Whether to preserve custom property descriptors",
   "story.argTypes.closure": "Select a predefined trusted closure fixture for parse",
@@ -34,12 +32,10 @@
   "story.argTypes.debug": "Print debug information",
   "story.argTypes.prettyPrint": "Pretty print deserialized code",
   "story.argTypes.fixedFixture": "Fixed trusted fixture (not editable in this demo)",
-
   "story.functions.closureFixture": "Closure fixture:",
   "story.functions.none": "none",
   "story.functions.allowedRoles": "allowedRoles = [admin, editor]",
   "story.functions.closureNotice": "Only predefined trusted closure fixtures are available; arbitrary closure input is intentionally unavailable.",
-
   "story.options.debugTooltip": "Toggle debug mode, shows additional information in console",
   "story.options.fixtureSelection": "Fixture Selection",
   "story.options.inputFixture": "Input Fixture",
@@ -52,10 +48,8 @@
   "story.options.fixture.descriptorsPrototype": "Descriptors & Prototype",
   "story.options.fixture.circularReferences": "Circular References",
   "story.options.fixture.complexObject": "Complex Object",
-
   "story.compatibility.runtimeEnvironment": "Runtime Environment",
   "story.compatibility.environmentDetection": "Environment Detection",
-
   "story.security.warningTitle": "⚠️ Security Notice",
   "story.security.infoTitle": "Information",
   "story.security.defaultNotice": "jsoneo.parse() executes generated JavaScript code. Only parse data produced by jsoneo.stringify() from trusted sources. Never parse untrusted user input or arbitrary strings. This playground uses a curated fixture whitelist.",
@@ -73,13 +67,11 @@
   "story.security.rule4": "jsoneo is NOT a sandbox — it uses new Function() to evaluate generated code",
   "story.security.rule5": "For untrusted data exchange, use native JSON.parse() or other data-only formats",
   "story.security.rule6": "If you must parse external data, validate/sanitize it first and understand the risks",
-
   "story.roundTrip.identicalReferences": "Identical references",
   "story.roundTrip.bothFunctions": "Both functions (bodies may differ, closure not captured)",
   "story.roundTrip.typeMismatch": "Type mismatch: {{original}} vs {{restored}}",
   "story.roundTrip.jsonMatch": "JSON stringify match",
   "story.roundTrip.valuesDiffer": "Values differ after round-trip",
-
   "story.meta.primitiveValues": "JSON-compatible primitives: string, number, boolean, null, array, plain object.",
   "story.meta.specialValues": "JavaScript-specific special values that native JSON cannot represent: undefined, NaN, Infinity, -Infinity, -0, BigInt.",
   "story.meta.builtinsCollections": "Built-in objects and collections: Date, RegExp, URL, URLSearchParams, Map, Set.",
@@ -90,5 +82,7 @@
   "story.meta.complexObject": "Complex objects. Demonstrates how jsoneo handles objects with complex structures and nested relationships.",
   "story.meta.options": "StringifyOptions and ParseOptions demonstration. Shows how options affect serialization and deserialization behavior. Switch between presets or tune every option interactively.",
   "story.meta.compatibility": "Browser and Node.js compatibility. Shows which features are available in each environment and how jsoneo handles differences.",
-  "story.meta.securityBoundary": "Security boundary demonstration. jsoneo.parse() executes generated JavaScript code. This page shows the correct and incorrect ways to use jsoneo, and why you must only parse trusted data."
+  "story.meta.securityBoundary": "Security boundary demonstration. jsoneo.parse() executes generated JavaScript code. This page shows the correct and incorrect ways to use jsoneo, and why you must only parse trusted data.",
+  "story.prevnext.prev": "Previous",
+  "story.prevnext.next": "Next"
 }
