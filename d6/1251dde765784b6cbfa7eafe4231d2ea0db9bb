@@ -1,0 +1,14 @@
+.storybook/vite.d.ts
+  h_99cad05bea77d1 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d61251dde765784b6cbfa7eafe4231d2ea0db9bb",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
