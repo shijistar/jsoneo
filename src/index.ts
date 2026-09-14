@@ -16,8 +16,6 @@ import { getByPath } from './utils/get';
 import { serializeRecursively } from './utils/serializeRecursively';
 import { version } from './version';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * ## Notes:
  *
@@ -76,11 +74,13 @@ import { version } from './version';
  *
  * @returns The serialized string.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function stringify(value: any, options?: StringifyOptions): string {
   const { debug, preserveDescriptors = true } = options ?? {};
   const patches: PatchInfo[] = [];
   const descriptors: DescriptorInfo[] = [];
   const types: TypeInfo[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const circular = new WeakMap<any, PathType[]>();
   const refs: RefInfo[] = [];
   const apis: JsonApi[] = [];

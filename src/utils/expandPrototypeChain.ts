@@ -1,10 +1,3 @@
-/**
- * Expands the prototype chain of the source object, including all properties from the prototype
- * chain.
- *
- * @param source - The source object to expand.
- * @param options - Options to control the expansion behavior.
- */
 import type {
   DescriptorInfo,
   ExpandPrototypeChainOptions,
@@ -22,7 +15,13 @@ import { pickPrototype } from './pickPrototype';
 import { serializeFunction } from './serializeRecursively';
 import { toSymbolString } from './symbol';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Expands the prototype chain of the source object, including all properties from the prototype
+ * chain.
+ *
+ * @param source - The source object to expand.
+ * @param options - Options to control the expansion behavior.
+ */
 export function expandPrototypeChain(
   source: unknown,
   options: ExpandPrototypeChainOptions = {} as ExpandPrototypeChainOptions,
@@ -231,7 +230,7 @@ function expandPrototypeChainRecursively(
         /* v8 ignore stop */
         try {
           result[key] = source[key];
-        } catch (error) {
+        } catch {
           // Silent failure
         }
         if (preserveDescriptors) {

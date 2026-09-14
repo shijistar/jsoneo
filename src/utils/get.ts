@@ -1,3 +1,5 @@
+import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
+
 /**
  * Gets the value at path of object. If the resolved value is undefined, the defaultValue is
  * returned in its place.
@@ -8,8 +10,6 @@
  *
  * @returns The resolved value
  */
-import { SymbolForGetDescriptor, SymbolForSetDescriptor } from './consts';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getByPath(obj: any, path: (string | number | symbol)[], defaultValue?: any): any {
   // Handle null/undefined objects

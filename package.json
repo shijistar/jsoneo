@@ -75,7 +75,7 @@
     "@storybook/addon-docs": "~10.3.5",
     "@storybook/addon-links": "~10.3.5",
     "@storybook/react-vite": "~10.3.5",
-    "@tiny-codes/code-style-all-in-one": "^2.0.2",
+    "@tiny-codes/code-style-all-in-one": "^3.1.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",

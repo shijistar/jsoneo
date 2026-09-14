@@ -55,14 +55,14 @@ describe('internal binary and encoding helpers', () => {
     expect(Array.from(deserializeBinary(serializeTypedArray(typed as never)) as Uint16Array)).toEqual([5, 6]);
     if (typeof Buffer !== 'undefined') {
       expect(() => serializeTypedArray(Buffer.from([1]) as unknown as never)).toThrow(
-        'Unsupported TypedArray type: Buffer'
+        'Unsupported TypedArray type: Buffer',
       );
     }
     expect(() => deserializeBinary({ kind: 'Other', base64: '', byteLength: 0 } as never)).toThrow(
-      'Invalid serialized typed array'
+      'Invalid serialized typed array',
     );
     expect(() =>
-      deserializeBinary({ kind: 'TypedArray', type: 'Missing', base64: '', byteLength: 0, length: 0 } as never)
+      deserializeBinary({ kind: 'TypedArray', type: 'Missing', base64: '', byteLength: 0, length: 0 } as never),
     ).toThrow('TypedArray constructor not available: Missing');
   });
 
@@ -91,7 +91,7 @@ describe('internal path, symbol, and prototype helpers', () => {
     const getterHolder = {};
     Object.defineProperty(getterHolder, SymbolForGetDescriptor, { get: () => 'symbol-getter', configurable: true });
     const setterHolder = {};
-    Object.defineProperty(setterHolder, SymbolForSetDescriptor, { set: () => undefined, configurable: true });
+    Object.defineProperty(setterHolder, SymbolForSetDescriptor, { set: vi.fn(), configurable: true });
     expect(typeof getByPath(getterHolder, [SymbolForGetDescriptor])).toBe('function');
     expect(typeof getByPath(setterHolder, [SymbolForSetDescriptor])).toBe('function');
     expect(getByPath(source, ['nested', 'value'])).toBe(3);
@@ -211,7 +211,7 @@ describe('internal serialization helpers', () => {
     const anonymousDescriptor = {};
     Object.defineProperty(anonymousDescriptor, Symbol(), { value: 1, enumerable: false, configurable: true });
     expect(
-      Object.getOwnPropertySymbols(expandPrototypeChain(anonymousDescriptor, makeOptions()) as object)
+      Object.getOwnPropertySymbols(expandPrototypeChain(anonymousDescriptor, makeOptions()) as object),
     ).toHaveLength(1);
     expandPrototypeChain(debugSource, { ...makeOptions(), debug: true });
     log.mockRestore();
@@ -250,7 +250,7 @@ describe('parse and generated deserialization code edge paths', () => {
     expect(parse(stringify({ arrayWithExtra }, { debug: true })).arrayWithExtra.label).toBe('x');
     expect(getByPath({ a: null }, ['a', 'b'], 'fallback')).toBe('fallback');
     expect(Object.getOwnPropertySymbols(serializeRecursively(symbolSource, { parentPath: [] }) as object)).toHaveLength(
-      2
+      2,
     );
     expect(parse(stringify({ toJSONOnly }))).toMatchObject({ toJSONOnly: { value: 4 } });
     serializeRecursively(1, undefined as never);

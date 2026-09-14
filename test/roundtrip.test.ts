@@ -169,7 +169,7 @@ describe('jsoneo round trips binary values', () => {
       const restored = roundTrip(sample) as typeof sample;
       expect(restored.constructor.name).toBe(sample.constructor.name);
       expect(Array.from(restored as unknown as Iterable<unknown>)).toEqual(
-        Array.from(sample as unknown as Iterable<unknown>)
+        Array.from(sample as unknown as Iterable<unknown>),
       );
     }
   });
@@ -404,6 +404,6 @@ describe('jsoneo supports optional JSON.rawJSON when the runtime provides it', (
       const restored = roundTrip({ raw: rawJSON('1') });
 
       expect(restored.raw).toBe(1);
-    }
+    },
   );
 });
