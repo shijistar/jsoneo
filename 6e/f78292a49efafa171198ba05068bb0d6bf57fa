@@ -1,0 +1,53 @@
+tsconfig.json
+  h_99cad05bea77d1 29
+tsconfig.eslint.json
+  h_99cad05bea77d1 17
+  h_99cad05bea77d1 8-16,18-20
+.storybook/stories/30-Options.stories.tsx
+  h_99cad05bea77d1 101,112,159
+package.json
+  h_99cad05bea77d1 78
+  h_99cad05bea77d1 89
+.storybook/manager.ts
+  h_99cad05bea77d1 18,24,26
+.storybook/components/ResultPanel.tsx
+  h_99cad05bea77d1 1,43,54
+  h_99cad05bea77d1 8-9,87
+.storybook/stories/90-SecurityBoundary.stories.tsx
+  h_99cad05bea77d1 33,35,80,201
+  h_99cad05bea77d1 34
+.storybook/components/RoundTripDemo.tsx
+  h_99cad05bea77d1 1,17,19
+eslint.config.mjs
+  h_99cad05bea77d1 1-2,22-23
+.storybook/components/useStoryPageDecorator.tsx
+  h_99cad05bea77d1 1,43
+  h_99cad05bea77d1 21
+.storybook/stories/26-CircularReferences.stories.tsx
+  h_99cad05bea77d1 36,51,64,66,80
+.storybook/utils/roundTrip.ts
+  h_99cad05bea77d1 137
+  h_99cad05bea77d1 136,138
+.storybook/stories/24-FunctionsAndClosure.stories.tsx
+  h_99cad05bea77d1 35,167,184
+  h_99cad05bea77d1 38
+.storybook/components/TrustedInputNotice.tsx
+  h_99cad05bea77d1 1,7
+.storybook/stories/25-DescriptorsAndPrototype.stories.tsx
+  h_99cad05bea77d1 34,37
+package-lock.json
+  h_99cad05bea77d1 15,26,237-267,2899-2909,4908-4910,4920,4926,4938-4939,4955-4956,4960,4977-4980,4984-4988,4991,4994,5160-5161,11121-11134,18092-18094
+prettier.config.mjs
+  h_99cad05bea77d1 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6ef78292a49efafa171198ba05068bb0d6bf57fa",
+  "prompts": {},
+  "humans": {
+    "h_99cad05bea77d1": {
+      "author": "Fengbao Li <shijistar@gmail.com>"
+    }
+  }
+}
