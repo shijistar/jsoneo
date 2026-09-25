@@ -63,7 +63,6 @@ function formatValueInner(value: unknown, depth: number, seen: WeakSet<object>):
     }
   } else if (value instanceof Date) return `new Date("${value.toISOString()}")`;
   else if (typeof value === 'function') {
-    const name = (value as Function).name || 'anonymous';
     return serializeFunction(value.toString()) || '';
   }
 
@@ -134,7 +133,9 @@ export function checkRoundTrip(original: unknown, restored: unknown): RoundTripR
     const origStr = JSON.stringify(original);
     const restStr = JSON.stringify(restored);
     if (origStr === restStr) return { passed: true, reason: t('story.roundTrip.jsonMatch') };
-  } catch {}
+  } catch {
+    // Handle any errors that occur during JSON.stringify
+  }
   return { passed: false, reason: t('story.roundTrip.valuesDiffer') };
 }
 

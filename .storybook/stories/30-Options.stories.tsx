@@ -98,7 +98,7 @@ const meta: Meta = {
   },
 };
 
-type OptionsArgs = {
+interface OptionsArgs {
   fixture: string;
   input: unknown;
   startTag: string;
@@ -109,7 +109,7 @@ type OptionsArgs = {
   debug: boolean;
   closure: string;
   prettyPrint: boolean;
-};
+}
 
 const DEFAULT_ARGS: OptionsArgs = {
   fixture: 'primitives',
@@ -156,7 +156,7 @@ const renderOptions = () => {
 
   const fixtureOptions = FIXTURE_TYPES.map((type) => {
     const text = t(FIXTURE_LABEL_KEYS[type] || type);
-    const match = text.match(/(.+?)([（\(].*[）\)])/);
+    const match = text.match(/(.+?)([（(].*[）)])/);
     const name = match?.[1] ?? text;
     const description = match?.[2];
     return {

@@ -33,6 +33,7 @@ export const SimpleCircular: Story = {
   nameCN: '简单循环',
   args: {
     input: (() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const circular: any = { name: 'circular', value: 42 };
       circular.self = circular;
       circular.ref = circular;
@@ -47,7 +48,7 @@ export const CircularArray: Story = {
   nameCN: '循环数组',
   args: {
     input: (() => {
-      const arr: any = [1, 2, 3];
+      const arr: unknown[] = [1, 2, 3];
       arr.push({ ref: arr });
       return arr;
     })(),
@@ -60,7 +61,9 @@ export const CircularObjectGraph: Story = {
   nameCN: '循环对象图',
   args: {
     input: (() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const a: any = { name: 'a' };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const b: any = { name: 'b', ref: a };
       a.ref = b;
       return { a, b };
@@ -74,6 +77,7 @@ export const DeepCircular: Story = {
   nameCN: '深层循环',
   args: {
     input: (() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const root: any = { level: 0 };
       let current = root;
       for (let i = 1; i <= 5; i++) {

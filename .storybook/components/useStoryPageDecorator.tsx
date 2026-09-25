@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactRenderer } from '@storybook/react-vite';
 import type { StoryContext } from 'storybook/internal/csf';
@@ -17,7 +18,7 @@ const ConfigProviderLazy = lazy(() => import('antd/es/config-provider'));
  * jsoneo story decorator: keeps the manager theme in sync and reloads the iframe when the locale
  * toolbar is toggled, so docs/stories pick up the new language without stale i18next state.
  */
-function useStoryPageDecorator(Story: React.ComponentType, context: StoryContext<ReactRenderer>) {
+function useStoryPageDecorator(Story: ComponentType, context: StoryContext<ReactRenderer>) {
   const localeKey = context.globals.storyLocale === 'zh-CN' ? 'zh-CN' : 'en-US';
   const locale = localeKey === 'zh-CN' ? zhCN : enUS;
   const themeKey = getThemeKey(context.globals.theme);
@@ -39,6 +40,7 @@ function useStoryPageDecorator(Story: React.ComponentType, context: StoryContext
   // Reload the page if the theme changes.
   useEffect(() => {
     if (themeName && themeName !== prevTheme) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPrevTheme(themeName);
       (window.top ?? window.parent ?? window).location.reload();
     }

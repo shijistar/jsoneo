@@ -30,7 +30,9 @@ const meta: Meta = {
   },
 };
 
-type StoryArgs = { input: unknown };
+interface StoryArgs {
+  input: unknown;
+}
 
 function SecurityBoundaryStory(args: StoryArgs) {
   const t = useStoryT();
@@ -75,7 +77,7 @@ function SecurityBoundaryStory(args: StoryArgs) {
 
   return (
     <div className="sb-story-container">
-      <TrustedInputNotice variant="warning" children={<>{t('story.security.detailedNotice')}</>} />
+      <TrustedInputNotice variant="warning">{t('story.security.detailedNotice')}</TrustedInputNotice>
       <div className="sb-section">
         <h3 className="sb-section-title">{t('story.security.correctUsage')}</h3>
         <ResultPanel
@@ -196,7 +198,7 @@ export const ComplexTrustedObject: Story = {
   nameCN: '复杂可信对象',
   args: {
     input: (() => {
-      const obj: any = {
+      const obj: Record<string, unknown> = {
         string: 'test',
         number: 42,
         date: new Date(),

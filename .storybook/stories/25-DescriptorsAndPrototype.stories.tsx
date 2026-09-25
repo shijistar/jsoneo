@@ -31,10 +31,10 @@ const meta: Meta = {
   },
 };
 
-type StoryArgs = {
+interface StoryArgs {
   input?: unknown;
   preserveDescriptors?: boolean;
-};
+}
 
 // useArgs 只能在 story render 函数（StoryContext）内调用。
 const renderWithArgs = (storyArgs: StoryArgs) => {

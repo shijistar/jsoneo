@@ -15,15 +15,15 @@ const theme = (!globalTheme && isPreferDark) || globalTheme === 'dark' ? 'dark' 
 // Merge docs + story titles into one lookup table. Story meta titles are
 // hierarchical ("Core API / Primitive Values") while the sidebar renders the
 // leaf name, so strip the leading group segment for matching.
-const sidebarTitles: Array<{
+const sidebarTitles: {
   fileName: string;
   title?: string;
   titleCN?: string;
   rawTitle?: string;
   rawTitleCN?: string;
-}> = [
+}[] = [
   ...docTitles,
-  ...(storyTitles as Array<{ fileName: string; title?: string; titleCN?: string }>).map((story) => ({
+  ...(storyTitles as { fileName: string; title?: string; titleCN?: string }[]).map((story) => ({
     fileName: story.fileName,
     title: story.title?.replace(/^[^/]*\/\s*/, ''),
     titleCN: story.titleCN?.replace(/^[^/]*\/\s*/, ''),

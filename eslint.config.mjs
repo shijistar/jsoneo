@@ -1,4 +1,5 @@
-import typescript from '@tiny-codes/code-style-all-in-one/eslint/typescript';
+import recommended from '@tiny-codes/code-style-all-in-one/eslint/react-recommended';
+import { configs as storybookConfigs } from 'eslint-plugin-storybook';
 
 export default [
   {
@@ -15,9 +16,9 @@ export default [
       'tses/**',
       'public/**',
       '.vscode/**',
-      '.storybook/**',
       '*.md',
     ],
   },
-  ...typescript,
+  ...recommended,
+  ...storybookConfigs['flat/recommended'],
 ];

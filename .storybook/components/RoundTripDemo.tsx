@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { Button, Space } from 'antd';
 import { parse, stringify } from '../../src';
 import type { ParseOptions, StringifyOptions } from '../../src/types';
@@ -14,9 +14,9 @@ interface RoundTripDemoProps {
   /** parse 选项，默认 { prettyPrint: true } */
   parseOptions?: ParseOptions;
   /** 插入在 Test Input 和 Actions 之间的自定义选项面板 */
-  optionsPanel?: React.ReactNode;
+  optionsPanel?: ReactNode;
   /** 插入在 Test Input 之前的自定义内容（如环境检测） */
-  beforeInput?: React.ReactNode;
+  beforeInput?: ReactNode;
   /** 是否在运行后展示 Original Input 面板（默认 false） */
   showOriginalInput?: boolean;
 }

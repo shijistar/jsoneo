@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { Alert } from 'antd';
 import { useStoryT } from '../locales';
 
 interface TrustedInputNoticeProps {
   variant?: 'warning' | 'info';
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export const TrustedInputNotice = ({ variant = 'warning', children }: TrustedInputNoticeProps) => {

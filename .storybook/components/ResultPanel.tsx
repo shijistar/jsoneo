@@ -1,11 +1,12 @@
+import type { CSSProperties, ReactNode } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { irBlack, vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Button } from 'antd';
 import { useStoryT } from '../locales';
 
 interface ResultPanelProps {
-  label: React.ReactNode;
-  children?: React.ReactNode;
+  label: ReactNode;
+  children?: ReactNode;
   variant?: 'default' | 'error' | 'success';
   badge?: { text: string; variant: 'success' | 'warning' | 'danger' };
   copyText?: string;
@@ -39,7 +40,7 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
         {
           background: bgColors[variant],
           borderColor: borderColors[variant],
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <div
@@ -50,7 +51,7 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-          } as React.CSSProperties
+          } as CSSProperties
         }
       >
         <span>{label}</span>
@@ -83,7 +84,7 @@ export const ResultPanel = ({ label, children, variant = 'default', badge, copyT
                       : isDark
                         ? '#ffdce0'
                         : '#cf222e',
-              } as React.CSSProperties
+              } as CSSProperties
             }
           >
             {badge.text}

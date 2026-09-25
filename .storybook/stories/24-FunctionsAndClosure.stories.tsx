@@ -32,10 +32,10 @@ const meta: Meta = {
   },
 };
 
-type StoryArgs = {
+interface StoryArgs {
   input?: unknown;
   closure?: string;
-};
+}
 
 // useArgs 只能在 story render 函数（StoryContext）内调用。
 const renderWithArgs = (storyArgs: StoryArgs) => {
@@ -164,6 +164,7 @@ export const FunctionWithClosure: Story = {
     input: (() => {
       function canRead(user: { role: string }) {
         // Uses external `allowedRoles` - must be provided via closure option
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (canRead as any).allowedRoles?.includes(user.role) ?? false;
       }
       return { canRead };
@@ -180,6 +181,7 @@ export const FunctionWithAttachedProperties: Story = {
   args: {
     input: (() => {
       function getConfig() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (getConfig as any).defaults;
       }
       return { getConfig };
